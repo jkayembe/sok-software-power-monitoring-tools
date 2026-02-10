@@ -1,0 +1,275 @@
+\documentclass{article}
+
+\usepackage{amsmath, amsthm, amssymb, amsfonts}
+\usepackage{thmtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{framed}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tcolorbox}
+
+\newcommand{\blue}[1]{\textcolor{RoyalBlue}{#1}}
+\newcommand{\green}[1]{\textcolor{ForestGreen}{#1}}
+\newcommand{\orange}[1]{\textcolor{Orange}{#1}}
+
+\colorlet{LightGray}{White!90!Periwinkle}
+\colorlet{LightOrange}{Orange!15}
+\colorlet{LightGreen}{Green!15}
+
+\newcommand{\HRule}[1]{\rule{\linewidth}{#1}}
+
+\declaretheoremstyle[name=Theorem,]{thmsty}
+\declaretheorem[style=thmsty,numberwithin=section]{theorem}
+\tcolorboxenvironment{theorem}{colback=LightGray}
+
+\declaretheoremstyle[name=Proposition,]{prosty}
+\declaretheorem[style=prosty,numberlike=theorem]{proposition}
+\tcolorboxenvironment{proposition}{colback=LightOrange}
+
+\declaretheoremstyle[name=Principle,]{prcpsty}
+\declaretheorem[style=prcpsty,numberlike=theorem]{principle}
+\tcolorboxenvironment{principle}{colback=LightGreen}
+
+\setstretch{1.2}
+\geometry{
+    textheight=9in,
+    textwidth=5.5in,
+    top=1in,
+    headheight=12pt,
+    headsep=25pt,
+    footskip=30pt
+}
+
+% ------------------------------------------------------------------------------
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% Cover Page and ToC
+% ------------------------------------------------------------------------------
+
+\title{ \normalsize \textsc{} \\ [2.0cm]
+		\HRule{2.0pt} \\
+		\LARGE SoK : Software Power Monitoring Tools
+		\HRule{2.0pt} \\ [0.6cm] 
+        \LARGE{Paper Draft}
+        \vspace*{10\baselineskip}
+		}
+
+\date{}
+\author{\textbf{Jason Kayembe, Iness Ben Guirat, Jan-Tobias Mühlberg} \\
+        \normalsize BEAMS - Embedded Systems Design and Security \\
+        \normalsize Université Libre de Bruxelles \\}
+
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+% ------------------------------------------------------------------------------
+
+\section{Introduction \& Motivation}
+
+The energy consumption of software systems has attracted increasing attention in recent years.
+\blue{Why not mentioning that this is driven by concerns for both environmental impact of computing AND operating costs? Personnaly I don't like the idea of emphasising economic benefits of seeking efficient softwares because of the obvious potential for rebound effect}. Digital services continue to scale across a wide range of computing contexts, from mobile and embedded devices to large-scale cloud infrastructures. They are increasingly recognised as not only being passive consumers of hardware resources, but also direct determinants of system-level power and energy demand. Therefore, the ability to measure and reason about software-induced energy consumption is crucial for energy-aware software engineering, and green system design.
+
+\paragraph{} Over the past decade, diverse tools have emerged to measure or estimate the power and energy consumption of software. These tools can differ substantially in their underlying measurement principles, levels of abstraction, deployment environments, and intended use cases. Some tools rely on external power meters or hardware-exposed energy interfaces provided by modern processors (e.g. Intel RAPL), while others estimate energy consumption using models based on performance counters, operating system statistics, or analytical abstractions. Similarly, tools vary in the granularity at which energy is attributed, ranging from whole-system measurements to per-process, per-container, or even per-function estimates. This diversity directly reflects the plenitude of application scenarios, but also makes it difficult to understand the trade-offs involved and to select appropriate tools for a given context.
+
+\paragraph{} Existing literature focuses on proposing new tools or evaluating individual techniques in isolation. While several surveys exist \cite{wysockiMethodsImprovingSoftware2025}, they tend to catalogue tools or measurement methods without providing a unifying structure that explains why certain approaches are suitable for specific environments and goals, and why others are not. Additionally, the increasing use of virtualisation and cloud-native environments introduces new complexities such as limited hardware visibility, multi-tenancy, and the lack of access to physical power measurements that are not systematically addressed in existing measurement approaches.
+
+\paragraph{} In this paper, we present a Systematisation of Knowledge (SoK) on software power and energy measurement tools. While we are not aiming for an exhaustive survey, our goal is to organise existing tools and approaches along a set of dimensions that capture their fundamental design choices and practical implications. We systematise tools according to axes including
+\begin{itemize}
+
+    \item Measurement level \& attribution : What is actually measured.
+    \item Methodology \& accuracy : How and how well is it measured.
+    \item Invasiveness \& usability : How is the tool implemented.
+    \item Execution environment support : What kind of computing device is supported, does it offer support for virtualisation\dots
+    \item Maturity \& ecosystem : Open-source? Well documented? Ease of use?...
+
+\end{itemize} This systematisation exposes common patterns, implicit assumptions, and trade-offs that are often obscured when tools are considered individually.
+
+\paragraph{} The contributions of this SoK are threefold. First, we propose a taxonomy of software energy measurement approaches that clarifies the design space and provides a shared vocabulary for future work. Secondly, we derive a decision framework that supports researchers and practitioners in selecting measurement tools based on their experimental goals and operational constraints. Third, through a comparative analysis of representative tools, we identify open challenges and research gaps. By consolidating and structuring existing knowledge, this paper aims to serve as a foundation for both empirical research and tool development in software energy measurement.
+
+
+\section{Measurement challenges}
+
+Here I'd like to discuss the challenges that energy profiling tools face:
+
+\begin{itemize}
+
+    \item Allocation : Computing devices often run many processes at the same time, whether it be through real parallel computing (e.g., multicore CPU, vectorisation...) or resources time-sharing. A process itself can encompass many threads. I'd like to discuss how this links to allocation of the hardware energy consumption and to the granularity of the tool. Introduce concept of baseline energy consumption etc\dots
+    
+    \item Virtualisation : Virtualisation introduces other layers of complexity in the way these tools need to allocate energy consumption among processes. Imagine a bare metal server running tens of virtual machines or hundreds of containers, each running hundreds of processes. How do we track down each process' consumption? How do we allocate the energy of the virtualisation layer, i.e., the whole stack of software/hardware allowing this virtual abstraction, to the different processes
+    
+\end{itemize}
+
+\section{Taxonomy of energy measurement approaches}
+
+To enable a meaningful comparison of software power and energy measurement tools, we introduce a taxonomy that captures the main dimensions along which these tools differ. The proposed taxonomy focuses on the conceptual and methodological choices that determine what is measured, how measurements are obtained, and in which environments tools can be deployed. These dimensions form the basis of the comparative analysis presented later in this paper.
+
+\subsection{Measurement level and attribution}
+
+The first dimension addresses the question of \emph{what exactly is being measured} and how energy consumption is attributed to software entities. Tools differ in their measurement targets, attribution granularity, and temporal resolution.
+
+\begin{itemize}
+    \item \textbf{Measurement target.} Tools may focus on specific hardware components such as the CPU, DRAM, GPU, storage devices, or network interfaces, or try to estimate system-level consumption.
+    
+    \item \textbf{Metrics.} While most tools report energy consumption in joules or average power in watts, some derive higher-level metrics such as carbon emissions (e.g., Green Metric Tool (GMT)) by combining energy estimates with external carbon-intensity data. These derived metrics introduce additional assumptions beyond energy measurement itself.
+    
+    \item \textbf{Granularity.} Energy may be attributed at different software levels, including the whole system, virtual machines, containers, processes, threads, or even individual functions. Finer-grained attribution offers more insights but typically requires more assumptions, e.g., share of system energy consumption proportional to resource percentage utilisation. It also typically increases overhead.
+    
+    \item \textbf{Temporal resolution.} Another parameter is how frequently measurements are sampled. This can range from coarse periodic sampling to event-based or continuous monitoring. Higher temporal resolution enables short events to be observed but may increase overhead and noise sensitivity.
+    
+    \item \textbf{Baseline modelling.} Some tools explicitly model baseline or idle energy consumption and subtract it when attributing energy to software entities. Whether and how a baseline is modelled can affects attribution results, especially in shared or multi-tenant systems. \blue{(This should maybe be part of "Methodology and accuracy")}
+\end{itemize}
+
+\subsection{Methodology and accuracy}
+
+This dimension captures the methodological foundations of energy measurement tools and the extent to which their results can be considered scientifically valid and reproducible.
+
+\begin{itemize}
+    \item \textbf{Measurement approach.} Tools may rely on external physical power meters, hardware-exposed energy interfaces, model-based estimation using performance counters or operating system statistics, or hybrid approaches combining multiple sources. \orange{Should we go deeper and specify families of model/assumptions used ?}
+    
+    \item \textbf{Calibration requirements.} Measurement accuracy may depend on explicit calibration procedures, which can be mandatory, optional, or absent.
+    
+    \item \textbf{Accuracy validation.} Some tools may provide accuracy validation e.g., \cite{noureddineMonitoringEnergyHotspots2015}. \blue{(This should maybe be part of "Maturity and ecosystem" dimension or maybe both)}
+    
+    \item \textbf{Repeatability.} The stability of measurements over repeated runs is influenced by noise, system load, and modelling assumptions. Some tools may be more deterministic than others.
+\end{itemize}
+
+\subsection{Invasiveness and usability}
+
+Beyond measurement accuracy, practical usability can affect whether a tool can be adopted in real-world settings.
+
+\begin{itemize}
+    \item \textbf{Code modification.} Some tools require changes to application source code or binary instrumentation\cite{noureddineMonitoringEnergyHotspots2015}, while others can operate more transparently.
+    
+    \item \textbf{Runtime overhead.} Monitoring introduces computational overhead that may perturb the system under study. Tools could vary in whether this overhead is quantified and how significant it is. \orange{Never saw this yet though}
+    
+    \item \textbf{Deployment complexity.} Tools can be deployed as standalone applications, background agents, kernel modules, or platform-level services, each with different operational implications.
+    
+\end{itemize}
+
+\subsection{Execution environment support}
+
+Execution environment support is a key dimension, particularly given the prevalence of cloud-native systems.
+
+\begin{itemize}
+    \item \textbf{Bare-metal support.} Some tools are designed primarily for non-virtualised environments with full hardware access. \blue{Does it make sense to detail targeted architecture here? Or do we create a dedicated feature for that?}
+    
+    \item \textbf{Virtual machines.} VM-aware tools may operate at the hypervisor level or attempt to attribute energy to guest operating systems.
+    
+    \item \textbf{Containers.} Container-level attribution introduces challenges related to resource sharing and namespace isolation.
+    
+    \item \textbf{Kubernetes integration.} Native support for orchestration platforms enables energy monitoring at cluster scale.
+    
+    \item \textbf{Multi-tenancy awareness.} Whether energy attribution assumes exclusive access to hardware resources or explicitly accounts for concurrent workloads and shared infrastructure. \orange{This one is maybe redundant}
+    
+    \item \textbf{Cloud provider compatibility.} Compatibility with major cloud providers and their exposed monitoring interfaces.
+\end{itemize}
+
+\subsection{Maturity and ecosystem}
+
+Finally, tools differ in their level of maturity and surrounding ecosystem, which affects long-term usability and impact.
+
+\begin{itemize}
+    \item \textbf{Availability and licensing.} Tools may be open-source or proprietary, with different licence constraints.
+    
+    \item \textbf{Maintenance status.} Tools may be more or less well maintained, e.g. reported issues solved etc.
+    
+    \item \textbf{Documentation quality.} Clear documentation is important to reduce misuse.
+    
+    \item \textbf{Community adoption.} Tools may be primarily used in academic research, industry, or both.
+    
+    \item \textbf{Ecosystem integration.} Integration with monitoring and visualisation platforms (e.g., Prometheus) facilitates deployment at scale.
+\end{itemize}
+
+Together, these dimensions provide a structured view of the design space of software energy measurement tools and form the basis for the comparative table and decision guidelines presented in the following sections.
+
+\section{Tool selection methodology}
+
+Given the plenitude of software power and energy measurement tools, it is not practical to aim for exhaustive listing. Instead, this SoK adopts a selection methodology to identify representative and well-documented tools that reflect the main approaches and trade-offs present in the design space. The objective is not to rank tools, but rather to enable structured comparison and informed tool selection across different experimental and operational contexts.
+
+\subsection{Seed selection}
+
+The tool selection process is initiated by a set of initial \emph{seed tools} that are well-established in the literature or have been used in prior empirical work. These seeds reflect both traditional measurement approaches and emerging cloud-native solutions, and serve as entry points into different regions of the design space.
+
+In particular, seed tools were selected based on:
+\begin{itemize}
+    \item prior use in peer-reviewed academic publications,
+    \item availability of public documentation or source code,
+    \item relevance to contemporary execution environments, including virtualised and containerised systems.
+\end{itemize}
+
+This initial set includes tools such as \emph{Kepler} \cite{centofantiImpactPowerConsumption2024,amaralKeplerFrameworkCalculate2023,bellalInvestigatingPotentialKepler}, motivated by its explicit focus on Kubernetes and cloud-native environments, as well as tools previously used in related work, such as the \emph{Green Metrics Tool}\cite{hoffmannGreenMetricsTool2025,kayembeExploringPrivacySecurity2025}, which supports container-level isolation and monitoring. Recently proposed tools, such as \emph{e-Surgeon}\cite{noureddineMonitoringEnergyHotspots2015}, were also considered where sufficient technical detail and evaluation were available.
+
+\subsection{Inclusion criteria}
+
+A tool will be included in the study if it satisfies:
+\begin{itemize}
+    \item \textbf{Scientific grounding.} The tool is described in a peer-reviewed publication or a well-documented technical report. We want sufficient information available to understand what is measured, how measurements are obtained, and under which assumptions they are valid.
+    
+    \item \textbf{Software-level attribution.} The tool provides energy or power measurements attributable to software entities (e.g., system, process, container, or application), rather than reporting only raw hardware power data.
+    
+    \item \textbf{Relevance to modern systems.} The tool targets execution environments that are representative of current practice, including bare-metal systems, virtual machines, containers, or cloud platforms.
+\end{itemize}
+
+These criteria ensure that selected tools can be meaningfully compared along the taxonomy dimensions introduced and that their design trade-offs can be analysed.
+
+\subsection{Exclusion criteria}
+
+Tools were excluded from the study if they met one or more of the following conditions:
+
+\begin{itemize}
+    \item \textbf{Hardware-only focus.} Tools limited to physical power measurement without any form of software-level attribution. \blue{This is probably redundant with Inclusion criteria "Software-level attribution"}
+    
+    \item \textbf{Insufficient documentation.} Tools lacking publicly available descriptions of their methodology, assumptions, or evaluation.
+    
+    \item \textbf{Obsolete or unsupported environments.} Tools targeting deprecated hardware platforms or software stacks with limited relevance to current systems.
+    
+    \item \textbf{Purely theoretical models.} Approaches proposed without an implemented tool or without empirical validation.
+\end{itemize}
+
+The application of these exclusion criteria helps avoiding representation of narrowly scoped or poorly specified approaches while maintaining focus on practical measurement tools.
+
+\subsection{Snowballing strategy}
+
+To mitigate bias introduced by the initial seed selection, we apply a backward and forward snowballing strategy. For each selected tool, we want to examine:
+
+\begin{itemize}
+    \item references cited in the original publication describing the tool,
+    \item subsequent publications that cite the tool or build upon it,
+    \item \blue{related tools discussed in comparative or evaluation studies? (Does that make sense here?)}.
+\end{itemize}
+
+Candidate tools identified through snowballing are evaluated against the same inclusion and exclusion criteria. This iterative process is repeated until no additional tools meeting the criteria were identified, providing confidence that the selected set adequately covers the main classes of software energy measurement approaches discussed in the literature.
+
+\subsection{Outcome of the selection process}
+
+The final outcome of this selection methodology is a set of representative tools spanning different measurement approaches, attribution granularities, and execution environments. Each selected tool is characterised using a common set of features derived from the taxonomy introduced earlier, and summarised in a comparative table. This table serves as the basis for analysing trade-offs and for deriving practical decision guidelines regarding tool selection in different scenarios.
+
+\section{Comparative analysis (table and discussion)}
+
+\section{Decision guidelines: “Which tool for which scenario?”}
+
+\section{Gaps \& open research problems}
+
+\section{Conclusion}
+		
+\newpage
+
+% ------------------------------------------------------------------------------
+% Reference and Cited Works
+% ------------------------------------------------------------------------------
+
+\bibliographystyle{IEEEtran}
+\bibliography{bib/main-zotero.bib, bib/temp-manual.bib}
+
+% ------------------------------------------------------------------------------
+
+\end{document}
