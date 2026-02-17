@@ -12,7 +12,7 @@
 \usepackage{framed}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{tcolorbox}
-
+\usepackage{todonotes}
 \newcommand{\blue}[1]{\textcolor{RoyalBlue}{#1}}
 \newcommand{\green}[1]{\textcolor{ForestGreen}{#1}}
 \newcommand{\orange}[1]{\textcolor{Orange}{#1}}
@@ -76,7 +76,7 @@
 \section{Introduction \& Motivation}
 
 The energy consumption of software systems has attracted increasing attention in recent years.
-\blue{Why not mentioning that this is driven by concerns for both environmental impact of computing AND operating costs? Personnaly I don't like the idea of emphasising economic benefits of seeking efficient softwares because of the obvious potential for rebound effect}. Digital services continue to scale across a wide range of computing contexts, from mobile and embedded devices to large-scale cloud infrastructures. They are increasingly recognised as not only being passive consumers of hardware resources, but also direct determinants of system-level power and energy demand. Therefore, the ability to measure and reason about software-induced energy consumption is crucial for energy-aware software engineering, and green system design.
+\blue{Why not mentioning that this is driven by concerns for both environmental impact of computing AND operating costs? Personnaly I don't like the idea of emphasising economic benefits of seeking efficient softwares because of the obvious potential for rebound effect}. Digital services continue to scale across a wide range of computing contexts, from mobile and embedded devices to large-scale cloud infrastructures. They are increasingly recognised as not only being passive consumers of hardware resources, but also direct determinants of system-level power and energy demand. Therefore, the ability to measure and reason about software-induced energy consumption is crucial for energy-aware software engineering, and green system design. \todo{what are the use cases of these tools besides academic contributions?}
 
 \paragraph{} Over the past decade, diverse tools have emerged to measure or estimate the power and energy consumption of software. These tools can differ substantially in their underlying measurement principles, levels of abstraction, deployment environments, and intended use cases. Some tools rely on external power meters or hardware-exposed energy interfaces provided by modern processors (e.g. Intel RAPL), while others estimate energy consumption using models based on performance counters, operating system statistics, or analytical abstractions. Similarly, tools vary in the granularity at which energy is attributed, ranging from whole-system measurements to per-process, per-container, or even per-function estimates. This diversity directly reflects the plenitude of application scenarios, but also makes it difficult to understand the trade-offs involved and to select appropriate tools for a given context.
 
