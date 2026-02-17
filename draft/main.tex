@@ -13,9 +13,9 @@
 \usepackage[dvipsnames]{xcolor}
 \usepackage{tcolorbox}
 
-\newcommand{\blue}[1]{\textcolor{RoyalBlue}{#1}}
-\newcommand{\green}[1]{\textcolor{ForestGreen}{#1}}
-\newcommand{\orange}[1]{\textcolor{Orange}{#1}}
+\newcommand{\jay}[1]{\textcolor{RoyalBlue}{#1}}
+\newcommand{\iness}[1]{\textcolor{ForestGreen}{#1}}
+\newcommand{\jt}[1]{\textcolor{Orange}{#1}}
 
 \colorlet{LightGray}{White!90!Periwinkle}
 \colorlet{LightOrange}{Orange!15}
@@ -47,7 +47,6 @@
 
 % ------------------------------------------------------------------------------
 \begin{document}
-
 % ------------------------------------------------------------------------------
 % Cover Page and ToC
 % ------------------------------------------------------------------------------
@@ -75,8 +74,22 @@
 
 \section{Introduction \& Motivation}
 
-The energy consumption of software systems has attracted increasing attention in recent years.
-\blue{Why not mentioning that this is driven by concerns for both environmental impact of computing AND operating costs? Personnaly I don't like the idea of emphasising economic benefits of seeking efficient softwares because of the obvious potential for rebound effect}. Digital services continue to scale across a wide range of computing contexts, from mobile and embedded devices to large-scale cloud infrastructures. They are increasingly recognised as not only being passive consumers of hardware resources, but also direct determinants of system-level power and energy demand. Therefore, the ability to measure and reason about software-induced energy consumption is crucial for energy-aware software engineering, and green system design.
+\jay{\textbf{Comments from 17-02-26 meeting with JT and Iness}}
+\begin{itemize}
+    \item   \iness{Iness : Is there a sound reason for the existence of so many of these tools?} \\
+            \jt{JT : That's potentially something we'll find out with this study} \\
+            \jay{Jay : I do agree with the fact that it should be an outcome of the study. To me the classification we create really defines a space of usage scenarios, i.e. needs + constraints. For instance a tool like Kepler might have been designed for data centres operators to monitor energy usage per computing loads and allow energy-aware orchestration of the latter. This translate to a context and its constraints: $(granularity=container/VM, measurment\_target=(CPU, DRAM, storage), measurment\_approach=external\_power\_meters + RAPL, virtualisation\_support, etc...)$. Another use case of a user wanting to assess the energy of a program running on its smartphone would imply another context, other constraints so another point in that space for which there might or not exist a tool}
+    \item   \jt{JT : We might want to add a column for use cases of the tools. The value of such a paper might be different for industry people than us academic fellows or even governance people makinig standards etc...}\\
+            \iness{Iness : The value of this SoK from these different perspectives could be made more explicit in the introduction to strenghten the scientific contribution}.
+
+    \item \jt{JT : For the moment, it is unclear how the GMT differentiates itself from Kepler. Why coudn't the GMT be used in data centre context? }\\
+          \jay{Jay : I think the GMT could be used in a data centre context, provided the DC operator allows access to some metrics (number of CPUs,RAM,... + system-level consumption wether it's real-time or spec-based) as source of truth, and a metric provider (GMT data reporter) is implemented to read and process that data. Such a metric provider exists when running different containers, that uses CPU usage \%age as a proxy for system energy allocation to containers.}
+    
+\end{itemize} 
+
+
+\paragraph{} The energy consumption of software systems has attracted increasing attention in recent years.
+\jay{Why not mentioning that this is driven by concerns for both environmental impact of computing AND operating costs? Personnaly I don't like the idea of emphasising economic benefits of seeking efficient softwares because of the obvious potential for rebound effect}. Digital services continue to scale across a wide range of computing contexts, from mobile and embedded devices to large-scale cloud infrastructures. They are increasingly recognised as not only being passive consumers of hardware resources, but also direct determinants of system-level power and energy demand. Therefore, the ability to measure and reason about software-induced energy consumption is crucial for energy-aware software engineering, and green system design.
 
 \paragraph{} Over the past decade, diverse tools have emerged to measure or estimate the power and energy consumption of software. These tools can differ substantially in their underlying measurement principles, levels of abstraction, deployment environments, and intended use cases. Some tools rely on external power meters or hardware-exposed energy interfaces provided by modern processors (e.g. Intel RAPL), while others estimate energy consumption using models based on performance counters, operating system statistics, or analytical abstractions. Similarly, tools vary in the granularity at which energy is attributed, ranging from whole-system measurements to per-process, per-container, or even per-function estimates. This diversity directly reflects the plenitude of application scenarios, but also makes it difficult to understand the trade-offs involved and to select appropriate tools for a given context.
 
@@ -117,7 +130,7 @@ To enable a meaningful comparison of software power and energy measurement tools
 The first dimension addresses the question of \emph{what exactly is being measured} and how energy consumption is attributed to software entities. Tools differ in their measurement targets, attribution granularity, and temporal resolution.
 
 \begin{itemize}
-    \item \textbf{Measurement target.} Tools may focus on specific hardware components such as the CPU, DRAM, GPU, storage devices, network interfaces and display \blue{(never seen yet for display though. But that might be interesting to shed light on)}, or try to estimate system-level consumption.
+    \item \textbf{Measurement target.} Tools may focus on specific hardware components such as the CPU, DRAM, GPU, storage devices, network interfaces and display \jay{(never seen yet for display though. But that might be interesting to shed light on)}, or try to estimate system-level consumption.
     
     \item \textbf{Metrics.} Most tools report energy consumption in joules or average power in watts. Some might also report network data exchanges while others may even report higher-level metrics such as carbon emissions (e.g., Green Metric Tool (GMT)~\cite{kayembeExploringPrivacySecurity2025}) by combining energy estimates with external carbon-intensity data. These derived metrics introduce additional assumptions beyond energy measurement itself.
     
@@ -125,7 +138,7 @@ The first dimension addresses the question of \emph{what exactly is being measur
     
     \item \textbf{Temporal resolution.} Another parameter is how frequently measurements are sampled. This can range from coarse periodic sampling to event-based or continuous monitoring. Higher temporal resolution enables short events to be observed but may increase overhead and noise sensitivity.
     
-    \item \textbf{Baseline modelling.} Some tools explicitly model baseline or idle energy consumption and subtract it when attributing energy to software entities. Whether and how a baseline is modelled can affects attribution results, especially in shared or multi-tenant systems. \blue{(This should maybe be part of "Methodology and accuracy")}
+    \item \textbf{Baseline modelling.} Some tools explicitly model baseline or idle energy consumption and subtract it when attributing energy to software entities. Whether and how a baseline is modelled can affects attribution results, especially in shared or multi-tenant systems. \jay{(This should maybe be part of "Methodology and accuracy")}
 \end{itemize}
 
 \subsection{Methodology and accuracy}
@@ -133,11 +146,11 @@ The first dimension addresses the question of \emph{what exactly is being measur
 This dimension captures the methodological foundations of energy measurement tools and the extent to which their results can be considered scientifically valid and reproducible.
 
 \begin{itemize}
-    \item \textbf{Measurement approach.} Tools may rely on external physical power meters, hardware-exposed energy interfaces, model-based estimation using performance counters or operating system statistics, or hybrid approaches combining multiple sources. \orange{Should we go deeper and specify families of model/assumptions used ?}
+    \item \textbf{Measurement approach.} Tools may rely on external physical power meters, hardware-exposed energy interfaces, model-based estimation using performance counters or operating system statistics, or hybrid approaches combining multiple sources. \jay{Should we go deeper and specify families of model/assumptions used ?}
     
     \item \textbf{Calibration requirements.} Measurement accuracy may depend on explicit calibration procedures, which can be mandatory, optional, or absent.
     
-    \item \textbf{Accuracy validation.} Some tools may provide accuracy validation e.g., \cite{noureddineMonitoringEnergyHotspots2015}. \blue{(This should maybe be part of "Maturity and ecosystem" dimension or maybe both)}
+    \item \textbf{Accuracy validation.} Some tools may provide accuracy validation e.g., \cite{noureddineMonitoringEnergyHotspots2015}. \jay{(This should maybe be part of "Maturity and ecosystem" dimension or maybe both)}
     
     \item \textbf{Repeatability.} The stability of measurements over repeated runs is influenced by noise, system load, and modelling assumptions. Some tools may be more deterministic than others.
 \end{itemize}
@@ -149,7 +162,7 @@ Beyond measurement accuracy, practical usability can affect whether a tool can b
 \begin{itemize}
     \item \textbf{Code modification.} Some tools require changes to application source code or binary instrumentation\cite{noureddineMonitoringEnergyHotspots2015}, while others can operate more transparently.
     
-    \item \textbf{Runtime overhead.} Monitoring introduces computational overhead that may perturb the system under study. Tools could vary in whether this overhead is quantified and how significant it is. \orange{Never saw this yet though}
+    \item \textbf{Runtime overhead.} Monitoring introduces computational overhead that may perturb the system under study. Tools could vary in whether this overhead is quantified and how significant it is. \jay{Never saw this yet though}
     
     \item \textbf{Deployment complexity.} Tools can be deployed as standalone applications, background agents, kernel modules, or platform-level services, each with different operational implications.
     
@@ -160,7 +173,7 @@ Beyond measurement accuracy, practical usability can affect whether a tool can b
 Execution environment support is a key dimension, particularly given the prevalence of cloud-native systems.
 
 \begin{itemize}
-    \item \textbf{Bare-metal support.} Some tools are designed primarily for non-virtualised environments with full hardware access. \blue{Does it make sense to detail targeted architecture here? Or do we create a dedicated feature for that?}
+    \item \textbf{Bare-metal support.} Some tools are designed primarily for non-virtualised environments with full hardware access. \jay{Does it make sense to detail targeted architecture here? Or do we create a dedicated feature for that?}
     
     \item \textbf{Virtual machines.} VM-aware tools may operate at the hypervisor level or attempt to attribute energy to guest operating systems.
     
@@ -168,7 +181,7 @@ Execution environment support is a key dimension, particularly given the prevale
     
     \item \textbf{Kubernetes integration.} Native support for orchestration platforms enables energy monitoring at cluster scale.
     
-    \item \textbf{Multi-tenancy awareness.} Whether energy attribution assumes exclusive access to hardware resources or explicitly accounts for concurrent workloads and shared infrastructure. \orange{This one is maybe redundant}
+    \item \textbf{Multi-tenancy awareness.} Whether energy attribution assumes exclusive access to hardware resources or explicitly accounts for concurrent workloads and shared infrastructure. \jay{This one is maybe redundant}
     
     \item \textbf{Cloud provider compatibility.} Compatibility with major cloud providers and their exposed monitoring interfaces.
 \end{itemize}
@@ -180,9 +193,9 @@ Finally, tools differ in their level of maturity and surrounding ecosystem, whic
 \begin{itemize}
     \item \textbf{Availability and licensing.} Tools may be open-source or proprietary, with different licence constraints.
     
-    \item \textbf{Maintenance status.} Tools may be more or less well maintained, e.g. reported issues solved etc. \blue{To quantify this we could set a treshold on the date of maintenance}
+    \item \textbf{Maintenance status.} Tools may be more or less well maintained, e.g. reported issues solved etc. \jay{To quantify this we could set a treshold on the date of maintenance}
     
-    \item \textbf{Documentation quality.} Clear documentation is important to reduce misuse. \orange{Maybe we drop that one because it's hard to assess, OR we just report existing documentation}
+    \item \textbf{Documentation quality.} Clear documentation is important to reduce misuse. \jay{Maybe we drop that one because it's hard to assess, OR we just report existing documentation}
     
     \item \textbf{Community adoption.} Tools may be primarily used in academic research, industry, or both.
     
@@ -226,7 +239,7 @@ These criteria ensure that selected tools can be meaningfully compared along the
 Tools were excluded from the study if they met one or more of the following conditions:
 
 \begin{itemize}
-    \item \textbf{Hardware-only focus.} Tools limited to physical power measurement without any form of software-level attribution. \blue{This is probably redundant with Inclusion criteria "Software-level attribution"}
+    \item \textbf{Hardware-only focus.} Tools limited to physical power measurement without any form of software-level attribution. \jay{This is probably redundant with Inclusion criteria "Software-level attribution"}
     
     \item \textbf{Insufficient documentation.} Tools lacking publicly available descriptions of their methodology, assumptions, or evaluation.
     
@@ -244,7 +257,7 @@ To mitigate bias introduced by the initial seed selection, we apply a backward a
 \begin{itemize}
     \item references cited in the original publication describing the tool,
     \item subsequent publications that cite the tool or build upon it,
-    \item \blue{related tools discussed in comparative or evaluation studies? (Does that make sense here?)}.
+    \item \jay{related tools discussed in comparative or evaluation studies? (Does that make sense here?)}.
 \end{itemize}
 
 Candidate tools identified through snowballing are evaluated against the same inclusion and exclusion criteria. This iterative process is repeated until no additional tools meeting the criteria were identified, providing confidence that the selected set adequately covers the main classes of software energy measurement approaches discussed in the literature.
