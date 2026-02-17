@@ -117,9 +117,9 @@ To enable a meaningful comparison of software power and energy measurement tools
 The first dimension addresses the question of \emph{what exactly is being measured} and how energy consumption is attributed to software entities. Tools differ in their measurement targets, attribution granularity, and temporal resolution.
 
 \begin{itemize}
-    \item \textbf{Measurement target.} Tools may focus on specific hardware components such as the CPU, DRAM, GPU, storage devices, or network interfaces, or try to estimate system-level consumption.
+    \item \textbf{Measurement target.} Tools may focus on specific hardware components such as the CPU, DRAM, GPU, storage devices, network interfaces and display \blue{(never seen yet for display though. But that might be interesting to shed light on)}, or try to estimate system-level consumption.
     
-    \item \textbf{Metrics.} While most tools report energy consumption in joules or average power in watts, some derive higher-level metrics such as carbon emissions (e.g., Green Metric Tool (GMT)) by combining energy estimates with external carbon-intensity data. These derived metrics introduce additional assumptions beyond energy measurement itself.
+    \item \textbf{Metrics.} Most tools report energy consumption in joules or average power in watts. Some might also report network data exchanges while others may even report higher-level metrics such as carbon emissions (e.g., Green Metric Tool (GMT)~\cite{kayembeExploringPrivacySecurity2025}) by combining energy estimates with external carbon-intensity data. These derived metrics introduce additional assumptions beyond energy measurement itself.
     
     \item \textbf{Granularity.} Energy may be attributed at different software levels, including the whole system, virtual machines, containers, processes, threads, or even individual functions. Finer-grained attribution offers more insights but typically requires more assumptions, e.g., share of system energy consumption proportional to resource percentage utilisation. It also typically increases overhead.
     
@@ -180,13 +180,13 @@ Finally, tools differ in their level of maturity and surrounding ecosystem, whic
 \begin{itemize}
     \item \textbf{Availability and licensing.} Tools may be open-source or proprietary, with different licence constraints.
     
-    \item \textbf{Maintenance status.} Tools may be more or less well maintained, e.g. reported issues solved etc.
+    \item \textbf{Maintenance status.} Tools may be more or less well maintained, e.g. reported issues solved etc. \blue{To quantify this we could set a treshold on the date of maintenance}
     
-    \item \textbf{Documentation quality.} Clear documentation is important to reduce misuse.
+    \item \textbf{Documentation quality.} Clear documentation is important to reduce misuse. \orange{Maybe we drop that one because it's hard to assess, OR we just report existing documentation}
     
     \item \textbf{Community adoption.} Tools may be primarily used in academic research, industry, or both.
     
-    \item \textbf{Ecosystem integration.} Integration with monitoring and visualisation platforms (e.g., Prometheus) facilitates deployment at scale.
+    \item \textbf{Ecosystem integration.} Integration with monitoring and visualisation platforms (e.g., Prometheus~\cite{centofantiImpactPowerConsumption2024}, GMT~\cite{hoffmannGreenMetricsTool2025}) facilitates deployment at scale.
 \end{itemize}
 
 Together, these dimensions provide a structured view of the design space of software energy measurement tools and form the basis for the comparative table and decision guidelines presented in the following sections.
