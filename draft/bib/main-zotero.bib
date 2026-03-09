@@ -53,6 +53,13 @@
   keywords = {Cache optimization,Energy efficiency,Parallel computing,Singular value decomposition}
 }
 
+@article{guegainAndroWattsUnpackingPower,
+  title = {{{AndroWatts}}: {{Unpacking}} the {{Power Consumption}} of {{Mobile Device}}'s {{Components}}},
+  author = {Gu{\'e}gain, {\'E}douard and Raes, R{\'e}my and Chachignot, No{\'e} and Quinton, Cl{\'e}ment and Rouvoy, Romain},
+  abstract = {Power efficiency is crucial for mobile devices, where software inefficiencies can rapidly drain battery life and reduce device longevity. To help developers diagnose inefficiency issues and optimize power use, this paper introduces a novel methodology for estimating power consumption at a hardware component level in mobile devices. Unlike existing approaches that rely on coarse-grained battery discharge measurements, our approach consists of modeling per-component power usage as an inverse problem, utilizing linear statistical models and system metrics to estimate the contributions of individual components.},
+  langid = {english}
+}
+
 @misc{hoffmannGreenMetricsTool2025,
   title = {Green {{Metrics Tool}}: {{Measuring}} for Fun and Profit},
   shorttitle = {Green {{Metrics Tool}}},
@@ -68,6 +75,22 @@
   abstract = {The environmental impact of software is gaining increasing attention as the demand for computational resources continues to rise. In order to optimize software resource consumption and reduce carbon emissions, measuring and evaluating software is a first essential step. In this paper we discuss what metrics are important for fact base decision making. We introduce the Green Metrics Tool (GMT), a novel framework for accurately measuring the resource consumption of software. The tool provides a containerized, controlled, and reproducible life cycle-based approach, assessing the resource use of software during key phases. Finally, we discuss GMT features like visualization, comparability and rule- and LLM-based optimisations highlighting its potential to guide developers and researchers in reducing the environmental impact of their software.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Computers and Society,Computer Science - Emerging Technologies,Computer Science - Software Engineering}
+}
+
+@misc{jagannadharaoBeginnersGuidePower2024,
+  title = {A {{Beginner}}'s {{Guide}} to {{Power}} and {{Energy Measurement}} and {{Estimation}} for {{Computing}} and {{Machine Learning}}},
+  author = {Jagannadharao, Akshaya and Beckage, Nicole and Biswas, Sovan and Egan, Hilary and Gafur, Jamil and Metsch, Thijs and Nafus, Dawn and Raffa, Giuseppe and Tripp, Charles},
+  year = 2024,
+  month = dec,
+  number = {arXiv:2412.17830},
+  eprint = {2412.17830},
+  primaryclass = {eess},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2412.17830},
+  urldate = {2026-02-19},
+  abstract = {Concerns about the environmental footprint of machine learning are increasing. While studies of energy use and emissions of ML models are a growing subfield, most ML researchers and developers still do not incorporate energy measurement as part of their work practices. While measuring energy is a crucial step towards reducing carbon footprint, it is also not straightforward. This paper introduces the main considerations necessary for making sound use of energy measurement tools and interpreting energy estimates, including the use of at-the-wall versus on-device measurements, sampling strategies and best practices, common sources of error, and proxy measures. It also contains practical tips and real-world scenarios that illustrate how these considerations come into play. It concludes with a call to action for improving the state of the art of measurement methods and standards for facilitating robust comparisons between diverse hardware and software environments.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Machine Learning,Electrical Engineering and Systems Science - Signal Processing}
 }
 
 @misc{kayembeExploringPrivacySecurity2025,
@@ -159,4 +182,19 @@
   copyright = {http://creativecommons.org/licenses/by/3.0/},
   langid = {english},
   keywords = {electronics,energy efficiency,knowledge acquisition and engineering,knowledge management,programming techniques,risk management,software}
+}
+
+@article{zoniSurveyRuntimePower2023,
+  title = {A {{Survey}} on {{Run-time Power Monitors}} at the {{Edge}}},
+  author = {Zoni, Davide and Galimberti, Andrea and Fornaciari, William},
+  year = 2023,
+  month = jul,
+  journal = {ACM Comput. Surv.},
+  volume = {55},
+  number = {14s},
+  pages = {325:1--325:33},
+  issn = {0360-0300},
+  doi = {10.1145/3593044},
+  urldate = {2026-02-19},
+  abstract = {Effectively managing energy and power consumption is crucial to the success of the design of any computing system, helping mitigate the efficiency obstacles given by the downsizing of the systems while also being a valuable step towards achieving green and sustainable computing. The quality of energy and power management is strongly affected by the prompt availability of reliable and accurate information regarding the power consumption for the different parts composing the target monitored system. At the same time, effective energy and power management are even more critical within the field of devices at the edge, which exponentially proliferated within the past decade with the digital revolution brought by the Internet of things. This manuscript aims to provide a comprehensive conceptual framework to classify the different approaches to implementing run-time power monitors for edge devices that appeared in literature, leading the reader toward the solutions that best fit their application needs and the requirements and constraints of their target computing platforms. Run-time power monitors at the edge are analyzed according to both the power modeling and monitoring implementation aspects, identifying specific quality metrics for both in order to create a consistent and detailed taxonomy that encompasses the vast existing literature and provides a sound reference to the interested reader.}
 }
