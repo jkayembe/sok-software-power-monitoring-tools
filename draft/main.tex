@@ -74,18 +74,28 @@
 
 \section{Introduction \& Motivation}
 
+\jay{\textbf{Comments from 23-03-26 meeting with JT and Iness}}
+    \begin{itemize}
+    \item \jay{\cite{raffinDissectingSoftwarebasedMeasurement2024} compare the limits (real versus targeted mean and std) of the polling frequency in their Figure 3. We could continue to assess this for the tools we consider in this sok.
+    \item \jay{\cite{raffinDissectingSoftwarebasedMeasurement2024} also discusses overflow issues in RAPL registers. We could add a column for tools that account for this common behavior when reading RAPL data}
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.8\linewidth]{img/polling_frequency.png}
+    \end{figure}}
+    
+\end{itemize}
+
 \jay{\textbf{Comments from 03-03-26 meeting with JT and Iness}}
 
 \begin{itemize}
-    \item Structure : Wrapper + 2 sources of input : Metric providers (This paper \cite{zoniSurveyRuntimePower2023} already defines a taxonomy for these) \& Resources Utilisation provider
-    Do we integrate these subcomponents (e.g. Andro watts for Android, RAPL, and tools present in the paper)?
-    \item Security : RAPL put a limit on purpose to the accuracy of its metrics to prevent side-channel attacks. How does that affects the tools considered ? "RAPL however has been nerfed recently through a discovered power-side-channel attack coined Platypus Moritz Lipp showed that it is possible to read the current executed processor instructions and also the memory layouts especially for data stored in the believed to be secure memory enclave from Intel called SGX SGX"
-    \item taxonomy : we can build on \cite{jagannadharaoBeginnersGuidePower2024}
+    \item \jay{Structure : Wrapper + 2 sources of input : Metric providers (This paper \cite{zoniSurveyRuntimePower2023} already conducts a survey for these) \& Resources Utilisation providers.
+    Do we integrate these subcomponents (e.g. Andro watts for Android, RAPL, and tools reviewed in the paper \cite{zoniSurveyRuntimePower2023})?}
+    \item \jay{Security : RAPL put a limit on purpose to the accuracy of its metrics to prevent side-channel attacks. How does that affects the tools considered ? "RAPL however has been nerfed recently through a discovered power-side-channel attack coined Platypus Moritz Lipp showed that it is possible to read the current executed processor instructions and also the memory layouts especially for data stored in the believed to be secure memory enclave from Intel called SGX SGX"}
+    \item \jay{taxonomy : we can build on \cite{jagannadharaoBeginnersGuidePower2024}}
 \end{itemize}
 
 
-
-\jay{\textbf{Comments from 17-02-26 meeting with JT and Iness}}
+\noindent\jay{\textbf{Comments from 17-02-26 meeting with JT and Iness}}
 \begin{itemize}
     \item   \iness{Iness : Is there a sound reason for the existence of so many of these tools?} \\
             \jt{JT : That's potentially something we'll find out with this study} \\
