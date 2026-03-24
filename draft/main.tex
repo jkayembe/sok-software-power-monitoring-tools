@@ -77,11 +77,29 @@
 \jay{\textbf{Comments from 23-03-26 meeting with JT and Iness}}
     \begin{itemize}
     \item \jay{\cite{raffinDissectingSoftwarebasedMeasurement2024} compare the limits (real versus targeted mean and std) of the polling frequency in their Figure 3. We could continue to assess this for the tools we consider in this sok.
-    \item \jay{\cite{raffinDissectingSoftwarebasedMeasurement2024} also discusses overflow issues in RAPL registers. We could add a column for tools that account for this common behavior when reading RAPL data}
-    \begin{figure}[htbp]
+    \begin{figure}[H]
         \centering
         \includegraphics[width=0.8\linewidth]{img/polling_frequency.png}
+        \includegraphics[width=0.8\linewidth]{img/power_and_cpu_states.png}
+        \includegraphics[width=0.8\linewidth]{img/execution_time.png}
     \end{figure}}
+    \item \jay{\cite{raffinDissectingSoftwarebasedMeasurement2024} also discusses overflow issues in RAPL registers. We could add a column for tools that account for this common behavior when reading RAPL data}
+    \item \jay{Actually we could also extend the overhead benchmark in \cite{raffinDissectingSoftwarebasedMeasurement2024} to the tools we consider. }
+    \begin{figure}[htbp]
+        \centering
+
+    \item \jay{Add a column to specify the type of method used to allocate energy to processes:
+        \begin{itemize}
+            \item statistical sampling (non-invasive but need to somehow check the callstack. This is more suitable for monitoring)
+            \item start/end time markers (in code so invasive and targeted to development)
+            \item process isolation (like the GMT with container)
+            \item model provided with system resources sharing indicators (e.g. CPU \%age)
+        \end{itemize}
+    }
+        
+    \end{figure}
+    
+    
     
 \end{itemize}
 
