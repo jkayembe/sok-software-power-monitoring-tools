@@ -13,9 +13,15 @@
 \usepackage[dvipsnames]{xcolor}
 \usepackage{tcolorbox}
 
+\usepackage{todonotes}
+\newcommand{\blue}[1]{\textcolor{RoyalBlue}{#1}}
+\newcommand{\green}[1]{\textcolor{ForestGreen}{#1}}
+\newcommand{\orange}[1]{\textcolor{Orange}{#1}}
+
 \newcommand{\jay}[1]{\textcolor{RoyalBlue}{#1}}
 \newcommand{\iness}[1]{\textcolor{ForestGreen}{#1}}
 \newcommand{\jt}[1]{\textcolor{Orange}{#1}}
+
 
 \colorlet{LightGray}{White!90!Periwinkle}
 \colorlet{LightOrange}{Orange!15}
@@ -74,6 +80,10 @@
 
 \section{Introduction \& Motivation}
 
+
+The energy consumption of software systems has attracted increasing attention in recent years.
+\blue{Why not mentioning that this is driven by concerns for both environmental impact of computing AND operating costs? Personnaly I don't like the idea of emphasising economic benefits of seeking efficient softwares because of the obvious potential for rebound effect}. Digital services continue to scale across a wide range of computing contexts, from mobile and embedded devices to large-scale cloud infrastructures. They are increasingly recognised as not only being passive consumers of hardware resources, but also direct determinants of system-level power and energy demand. Therefore, the ability to measure and reason about software-induced energy consumption is crucial for energy-aware software engineering, and green system design.
+
 \jay{\textbf{Comments from 23-03-26 meeting with JT and Iness}}
     \begin{itemize}
     \item \jay{\cite{raffinDissectingSoftwarebasedMeasurement2024} compare the limits (real versus targeted mean and std) of the polling frequency in their Figure 3. We could continue to assess this for the tools we consider in this sok.
@@ -114,6 +124,7 @@
 
 
 \noindent\jay{\textbf{Comments from 17-02-26 meeting with JT and Iness}}
+
 \begin{itemize}
     \item   \iness{Iness : Is there a sound reason for the existence of so many of these tools?} \\
             \jt{JT : That's potentially something we'll find out with this study} \\
