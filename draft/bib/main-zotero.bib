@@ -50,7 +50,53 @@
   abstract = {The problem of increasing the software energy efficiency becomes more and more urgent every year due to the growing volume of calculations and the complexity of modern computing systems. This work examines methods for monitoring and improving the software energy efficiency, with an emphasis on the RAPL interface proposed by Intel. The experience of developing applications with RAPL is described, and the results of computational experiments are presented.},
   isbn = {978-3-032-02717-7},
   langid = {english},
-  keywords = {Cache optimization,Energy efficiency,Parallel computing,Singular value decomposition}
+  keywords = {Cache optimization,Energy efficiency,Parallel computing,read-jay,Singular value decomposition}
+}
+
+@misc{cncfExploringKeplersPotentials2023,
+  title = {Exploring {{Kepler}}'s Potentials: Unveiling Cloud Application Power Consumption},
+  shorttitle = {Exploring {{Kepler}}'s Potentials},
+  author = {CNCF},
+  year = 2023,
+  month = oct,
+  journal = {CNCF},
+  urldate = {2026-03-03},
+  abstract = {Guest post by Marcelo Amaral, Sunyanan Choochotkaew, Eun Kyung Lee, Huamin Chen, and Tamar Eilam Stepping into the exciting world of technology where things are always on the move, we're introduced to\dots},
+  howpublished = {https://www.cncf.io/blog/2023/10/11/exploring-keplers-potentials-unveiling-cloud-application-power-consumption/},
+  langid = {american}
+}
+
+@article{ergashevaMetricsEnergyConsumption2020,
+  title = {Metrics of Energy Consumption in Software Systems: A Systematic Literature Review},
+  shorttitle = {Metrics of Energy Consumption in Software Systems},
+  author = {Ergasheva, S and Khomyakov, I and Kruglov, A and Succil, G},
+  year = 2020,
+  month = feb,
+  journal = {IOP Conference Series: Earth and Environmental Science},
+  volume = {431},
+  number = {1},
+  pages = {012051},
+  publisher = {IOP Publishing},
+  issn = {1755-1315},
+  doi = {10.1088/1755-1315/431/1/012051},
+  urldate = {2026-02-27},
+  abstract = {The current situation when using tight time frames and frequently changing requirements when creating software dictates the need to create a system for monitoring energy consumption at any stage of production of a software product. At the first stage, we need to evaluate the state-of-the-art on this topic. To this goal, we conducted a systematic literature review. During the review more than 500 studies were observed and 124 of them were selected for detailed analysis. Among these papers, 169 metrics were derived and assessed from the point of their applicability within invasive software development process analysis. The study demonstrates the relevance of the questions posed and shows the immaturity of the area. There is no evolutionary study and the possibility of assessment at any stage of the development of a software product. The data show the importance and relevance of technical work and the importance of its further development.},
+  langid = {english},
+  keywords = {read-jay}
+}
+
+@inproceedings{guegainAndroWattsUnpackingPower2025,
+  title = {{{AndroWatts}}: {{Unpacking}} the {{Power Consumption}} of {{Mobile Device}}'s {{Components}}},
+  shorttitle = {{{AndroWatts}}},
+  booktitle = {2025 {{IEEE}}/{{ACM}} 12th {{International Conference}} on {{Mobile Software Engineering}} and {{Systems}} ({{MOBILESoft}})},
+  author = {Gu{\'e}gain, {\'E}douard and Raes, R{\'e}my and Chachignot, No{\'e} and Quinton, Cl{\'e}ment and Rouvoy, Romain},
+  year = 2025,
+  month = apr,
+  pages = {71--81},
+  doi = {10.1109/MOBILESoft66462.2025.00015},
+  urldate = {2026-02-27},
+  abstract = {Power efficiency is crucial for mobile devices, where software inefficiencies can rapidly drain battery life and reduce device longevity. To help developers diagnose inefficiency issues and optimize power use, this paper introduces a novel methodology for estimating power consumption at a hardware component level in mobile devices. Unlike existing approaches that rely on coarse-grained battery discharge measurements, our approach consists of modeling per-component power usage as an inverse problem, utilizing linear statistical models and system metrics to estimate the contributions of individual components.In this paper, we model the total power usage using system metrics, we evaluate the accuracy of per-component power estimations, and we investigate the impact of dataset size on the model's performance. Our empirical evaluation shows that linear models achieve high predictive accuracy, with R-squared values exceeding 0.90 for total power usage, and robust correlations are observed between predicted and ground-truth power consumption for key components such as the CPU and GPU. We also observe that the amount of measures required to build such a model is of the order of magnitude of the hundred rather than the thousand.},
+  keywords = {Accuracy,Android,Batteries,battery,Battery charge measurement,component,Measurement,Mobile handsets,model,power,Power demand,Predictive models,Software,Software engineering,System analysis and design}
 }
 
 @misc{hoffmannGreenMetricsTool2025,
@@ -70,6 +116,22 @@
   keywords = {Computer Science - Computers and Society,Computer Science - Emerging Technologies,Computer Science - Software Engineering}
 }
 
+@misc{jagannadharaoBeginnersGuidePower2024,
+  title = {A {{Beginner}}'s {{Guide}} to {{Power}} and {{Energy Measurement}} and {{Estimation}} for {{Computing}} and {{Machine Learning}}},
+  author = {Jagannadharao, Akshaya and Beckage, Nicole and Biswas, Sovan and Egan, Hilary and Gafur, Jamil and Metsch, Thijs and Nafus, Dawn and Raffa, Giuseppe and Tripp, Charles},
+  year = 2024,
+  month = dec,
+  number = {arXiv:2412.17830},
+  eprint = {2412.17830},
+  primaryclass = {eess},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2412.17830},
+  urldate = {2026-02-19},
+  abstract = {Concerns about the environmental footprint of machine learning are increasing. While studies of energy use and emissions of ML models are a growing subfield, most ML researchers and developers still do not incorporate energy measurement as part of their work practices. While measuring energy is a crucial step towards reducing carbon footprint, it is also not straightforward. This paper introduces the main considerations necessary for making sound use of energy measurement tools and interpreting energy estimates, including the use of at-the-wall versus on-device measurements, sampling strategies and best practices, common sources of error, and proxy measures. It also contains practical tips and real-world scenarios that illustrate how these considerations come into play. It concludes with a call to action for improving the state of the art of measurement methods and standards for facilitating robust comparisons between diverse hardware and software environments.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Machine Learning,Electrical Engineering and Systems Science - Signal Processing}
+}
+
 @misc{kayembeExploringPrivacySecurity2025,
   title = {Exploring {{Privacy}} and {{Security}} as {{Drivers}} for {{Environmental Sustainability}} in {{Cloud-Based Office Solutions}}},
   author = {Kayembe, Jason and Guirat, Iness Ben and M{\"u}hlberg, Jan Tobias},
@@ -86,6 +148,16 @@
   keywords = {Computer Science - Computers and Society,Computer Science - Cryptography and Security,Computer Science - Software Engineering}
 }
 
+@book{khanEnergyProfilingUsing2015,
+  title = {Energy {{Profiling Using IgProf}}},
+  author = {Khan, Kashif and Nyb{\"a}ck, Filip and Ou, Zhonghong and Nurminen, Jukka and Niemi, Tapio and Eulisse, G. and Elmer, Peter and Abdurachmanov, David},
+  year = 2015,
+  month = may,
+  journal = {Proceedings - 2015 IEEE/ACM 15th International Symposium on Cluster, Cloud, and Grid Computing, CCGrid 2015},
+  doi = {10.1109/CCGrid.2015.118},
+  abstract = {Energy efficiency has become a primary concern for data centers in recent years. Understanding where the energy has been spent within a software is fundamental for energy-efficiency study as a whole. In this paper, we take the first step towards this direction by building an energy profiling module on top of IgProf. IgProf is an application profiler developed at CERN for scientific computing workloads. The energy profiling module is based on sampling and obtains energy measurements from the Running Average Power Limit (RAPL) interface present on the latest Intel processors. The initial profiling results of a single-threaded program demonstrates potential, showing a close correlation between the execution time and the energy spent within a function.}
+}
+
 @article{khanRAPLActionExperiences2018,
   title = {{{RAPL}} in {{Action}}: {{Experiences}} in {{Using RAPL}} for {{Power Measurements}}},
   shorttitle = {{{RAPL}} in {{Action}}},
@@ -100,6 +172,38 @@
   doi = {10.1145/3177754},
   urldate = {2026-02-17},
   abstract = {To improve energy efficiency and comply with the power budgets, it is important to be able to measure the power consumption of cloud computing servers. Intel's Running Average Power Limit (RAPL) interface is a powerful tool for this purpose. RAPL provides power limiting features and accurate energy readings for CPUs and DRAM, which are easily accessible through different interfaces on large distributed computing systems. Since its introduction, RAPL has been used extensively in power measurement and modeling. However, the advantages and disadvantages of RAPL have not been well investigated yet. To fill this gap, we conduct a series of experiments to disclose the underlying strengths and weaknesses of the RAPL interface by using both customized microbenchmarks and three well-known application level benchmarks: Stream, Stress-ng, and ParFullCMS. Moreover, to make the analysis as realistic as possible, we leverage two production-level power measurement datasets from the Taito, a supercomputing cluster of the Finnish Center of Scientific Computing and also replicate our experiments on Amazon EC2. Our results illustrate different aspects of RAPL and document the findings through comprehensive analysis. Our observations reveal that RAPL readings are highly correlated with plug power, promisingly accurate enough, and have negligible performance overhead. Experimental results suggest RAPL can be a very useful tool to measure and monitor the energy consumption of servers without deploying any complex power meters. We also show that there are still some open issues, such as driver support, non-atomicity of register updates, and unpredictable timings that might weaken the usability of RAPL in certain scenarios. For such scenarios, we pinpoint solutions and workarounds.}
+}
+
+@inproceedings{liRuntimeModelingEstimation2003,
+  title = {Run-Time Modeling and Estimation of Operating System Power Consumption},
+  booktitle = {Proceedings of the 2003 {{ACM SIGMETRICS}} International Conference on {{Measurement}} and Modeling of Computer Systems},
+  author = {Li, Tao and John, Lizy Kurian},
+  year = 2003,
+  month = jun,
+  series = {{{SIGMETRICS}} '03},
+  pages = {160--171},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/781027.781048},
+  urldate = {2026-03-10},
+  abstract = {The increasing constraints on power consumption in many computing systems point to the need for power modeling and estimation for all components of a system. The Operating System (OS) constitutes a major software component and dissipates a significant portion of total power in many modern application executions. Therefore, modeling OS power is imperative for accurate software power evaluation, as well as power management (e.g. dynamic thermal control and equal energy scheduling) in the light of OS-intensive workloads. This paper characterizes the power behavior of a commercial OS across a wide spectrum of applications to understand OS energy profiles and then proposes various models to cost-effectively estimate its run-time energy dissipation. The proposed models rely on a few simple parameters and have various degrees of complexity and accuracy. Experiments show that compared with cycle-accurate full-system simulation, the model can predict cumulative OS energy to within 1\% accuracy for a set of benchmark programs evaluated on a high-end superscalar microprocessor. When applied to track run-time OS energy profiles, the proposed routine level OS power model offers superior accuracy than a simpler, flat OS power model, yielding per-routine estimation error of less than 6\%. The most striking observation is the strong correlation between power consumption and the instructions per cycle (IPC) during OS routine executions. Since tools and methodology to measure IPC exist on modern microprocessors, the proposed models can estimate OS power for run-time dynamic thermal and energy management.},
+  isbn = {978-1-58113-664-7}
+}
+
+@inproceedings{liuDataOrientedCharacterizationApplicationLevel2015,
+  title = {Data-{{Oriented Characterization}} of {{Application-Level Energy Optimization}}},
+  booktitle = {Fundamental {{Approaches}} to {{Software Engineering}}},
+  author = {Liu, Kenan and Pinto, Gustavo and Liu, Yu David},
+  editor = {Egyed, Alexander and Schaefer, Ina},
+  year = 2015,
+  pages = {316--331},
+  publisher = {Springer},
+  address = {Berlin, Heidelberg},
+  doi = {10.1007/978-3-662-46675-9_21},
+  abstract = {Empowering application programmers to make energy-aware decisions is a critical dimension of energy optimization for computer systems. In this paper, we study the energy impact of alternative data management choices by programmers, such as data access patterns, data precision choices, and data organization. Second, we attempt to build a bridge between application-level energy management and hardware-level energy management, by elucidating how various application-level data management features respond to Dynamic Voltage and Frequency Scaling (DVFS). Finally, we apply our findings to real-world applications, demonstrating their potential for guiding application-level energy optimization. The empirical study is particularly relevant in the Big Data era, where data-intensive applications are large energy consumers, and their energy efficiency is strongly correlated to how data are maintained and handled in programs.},
+  isbn = {978-3-662-46675-9},
+  langid = {english},
+  keywords = {Application-level data management,Energy consumption}
 }
 
 @techreport{noureddineESurgeonDiagnosingEnergy2012,
@@ -132,6 +236,74 @@
   keywords = {Energy consumption,Power model,Power monitoring}
 }
 
+@misc{noureddinePowerJoularJoularJXMultiPlatform2022,
+  title = {{{PowerJoular}} and {{JoularJX}}: {{Multi-Platform Software Power Monitoring Tools}}},
+  shorttitle = {{{PowerJoular}} and {{JoularJX}}},
+  author = {Noureddine, Adel},
+  year = 2022,
+  journal = {Proceedings of the 18th International Conference on Intelligent Environments},
+  series = {Intelligent {{Environments}}},
+  doi = {10.1109/IE54923.2022.9826760},
+  urldate = {2026-03-20},
+  abstract = {PowerJoular allows monitoring power consumption of multiple platforms and processes},
+  copyright = {GPL-3.0},
+  howpublished = {IEEE}
+}
+
+@article{noureddineReviewEnergyMeasurement2013,
+  title = {A Review of Energy Measurement Approaches},
+  author = {Noureddine, Adel and Rouvoy, Romain and Seinturier, Lionel},
+  year = 2013,
+  month = nov,
+  journal = {SIGOPS Oper. Syst. Rev.},
+  volume = {47},
+  number = {3},
+  pages = {42--49},
+  issn = {0163-5980},
+  doi = {10.1145/2553070.2553077},
+  urldate = {2026-02-27},
+  abstract = {Reducing the energy footprint of digital devices and software is a task challenging the research in Green IT. Researches have proposed approaches for energy management, ranging from reducing usage of software and hardware, compilators optimization, to server consolidation and software migration. However, optimizing the energy consumption requires knowledge of that said consumption. In particular, measuring the energy consumption of hardware and software is an important requirement for efficient energy strategies. In this review, we outline the different categories of approaches in energy measurements, and provide insights into example of each category. We draw recommendations from our review on requirements on how to efficiently measure energy consumption of devices and software.}
+}
+
+@inproceedings{phungModelingSystemLevelPower2018,
+  title = {Modeling {{System-Level Power Consumption Profiles Using RAPL}}},
+  booktitle = {2018 {{IEEE}} 17th {{International Symposium}} on {{Network Computing}} and {{Applications}} ({{NCA}})},
+  author = {Phung, James and Lee, Young Choon and Zomaya, Albert Y.},
+  year = 2018,
+  month = nov,
+  pages = {1--4},
+  doi = {10.1109/NCA.2018.8548281},
+  urldate = {2026-03-10},
+  abstract = {Efficient power management is essential in ensuring the economic viability of large-scale distributed systems. There is growing interest in applying the Running Average Power Limit (RAPL) feature that is commonly found in today's Intel CPUs to energy monitoring and efficiency applications. We investigate the power consumption characteristics of two different CPUs using the RAPL feature. We present a prototype lightweight software-based virtual power meter that exploits this functionality. Utilizing a simple but very effective application-agnostic power model, it offers comparable or superior performance to existing power models that are more complex. It is portable across a variety of systems. It can be used in containerized or virtualized environments. We demonstrate that our power model has an average error of 1.63 \%. This result compares favorably with existing state-of-the-art power models and is achieved using a simple power model. Consequently, our power meter is viable for use in real-world applications such as power estimation for energy-aware scheduling.},
+  keywords = {Benchmark testing,Computational modeling,CPU,distributed systems,energy monitoring,Estimation,Mathematical model,Meters,Power demand,power modeling,power monitoring,RAPL,Servers}
+}
+
+@misc{raffinDissectingSoftwarebasedMeasurement2024,
+  title = {Dissecting the Software-Based Measurement of {{CPU}} Energy Consumption: A Comparative Analysis},
+  shorttitle = {Dissecting the Software-Based Measurement of {{CPU}} Energy Consumption},
+  author = {Raffin, Guillaume and Trystram, Denis},
+  year = 2024,
+  month = jul,
+  number = {arXiv:2401.15985},
+  eprint = {2401.15985},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2401.15985},
+  urldate = {2026-03-03},
+  abstract = {Every day, we experience the effects of the global warming: extreme weather events, major forest fires, storms, global warming, etc.The scientific community acknowledges that this crisis is a consequence of human activities where Information and Communications Technologies (ICT) are an increasingly important contributor.Computer scientists need tools for measuring the footprint of the code they produce and for optimizing it. Running Average Power Limit (RAPL) is a low-level interface designed by Intel that provides a measure of the energy consumption of a CPU (and more) without the need for additional hardware. Since 2017, it is available on most computing devices, including non-Intel devices such as AMD processors.More and more people are using RAPL for energy measurement, mostly like a black box without deep knowledge of its behavior.Unfortunately, this causes mistakes when implementing measurement tools.In this paper, we propose to come back to the basic mechanisms that allow to use RAPL measurements and present a critical analysis of their operations. In addition to long-established mechanisms, we explore the suitability of the recent eBPF technology (formerly and abbreviation for extended Berkeley Packet Filter) for working with RAPL.For each mechanism, we release an implementation in Rust that avoids the pitfalls we detected in existing tools, improving correctness, timing accuracy and performance. These new implementations have desirable properties for monitoring and profiling parallel applications.We also provide an experimental study with multiple benchmarks and processor models (Intel and AMD) in order to evaluate the efficiency of the various mechanisms and their impact on parallel software.These experiments show that no mechanism provides a significant performance advantage over the others. However, they differ significantly in terms of ease-of-use and resiliency.We believe that this work will help the community to develop correct, resilient and lightweight measurement tools.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Performance}
+}
+
+@misc{tararaRAPLSGXEnergy,
+  title = {{{RAPL}}, {{SGX}} and Energy Filtering - {{Influences}} on Power Consumption},
+  author = {Tarara, Arne},
+  urldate = {2026-03-03},
+  abstract = {In this case study we will look at the RAPL feature in modern processors and a security feature that can influence it's accuracy},
+  howpublished = {https://www.green-coding.io/case-studies/rapl-and-sgx/},
+  langid = {english}
+}
+
 @misc{WebsiteCarbonCalculator,
   title = {Website {{Carbon}}™ {{Calculator}} v4 \textbar{} {{What}}'s Your Site's Carbon Footprint?},
   journal = {Website Carbon Calculator},
@@ -158,5 +330,21 @@
   abstract = {Software energy efficiency management is still a serious challenge and provides an opportunity to introduce improvements that will reduce the resources needed for the successful functioning of the Information Technology (IT) world. After all, in the modern era of information society, computers are a basic work tool. This article presents the current state of application of good practices and methods for reducing energy consumption by software. The aim of the article is to indicate the need to optimize computer devices' use of electricity in accordance with the concept of sustainable development and to analyze methods for reducing energy consumption. The article discusses the most popular techniques for reducing energy consumption by software, which is of fundamental importance for this type of organization and translates into the costs of services provided, and indirectly affects the future of the world economy. The aim of scientific research carried out in this way is to support decision-makers in the search for energy-saving solutions.},
   copyright = {http://creativecommons.org/licenses/by/3.0/},
   langid = {english},
-  keywords = {electronics,energy efficiency,knowledge acquisition and engineering,knowledge management,programming techniques,risk management,software}
+  keywords = {electronics,energy efficiency,knowledge acquisition and engineering,knowledge management,programming techniques,read-jay,risk management,software}
+}
+
+@article{zoniSurveyRuntimePower2023,
+  title = {A {{Survey}} on {{Run-time Power Monitors}} at the {{Edge}}},
+  author = {Zoni, Davide and Galimberti, Andrea and Fornaciari, William},
+  year = 2023,
+  month = jul,
+  journal = {ACM Comput. Surv.},
+  volume = {55},
+  number = {14s},
+  pages = {325:1--325:33},
+  issn = {0360-0300},
+  doi = {10.1145/3593044},
+  urldate = {2026-02-19},
+  abstract = {Effectively managing energy and power consumption is crucial to the success of the design of any computing system, helping mitigate the efficiency obstacles given by the downsizing of the systems while also being a valuable step towards achieving green and sustainable computing. The quality of energy and power management is strongly affected by the prompt availability of reliable and accurate information regarding the power consumption for the different parts composing the target monitored system. At the same time, effective energy and power management are even more critical within the field of devices at the edge, which exponentially proliferated within the past decade with the digital revolution brought by the Internet of things. This manuscript aims to provide a comprehensive conceptual framework to classify the different approaches to implementing run-time power monitors for edge devices that appeared in literature, leading the reader toward the solutions that best fit their application needs and the requirements and constraints of their target computing platforms. Run-time power monitors at the edge are analyzed according to both the power modeling and monitoring implementation aspects, identifying specific quality metrics for both in order to create a consistent and detailed taxonomy that encompasses the vast existing literature and provides a sound reference to the interested reader.},
+  keywords = {read-jay}
 }
