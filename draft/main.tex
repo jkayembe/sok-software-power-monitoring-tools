@@ -144,13 +144,13 @@ The energy consumption of software systems has attracted increasing attention in
 \paragraph{} Over the past decade, diverse tools have emerged to measure or estimate the power and energy consumption of software. These tools can differ substantially in their underlying measurement principles, levels of abstraction, deployment environments, and intended use cases. Some tools rely on external power meters or hardware-exposed energy interfaces provided by modern processors (e.g. Intel RAPL), while others estimate energy consumption using models based on performance counters, operating system statistics, or analytical abstractions. Similarly, tools vary in the granularity at which energy is attributed, ranging from whole-system measurements to per-process, per-container, or even per-function estimates. This diversity directly reflects the plenitude of application scenarios, but also makes it difficult to understand the trade-offs involved and to select appropriate tools for a given context.
 
 \paragraph{} Existing literature focuses on proposing new tools or evaluating individual techniques in isolation. While several surveys exist \cite{wysockiMethodsImprovingSoftware2025}, they tend to catalogue tools or measurement methods without providing a unifying structure that explains why certain approaches are suitable for specific environments and goals, and why others are not. Additionally, the increasing use of virtualisation and cloud-native environments introduces new complexities such as limited hardware visibility, multi-tenancy, and the lack of access to physical power measurements that are not systematically addressed in existing measurement approaches.
-
+\todo{Iness: "tools for a given context.", "understand the trade-offs", "given context" these seems the critique of the litterature, hence will this SoK provide answers to these limits? }
 \paragraph{} In this paper, we present a Systematisation of Knowledge (SoK) on software power and energy measurement tools. While we are not aiming for an exhaustive survey, our goal is to organise existing tools and approaches along a set of dimensions that capture their fundamental design choices and practical implications. We systematise tools according to axes including
 \begin{itemize}
 
-    \item Measurement level \& attribution : What is actually measured.
-    \item Methodology \& accuracy : How and how well is it measured.
-    \item Invasiveness \& usability : How is the tool implemented.
+    \item Measurement level \& attribution : What is actually measured. \todo{iness: granularity?}
+    \item Methodology \& accuracy : How and how well is it measured. \todo{iness; how will the accuracy be measured?}
+    \item Invasiveness \& usability : How is the tool implemented. \todo{iness: I wouldn't use the term usability here}
     \item Execution environment support : What kind of computing device is supported, does it offer support for virtualisation\dots
     \item Maturity \& ecosystem : Open-source? Well documented? Ease of use?...
 
@@ -178,7 +178,7 @@ To enable a meaningful comparison of software power and energy measurement tools
 \subsection{Measurement level and attribution}
 
 The first dimension addresses the question of \emph{what exactly is being measured} and how energy consumption is attributed to software entities. Tools differ in their measurement targets, attribution granularity, and temporal resolution.
-
+\todo{iness: I am not sure I understand the goal of the itemize list below}
 \begin{itemize}
     \item \textbf{Measurement target.} Tools may focus on specific hardware components such as the CPU, DRAM, GPU, storage devices, network interfaces and display \jay{(never seen yet for display though. But that might be interesting to shed light on)}, or try to estimate system-level consumption.
     
@@ -269,7 +269,7 @@ In particular, seed tools were selected based on:
     \item relevance to contemporary execution environments, including virtualised and containerised systems.
 \end{itemize}
 
-This initial set includes tools such as \emph{Kepler} \cite{centofantiImpactPowerConsumption2024,amaralKeplerFrameworkCalculate2023,bellalInvestigatingPotentialKepler}, motivated by its explicit focus on Kubernetes and cloud-native environments, as well as tools previously used in related work, such as the \emph{Green Metrics Tool}\cite{hoffmannGreenMetricsTool2025,kayembeExploringPrivacySecurity2025}, which supports container-level isolation and monitoring. Recently proposed tools, such as \emph{e-Surgeon}\cite{noureddineMonitoringEnergyHotspots2015}, were also considered where sufficient technical detail and evaluation were available.
+This initial set includes tools such as \emph{Kepler} \cite{centofantiImpactPowerConsumption2024,amaralKeplerFrameworkCalculate2023,bellalInvestigatingPotentialKepler}, motivated by its explicit focus on Kubernetes and cloud-native environments, as well as tools previously used in related work, such as the \emph{Green Metrics Tool}\cite{hoffmannGreenMetricsTool2025,kayembeExploringPrivacySecurity2025}, which supports container-level isolation and monitoring. Recently proposed tools, such as \emph{e-Surgeon}\cite{noureddineMonitoringEnergyHotspots2015}, were also considered where sufficient technical detail and evaluation were available. \todo{iness: I would be very specefic for the set of seed tools not as an example. Choose 3 seed and commit}
 
 \subsection{Inclusion criteria}
 
@@ -307,7 +307,7 @@ To mitigate bias introduced by the initial seed selection, we apply a backward a
 \begin{itemize}
     \item references cited in the original publication describing the tool,
     \item subsequent publications that cite the tool or build upon it,
-    \item \jay{related tools discussed in comparative or evaluation studies? (Does that make sense here?)}.
+    \item \jay{related tools discussed in comparative or evaluation studies? (Does that make sense here?)}. \todo{iness: I think so}
 \end{itemize}
 
 Candidate tools identified through snowballing are evaluated against the same inclusion and exclusion criteria. This iterative process is repeated until no additional tools meeting the criteria were identified, providing confidence that the selected set adequately covers the main classes of software energy measurement approaches discussed in the literature.
