@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[twocolumn]{article}
 
 \usepackage{amsmath, amsthm, amssymb, amsfonts}
 \usepackage{thmtools}
@@ -80,66 +80,6 @@
 
 \section{Introduction \& Motivation}
 
-
-The energy consumption of software systems has attracted increasing attention in recent years.
-\blue{Why not mentioning that this is driven by concerns for both environmental impact of computing AND operating costs? Personnaly I don't like the idea of emphasising economic benefits of seeking efficient softwares because of the obvious potential for rebound effect}. Digital services continue to scale across a wide range of computing contexts, from mobile and embedded devices to large-scale cloud infrastructures. They are increasingly recognised as not only being passive consumers of hardware resources, but also direct determinants of system-level power and energy demand. Therefore, the ability to measure and reason about software-induced energy consumption is crucial for energy-aware software engineering, and green system design.
-
-\jay{\textbf{Comments from 23-03-26 meeting with JT and Iness}}
-    \begin{itemize}
-    \item \jay{\cite{raffinDissectingSoftwarebasedMeasurement2024} compare the limits (real versus targeted mean and std) of the polling frequency in their Figure 3. We could continue to assess this for the tools we consider in this sok.
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.8\linewidth]{img/polling_frequency.png}
-        \includegraphics[width=0.8\linewidth]{img/power_and_cpu_states.png}
-        \includegraphics[width=0.8\linewidth]{img/execution_time.png}
-    \end{figure}}
-    \item \jay{\cite{raffinDissectingSoftwarebasedMeasurement2024} also discusses overflow issues in RAPL registers. We could add a column for tools that account for this common behavior when reading RAPL data}
-    \item \jt{JT thinks this is not relevent}
-    \item \jay{Actually we could also extend the overhead benchmark in \cite{raffinDissectingSoftwarebasedMeasurement2024} to the tools we consider. }
-    \item \jt{JT: Give this as a project for Arthuro}
-    \begin{figure}[htbp]
-        \centering
-
-    \item \jay{Add a column to specify the type of method used to allocate energy to processes:
-        \begin{itemize}
-            \item statistical sampling (non-invasive but need to somehow check the callstack. This is more suitable for monitoring)
-            \item start/end time markers (in code so invasive and targeted to development)
-            \item process isolation (like the GMT with container)
-            \item model provided with system resources sharing indicators (e.g. CPU \%age)
-        \end{itemize}
-    }
-        
-    \end{figure}
-    
-    
-    
-\end{itemize}
-
-\jay{\textbf{Comments from 03-03-26 meeting with JT and Iness}}
-
-\begin{itemize}
-    \item \jay{Structure : Wrapper + 2 sources of input : Metric providers (This paper \cite{zoniSurveyRuntimePower2023} already conducts a survey for these) \& Resources Utilisation providers.
-    Do we integrate these subcomponents (e.g. Andro watts for Android, RAPL, and tools reviewed in the paper \cite{zoniSurveyRuntimePower2023})?}
-    \item \jay{Security : RAPL put a limit on purpose to the accuracy of its metrics to prevent side-channel attacks. How does that affects the tools considered ? "RAPL however has been nerfed recently through a discovered power-side-channel attack coined Platypus Moritz Lipp showed that it is possible to read the current executed processor instructions and also the memory layouts especially for data stored in the believed to be secure memory enclave from Intel called SGX SGX"}
-    \item \jay{taxonomy : we can build on \cite{jagannadharaoBeginnersGuidePower2024}}
-\end{itemize}
-
-
-\noindent\jay{\textbf{Comments from 17-02-26 meeting with JT and Iness}}
-
-\begin{itemize}
-    \item   \iness{Iness : Is there a sound reason for the existence of so many of these tools?} \\
-            \jt{JT : That's potentially something we'll find out with this study} \\
-            \jay{Jay : I do agree with the fact that it should be an outcome of the study. To me, the classification we create really defines a space of usage scenarios, i.e. needs + constraints. For instance a tool like Kepler might have been designed for data centres operators to monitor energy usage per computing loads and allow energy-aware orchestration of the latter. This translates to a context and its constraints: $(granularity=container/VM, measurment\_target=(CPU, DRAM, storage), measurment\_approach=external\_power\_meters + RAPL, virtualisation\_support, etc...)$. Another use case of a user wanting to assess the energy of a program running on its smartphone would imply another context, other constraints so another point in that space for which there might or not exist a tool}
-    \item   \jt{JT : We might want to add a column for use cases of the tools. The value of such a paper might be different for industry people than us academic fellows or even governance people making standards etc...}\\
-            \iness{Iness : The value of this SoK, from these different perspectives, could be made more explicit in the introduction to strengthen the scientific contribution}.
-
-    \item \jt{JT : For the moment, it is unclear how the GMT differentiates itself from Kepler. Why couldn't the GMT be used in data centre context? }\\
-          \jay{Jay : I think the GMT could be used in a data centre context, provided the DC operator allows access to some metrics (number of CPUs,RAM,... + system-level consumption wether it's real-time or spec-based) as source of truth, and a metric provider (GMT data reporter) is implemented to read and process that data. Such a metric provider exists when running different containers, that uses CPU percentage utilisation as a proxy for system-energy allocation to containers.}
-    
-\end{itemize} 
-
-
 \paragraph{} The energy consumption of software systems has attracted increasing attention in recent years.
 \jay{Why not mentioning that this is driven by concerns for both environmental impact of computing AND operating costs? Personnaly I don't like the idea of emphasising economic benefits of seeking efficient softwares because of the obvious potential for rebound effect}. Digital services continue to scale across a wide range of computing contexts, from mobile and embedded devices to large-scale cloud infrastructures. They are increasingly recognised as not only being passive consumers of hardware resources, but also direct determinants of system-level power and energy demand. Therefore, the ability to measure and reason about software-induced energy consumption is crucial for energy-aware software engineering, and green system design.
 
@@ -147,114 +87,384 @@ The energy consumption of software systems has attracted increasing attention in
 
 \paragraph{} Existing literature focuses on proposing new tools or evaluating individual techniques in isolation. While several surveys exist \cite{wysockiMethodsImprovingSoftware2025}, they tend to catalogue tools or measurement methods without providing a unifying structure that explains why certain approaches are suitable for specific environments and goals, and why others are not. Additionally, the increasing use of virtualisation and cloud-native environments introduces new complexities such as limited hardware visibility, multi-tenancy, and the lack of access to physical power measurements that are not systematically addressed in existing measurement approaches.
 \todo{Iness: "tools for a given context.", "understand the trade-offs", "given context" these seems the critique of the litterature, hence will this SoK provide answers to these limits? }
-\paragraph{} In this paper, we present a Systematisation of Knowledge (SoK) on software power and energy measurement tools. While we are not aiming for an exhaustive survey, our goal is to organise existing tools and approaches along a set of dimensions that capture their fundamental design choices and practical implications. We systematise tools according to axes including
+\paragraph{} In this paper, we present a Systematisation of Knowledge (SoK) on software power and energy measurement tools. While we do not aim for an exhaustive survey, our goal is to organise existing tools and approaches along dimensions that capture their main design choices, operational trade-offs, and practical applicability.
+
+More specifically, we systematise profiling tools according to dimensions including:
 \begin{itemize}
 
-    \item Measurement level \& attribution : What is actually measured. \todo{iness: granularity?}
-    \item Methodology \& accuracy : How and how well is it measured. \todo{iness; how will the accuracy be measured?}
-    \item Invasiveness \& usability : How is the tool implemented. \todo{iness: I wouldn't use the term usability here}
-    \item Execution environment support : What kind of computing device is supported, does it offer support for virtualisation\dots
-    \item Maturity \& ecosystem : Open-source? Well documented? Ease of use?...
+    \item \textbf{Granularity}: what software entities are attributed energy consumption,
 
-\end{itemize} This systematisation exposes common patterns, implicit assumptions, and trade-offs that are often obscured when tools are considered individually.
+    \item \textbf{Measurement sources}: how energy and activity information are obtained,
+
+    \item \textbf{Attribution mechanisms}: how system-level energy is distributed across software entities,
+
+    \item \textbf{Virtualised environment support}: how profiling is supported in virtualised and cloud-native infrastructures,
+
+    \item \textbf{Operational constraints}: runtime overhead, temporal resolution, privilege requirements, portability, and instrumentation constraints,
+
+    \item \textbf{Maturity and ecosystem}: deployment complexity, validation, maintenance, documentation, and ecosystem integration.
+
+\end{itemize}
+
+This systematisation exposes common patterns, implicit assumptions, and trade-offs that are often obscured when tools are considered individually.
 
 \paragraph{} The contributions of this SoK are threefold. First, we propose a taxonomy of software energy measurement approaches that clarifies the design space and provides a shared vocabulary for future work. Secondly, we derive a decision framework that supports researchers and practitioners in selecting measurement tools based on their experimental goals and operational constraints. Third, through a comparative analysis of representative tools, we identify open challenges and research gaps. By consolidating and structuring existing knowledge, this paper aims to serve as a foundation for both empirical research and tool development in software energy measurement.
 
 
-\section{Measurement challenges}
+\section{Profiling Challenges} \label{challenges}
 
-Here I'd like to discuss the challenges that energy profiling tools face:
+Energy profiling of software systems is inherently indirect. While hardware components consume energy, software only influences this consumption through its use of system resources. As a result, profiling tools do not measure software energy consumption directly, but instead estimate and attribute it based on observable signals and modelling assumptions.
+
+Most approaches can be abstracted as a combination of two sources of information:  
+(i) system-level energy estimations, obtained from hardware interfaces, external measurements, or models, and  
+(ii) resource utilisation information, describing how software entities use shared hardware resources over time.
+
+Profiling consists in combining these sources to reconstruct an attribution of energy consumption to software entities. This process raises several fundamental challenges.
+
+\subsection{Energy Attribution and Allocation}
+
+The primary challenge is allocation, i.e., determining how system-level energy consumption should be distributed across software entities.
+
+\paragraph{Granularity of attribution}
+
+Attribution can be performed at different levels:
+
+\begin{itemize}
+    \item \textbf{Process-level}, using operating system metrics to distribute energy across processes,
+    \item \textbf{Thread-level}, providing finer visibility within processes,
+    \item \textbf{Code-level}, where energy is attributed to functions or methods.
+\end{itemize}
+
+Increasing granularity improves interpretability but requires stronger assumptions and additional instrumentation.
+
+\paragraph{Attribution mechanisms}
+
+The choice of attribution mechanism is tightly coupled with the targeted granularity.
+
+\begin{itemize}
+    \item At \textbf{process or thread level}, attribution is typically based on \textbf{resource-based allocation}, where system energy is distributed proportionally to observable, often OS-provided, metrics such as CPU utilisation, memory usage, or I/O activity. Consequently, this approach relies on the operating system’s view of resource sharing.
+
+    \item At \textbf{code-level granularity}, resource-based metrics are insufficient, as operating systems do not expose fine-grained utilisation within a process. As a result, two main approaches are used:
+
+    \begin{itemize}
+        \item \textbf{Statistical sampling}, where execution states (e.g., call stacks) are periodically observed, and energy is attributed proportionally to the time spent in each code region,
+        
+        \item \textbf{Time-based attribution}, where execution intervals are explicitly delimited (e.g., via instrumentation or tracing), and energy is assigned to these intervals.
+    \end{itemize}
+\end{itemize}
+
+These techniques differ in their intrusiveness and assumptions: sampling provides probabilistic approximations with limited instrumentation, while time-based approaches provide deterministic boundaries at the cost of additional instrumentation or runtime support.
+
+\paragraph{Baseline consumption}
+
+A recurring issue is the treatment of baseline (idle) energy consumption. Since part of the system energy is independent of the workload, tools must decide whether to:
+
+\begin{itemize}
+    \item subtract an estimated baseline,
+    \item or distribute it across active entities.
+\end{itemize}
+
+This choice directly affects attribution results, particularly in low-load or shared environments where baseline consumption can dominate.
+
+\subsection{Access to Measurement Sources}
+
+A second challenge lies in obtaining reliable measurement and observability data. As discussed previously, profiling tools generally rely on two categories of information sources: hardware-level energy estimations and resource utilisation observations. Accessing these sources depends on the measurement interfaces, observability mechanisms, and privilege models exposed by the underlying platform.
+
+\paragraph{Measurement sources} \label{measurment-sources}
+
+Energy estimation may rely on:
+
+\begin{itemize}
+    \item \textbf{hardware-exposed interfaces}, providing energy or power readings for specific components of the system. Such interfaces may still require additional handling by the operating system or profiling tool itself, for instance to account for counter overflows or hardware-specific limitations,
+    
+    \item \textbf{external measurement devices}, offering higher accuracy but limited deployability and requiring time synchronisation with the attribution mechanism,
+    
+    \item \textbf{software-based models}, using analytical or learned models to estimate energy consumption from observable system metrics such as performance counters (i.e., hardware-exposed event counters) or operating system activity.
+\end{itemize}
+
+Similarly, resource utilisation observations may rely on operating-system activity metrics, tracing facilities, scheduler events, runtime instrumentation, or kernel observability frameworks.
+
+Each source involves trade-offs between accuracy, deployability, and generality.
+
+\paragraph{Operating-system dependencies}
+
+Profiling tools are also constrained by the operating systems and execution environments they target. Many measurement interfaces, performance counters, tracing facilities, or privilege mechanisms are operating-system specific, limiting the portability of profiling approaches across platforms.
+
+As a result, some tools are tightly coupled to a specific operating-system observability stack, while others explicitly implement platform-specific backends to support multiple environments through a unified profiling interface.
+
+\paragraph{Privilege constraints}
+
+Access to low-level measurement and observability data is often restricted for stability and security reasons. In particular, some hardware counters and energy registers have been shown to enable side-channel attacks, leading operating systems and hardware vendors to restrict or filter access to these interfaces.
+
+\begin{itemize}
+    \item hardware counters and energy registers may require elevated privileges,
+    \item hardware-level metrics exposed to user-space applications may be partially filtered, aggregated, or sampled by the operating system.
+\end{itemize}
+
+As a result, profiling tools differ in how they access measurement sources. Some rely on operating-system-exposed interfaces available from user space, such as system files, runtime APIs, or process statistics. Others use privileged mechanisms to interact more directly with operating-system monitoring and tracing mechanisms, for instance through kernel tracing interfaces or eBPF-based (user code executed in kernel sandboxes) instrumentation.
+
+These design choices affect deployability, operating-system compatibility, profiling overhead, and the granularity of observable system activity.
+
+\subsection{Temporal Resolution}
+
+Energy profiling relies on periodically observing system activity and updating energy attribution estimates over time. The frequency at which these observations and attribution routines are executed directly impacts profiling quality.
+
+Regardless of the underlying profiling mechanism --- whether collecting energy measurements, observing resource utilisation, sampling execution states, or tracking execution intervals --- increasing the observation frequency generally improves temporal precision and attribution accuracy. However, it also increases runtime overhead, data collection costs, and sensitivity to short-term system noise.
+
+Conversely, lower observation frequencies reduce profiling overhead but may fail to capture short-lived execution phases or rapid variations in resource usage.
+
+Temporal resolution therefore defines a trade-off between \textbf{accuracy of attribution} and \textbf{measurement overhead}.
+
+\subsection{Profiling Overhead}
+
+Profiling mechanisms introduce runtime overhead, which may affect the behaviour of the system being observed.
+
+This overhead arises from:
+
+\begin{itemize}
+    \item instrumentation of code or binaries,
+    \item periodic sampling and interrupt handling,
+    \item live logging of estimated energy shares.
+\end{itemize}
+
+Most observation mechanisms must execute online during the monitored program's execution. However, some approaches defer part of the data processing and analysis offline, reducing runtime overhead when live analysis is not required.
+
+As a result, measurements may be biased by the profiling process itself. Minimising and quantifying this overhead is necessary to ensure the validity of observations, yet it is not always explicitly addressed.
+
+\subsection{Virtualisation and Multi-Tenancy}
+
+Modern execution environments introduce additional complexity through virtualisation and resource sharing.
+
+Software execution is often structured across multiple layers:
+
+\begin{itemize}
+    \item physical hardware,
+    \item hypervisors or container runtimes,
+    \item virtual machines or containers,
+    \item processes and threads.
+\end{itemize}
+
+This layering creates several issues:
+
+\begin{itemize}
+    \item \textbf{limited visibility}, as low-level measurements may not be accessible from within virtualised environments,
+    \item \textbf{(blind) resource multiplexing}, where multiple entities share the same hardware components, not necessarily being aware of it,
+    \item \textbf{attribution ambiguity}, particularly for the energy consumed by the virtualisation layer itself.
+\end{itemize}
+
+To mitigate these limitations, some profiling tools expose \textbf{aggregated energy or power metrics from the host to guest environments} (e.g., via shared files or APIs). However, such approaches introduce additional dependencies on the host operator, who must explicitly provide and expose these measurements to guest environments.
+
+Virtualisation may also require profiling mechanisms to operate simultaneously at multiple levels (e.g., host and guest), increasing instrumentation complexity, profiling overhead, and potential inaccuracies in attribution. As a result, energy profiling in virtualised environments becomes dependent not only on measurement capabilities, but also on the visibility agreements established between host and guest environments.
+
+\subsection{Synthesis}
+
+These challenges highlight that software energy profiling fundamentally consists in reconstructing a mapping between \textbf{hardware-level energy measurements} and \textbf{software activity}, under partial observability and shared resource constraints.
+
+The previous subsections show that profiling tools must simultaneously balance several competing objectives:
+
+\begin{itemize}
+    \item \textbf{Accuracy}, depending on the source, the frequency, the quality and precision of measurement and attribution mechanisms,
+    
+    \item \textbf{Deployability and generality}, depending on hardware requirements, privilege constraints, operating-system dependencies, and execution environment assumptions,
+    
+    \item \textbf{Granularity of attribution}, ranging from coarse process-level estimation to fine-grained code-level profiling,
+    
+    \item \textbf{Profiling overhead}, introduced by instrumentation, observation frequency, and online data collection,
+    
+    \item \textbf{Support for virtualised and multi-tenant environments}, where visibility and attribution become distributed across multiple abstraction layers.
+\end{itemize}
+
+These dimensions are interdependent. Improving one aspect can impact the others. For instance, increasing attribution granularity generally requires additional instrumentation and higher observation frequencies, which increases profiling overhead. Similarly, approaches relying on privileged low-level measurements may improve accuracy while reducing portability and deployability.
+
+Profiling tools can therefore be understood as different compromises within this multidimensional design space. The taxonomy introduced in the next section formalises these dimensions to enable structured comparison between existing approaches.
+
+
+% -----------------------------------------------------------------------------------------------------
+% Taxonomy of Profiling approaches --------------------------------------------------------------------
+% -----------------------------------------------------------------------------------------------------
+\newpage
+\section{Taxonomy of software energy profiling tools}
+
+The challenges presented in Section~\ref{challenges} manifest concretely through a set of design choices implemented by profiling tools to address them. These choices reflect different compromises between attribution granularity, accuracy, deployability, overhead, and compatibility with modern infrastructures.
+
+The objective of the proposed taxonomy is to classify profiling tools along dimensions that differentiate how they address these challenges in practice. Rather than listing profiler features, we aim to expose the underlying methodological choices that impact the behaviour, assumptions, and constraints of existing approaches. The taxonomy is the basis of the comparative classification table presented later in this paper.
+
+To structure this design space, we organise the taxonomy around three categories of dimensions:
+\emph{(i) Design choices}: How tools obtain, estimate, and attribute energy consumption, \emph{(ii) Operational constraints} i.e., the practical consequences and trade-offs induced by these design choices, \emph{(iii) Maturity and ecosystem}, gathering extra and more practical information about the usability, maintenance, and adoption of the tools.
+
+\subsection{Design choices}
+
+Design choices correspond to the methodological and architectural decisions taken by profiling tools to observe, estimate, and attribute energy consumption. These choices directly determine the achievable granularity, accuracy, portability, and runtime cost of the profiler.
+
+\subsubsection{Granularity}
+
+Granularity describes the software abstraction level to which energy consumption is attributed. Profiling tools may operate at \emph{(i) virtual machine}, \emph{(ii) pod}, \emph{(iii) container}, \emph{(iv) application}, \emph{(v) process}, \emph{(vi) thread}, or \emph{(vii) code-section} level.
+
+Process-level attribution is the most common profiling granularities and often the first step in providing other levels of granularities. These approaches generally rely on operating-system scheduling and accounting statistics, such as CPU time or process resource utilisation, to distribute hardware-level energy consumption among processes. Their accuracy therefore depends both on the quality of the underlying operating-system resource accounting mechanisms and on the assumptions used to distribute shared hardware consumption across concurrent workloads.
+
+Virtual-machine-, pod-, and container-level attribution are mainly designed for cloud-native and virtualised environments, where these entities represent the workload units managed by infrastructure operators and orchestration frameworks. Profilers supporting these granularities generally rely on isolation mechanisms such as cgroups or hypervisors to group processes belonging to the same workload. In practice, energy attribution is often first performed at process level, before aggregating the energy shares of the processes associated with the same virtual machine, container, or pod.
+
+Thread-level attribution provides finer insight inside processes by attempting to distribute process-level energy consumption among threads. Achieving this granularity requires access to thread scheduling and execution statistics, generally through operating-system or runtime-level observability mechanisms.
+
+Code-section-level profiling is more dedicated to software engineering and optimisation use cases. These approaches attempt to attribute energy consumption to functions, methods, or code execution regions. They typically rely on two layers of attribution: the profiler must first allocate energy consumption to the monitored process before distributing this process-level energy across internal code sections. This finer decomposition requires additional instrumentation mechanisms such as statistical call-stack sampling or execution markers. Consequently, fine-grained attribution increases runtime overhead, implementation complexity, and potentially invasiveness.
+
+\subsubsection{Measurement sources}
+
+Energy profiling tools differ in how they obtain measurements, but also in how they define the scope of the monitored energy consumption itself. While the monitored ``system'' theoretically corresponds to the energy consumption of the whole machine, profiling tools may instead decompose this consumption into distinct hardware domains such as CPU, DRAM, GPU, or network interfaces.
+
+This decomposition provides insight into which hardware resources are responsible for the energy consumption attributed to software entities, which can help identifying optimisation opportunities. For instance, some applications may primarily induce CPU and memory activity, while others may be dominated by GPU computation or network transfers.
+
+Such decomposition further allows to rely on different power and activity sources within the same profiling tool. For example, a profiler may rely on hardware-exposed interfaces for CPU and DRAM energy estimation, while simultaneously using software models for whole-system or network-related consumption. Similarly, activity attribution may rely on different sources depending on the targeted component, such as CPU utilisation metrics, memory-access counters, GPU runtime statistics, or network throughput measurements.
+
+The taxonomy therefore distinguishes measurement sources independently for CPU, DRAM, GPU, network interfaces, and system-level consumption.
+
+\paragraph{Power source type}
+
+As discussed in Section~\ref{measurment-sources}, software energy profiling first requires a source of hardware-level power or energy information. Profiling tools mainly differ in whether they rely on:
+
+\begin{itemize}
+    \item \textbf{External power meters} measure physical power consumption directly using dedicated hardware instrumentation. They observe the electrical behaviour of the system itself, and provide therefore the highest measurement fidelity while remaining independent from the type of platform. They are therefore best suited for measurements validation \todo {reference a few papers doing that here}. However, they require dedicated equipment, physical access to the monitored system, and synchronisation with software activity observations. Consequently, they offer limited deployability and are difficult to integrate into cloud-native infrastructures.
+
+    \item \textbf{Hardware exposed interfaces} rely on telemetry mechanisms implemented by hardware vendors to estimate the energy or power consumed by hardware domains such as the CPU, DRAM, GPU, or sometimes the whole system. These measurements are exposed through dedicated registers accessed via operating-system interfaces, kernel drivers, or vendor APIs. They generally provide low-overhead and high-frequency measurements, but remain strongly dependent on hardware vendors, operating systems. Additionally, because some of these interfaces have been shown to enable side-channel attacks, access to them is often subject to priviledge restriction.
+
+    \item \textbf{Software models} estimate energy consumption indirectly from observable metrics such as TDP, processor frequency, CPU utilisation, performance counters, or other system activity metrics. Models can be analytical or trained models calibrated from reference measurements. These approaches improve portability and deployability because they can operate without specialised hardware support and remain compatible with virtualised or cloud environments where direct hardware visibility is restricted. However, they introduce modelling assumptions and calibration requirements which may reduce accuracy.
+\end{itemize}
+
+Consequently, the selected power source type strongly influences the overall profiling design space. Direct physical measurements favour accuracy but reduce deployability, while model-based approaches improve portability and scalability at the cost of additional estimation uncertainty.
+
+\paragraph{Activity sources}
+
+Beyond the power source itself, tools differ in the activity metrics used to attribute energy consumption to software entities. Common activity sources include CPU utilisation (derived from CPU time), hardware performance counters, scheduler statistics, memory accesses, network throughput, call stacks, or execution time markers.
+
+Performance-counter-based approaches estimate hardware activity from lower-level architectural events such as retired instructions or cache accesses. For example, instruction counts may better reflect effective processor activity than CPU time alone, which does not capture frequency scaling or microarchitectural behaviour. These approaches may therefore improve attribution fidelity, but they increase hardware dependency, hence and may reduce portability and require privileged access.
+
+Overall, the activity source is influenced by the desired granularity and directly impacts both attribution accuracy and portability.
+
+\subsubsection{Attribution}
+
+\paragraph{Activity share reconstruction}
+
+Profiling tools differ in how they reconstruct the share of hardware activity attributable to software entities before distributing energy consumption proportionally with these shares.
 
 \begin{itemize}
 
-    \item Allocation : Computing devices often run many processes at the same time, whether it be through real parallel computing (e.g., multicore CPU, vectorisation...) or resources time-sharing. A process itself can encompass many threads. I'd like to discuss how this links to allocation of the hardware energy consumption and to the granularity of the tool. Introduce concept of baseline energy consumption etc\dots
-    
-    \item Virtualisation : Virtualisation introduces other layers of complexity in the way these tools need to allocate energy consumption among processes. Imagine a bare metal server running tens of virtual machines or hundreds of containers, each running hundreds of processes. How do we track down each process' consumption? How do we allocate the energy of the virtualisation layer, i.e., the whole stack of software/hardware allowing this virtual abstraction, to the different processes
-    
+    \item \textbf{Resource-share proportional allocation} relies on observable resource usage proxies such as PID CPU utilisation percentages to estimate the share of system activity attributable to processes, containers, or virtual machines. Since these approaches leverage pre-existing scheduler statistic proxies, they are easy to implement, lightweight and therefore scalable. The downside is they rely on simplified assumptions regarding workload linearity and hardware sharing behaviour.
+
+    \item \textbf{Statistical sampling} periodically samples execution state information such as call stacks to estimate which code regions were active during execution. The frequency of sampled execution states is then used to approximate the share of process activity attributable to functions or methods. While these approaches reduce instrumentation invasiveness, they still require access to runtime execution states and their accuracy depends on sampling frequency. 
+
+    \item \textbf{Execution markers} explicitly delimit execution regions using instrumentation markers inserted manually or automatically into the application. Process-level energy consumption can then be distributed across the execution intervals delimited by these markers. Such approaches may provide more precise fine-grained attribution, but generally require source-code modification, bytecode instrumentation, or runtime agents hence increasing runtime overhead and potentially invasiveness.
+
 \end{itemize}
 
-\section{Taxonomy of energy measurement approaches}
+These mechanisms reflect different trade-offs attribution precision, runtime overhead, and deployment complexity.
 
-To enable a meaningful comparison of software power and energy measurement tools, we introduce a taxonomy that captures the main dimensions along which these tools differ. The proposed taxonomy focuses on the conceptual and methodological choices that determine what is measured, how measurements are obtained, and in which environments tools can be deployed. These dimensions form the basis of the comparative analysis presented later in this paper.
+\paragraph{Baseline modelling and calibration}
 
-\subsection{Measurement level and attribution}
+Even when no specific application is running, computing systems still consume energy due to the operating system, background services, and idle hardware activity. Profiling tools therefore differ in whether and how they account for this baseline consumption before attribution.
 
-The first dimension addresses the question of \emph{what exactly is being measured} and how energy consumption is attributed to software entities. Tools differ in their measurement targets, attribution granularity, and temporal resolution.
-\todo{iness: I am not sure I understand the goal of the itemize list below}
-\begin{itemize}
-    \item \textbf{Measurement target.} Tools may focus on specific hardware components such as the CPU, DRAM, GPU, storage devices, network interfaces and display \jay{(never seen yet for display though. But that might be interesting to shed light on)}, or try to estimate system-level consumption.
-    
-    \item \textbf{Metrics.} Most tools report energy consumption in joules or average power in watts. Some might also report network data exchanges while others may even report higher-level metrics such as carbon emissions (e.g., Green Metric Tool (GMT)~\cite{kayembeExploringPrivacySecurity2025}) by combining energy estimates with external carbon-intensity data. These derived metrics introduce additional assumptions beyond energy measurement itself.
-    
-    \item \textbf{Granularity.} Energy may be attributed at different software levels, including the whole system, virtual machines, containers, processes, threads, or even individual functions. Finer-grained attribution offers more insights but typically requires more assumptions, e.g., share of system energy consumption proportional to resource percentage utilisation. It also typically increases overhead.
-    
-    \item \textbf{Temporal resolution.} Another parameter is how frequently measurements are sampled. This can range from coarse periodic sampling to event-based or continuous monitoring. Higher temporal resolution enables short events to be observed but may increase overhead and noise sensitivity.
-    
-    \item \textbf{Baseline modelling.} Some tools explicitly model baseline or idle energy consumption and subtract it when attributing energy to software entities. Whether and how a baseline is modelled can affects attribution results, especially in shared or multi-tenant systems. \jay{(This should maybe be part of "Methodology and accuracy")}
-\end{itemize}
+Some tools explicitly model baseline energy and distribute a share of it across monitored entities according to activity indicators such as CPU utilisation or container resource allocation. Others simply attribute only the dynamically observed consumption, or do not distinguish baseline consumption at all.
 
-\subsection{Methodology and accuracy}
+Calibration is generally done in three different ways. The first consists in profiling the system at rest during a short period of time, to evaluate the idle power. In the second approach, the overall CPU utilisation is used as a proxy to estimate the ratio of active against idle power of the system. Yet another approach consists in considering the minimum power observed as the baseline.
 
-This dimension captures the methodological foundations of energy measurement tools and the extent to which their results can be considered scientifically valid and reproducible.
+These choices affect attribution results, especially in situations where idle or background consumption represents a significant fraction of total system power.
 
-\begin{itemize}
-    \item \textbf{Measurement approach.} Tools may rely on external physical power meters, hardware-exposed energy interfaces, model-based estimation using performance counters or operating system statistics, or hybrid approaches combining multiple sources. \jay{Should we go deeper and specify families of model/assumptions used ?}
-    
-    \item \textbf{Calibration requirements.} Measurement accuracy may depend on explicit calibration procedures, which can be mandatory, optional, or absent.
-    
-    \item \textbf{Accuracy validation.} Some tools may provide accuracy validation e.g., \cite{noureddineMonitoringEnergyHotspots2015}. \jay{(This should maybe be part of "Maturity and ecosystem" dimension or maybe both)}
-    
-    \item \textbf{Repeatability.} The stability of measurements over repeated runs is influenced by noise, system load, and modelling assumptions. Some tools may be more deterministic than others.
-\end{itemize}
+\subsubsection{Virtualised environment support}
 
-\subsection{Invasiveness and usability}
+Virtualisation introduces additional attribution challenges because applications running inside virtual machines generally do not have direct access to the usual hardware power sources exposed on the host system.
 
-Beyond measurement accuracy, practical usability can affect whether a tool can be adopted in real-world settings.
+As a result, profiling tools supporting virtualised environments typically rely on two main approaches. Some use pretrained or calibrated models to estimate the energy share of the virtual machine from observable guest-level activity metrics such as CPU utilisation, allocated cores and memory. Others deploy monitoring components on the host system capable of estimating virtual-machine-level energy consumption, then expose these estimations to the guest environment through shared files.
 
-\begin{itemize}
-    \item \textbf{Code modification.} Some tools require changes to application source code or binary instrumentation\cite{noureddineMonitoringEnergyHotspots2015}, while others can operate more transparently.
-    
-    \item \textbf{Runtime overhead.} Monitoring introduces computational overhead that may perturb the system under study. Tools could vary in whether this overhead is quantified and how significant it is. \jay{Never saw this yet though}
-    
-    \item \textbf{Deployment complexity.} Tools can be deployed as standalone applications, background agents, kernel modules, or platform-level services, each with different operational implications.
-    
-\end{itemize}
+Some tools targeting code-section-level attribution, rely on another profiler to obtain process-level attribution before refining the attribution within the application itself. Their support for virtualised environments therefore depends on the virtualisation support provided by the underlying profiler.
 
-\subsection{Execution environment support}
+These two approaches differ in how they trade portability for accuracy and dependence on the host environment. Model-based approaches are generally more portable and do not require infrastructure operators to explicitly expose energy measurements to guest environments, but they introduce additional modelling uncertainties. Conversely, host-assisted approaches may provide more accurate estimations, at the cost of stronger dependencies on the underlying infrastructure and monitoring stack.
 
-Execution environment support is a key dimension, particularly given the prevalence of cloud-native systems.
+\subsection{Operational constraints}
 
-\begin{itemize}
-    \item \textbf{Bare-metal support.} Some tools are designed primarily for non-virtualised environments with full hardware access. \jay{Does it make sense to detail targeted architecture here? Or do we create a dedicated feature for that?}
-    
-    \item \textbf{Virtual machines.} VM-aware tools may operate at the hypervisor level or attempt to attribute energy to guest operating systems.
-    
-    \item \textbf{Containers.} Container-level attribution introduces challenges related to resource sharing and namespace isolation.
-    
-    \item \textbf{Kubernetes integration.} Native support for orchestration platforms enables energy monitoring at cluster scale.
-    
-    \item \textbf{Multi-tenancy awareness.} Whether energy attribution assumes exclusive access to hardware resources or explicitly accounts for concurrent workloads and shared infrastructure. \jay{This one is maybe redundant}
-    
-    \item \textbf{Cloud provider compatibility.} Compatibility with major cloud providers and their exposed monitoring interfaces.
-\end{itemize}
+Operational constraints describe the practical conditions and limitations under which profiling tools operate. They are strongly influenced by the underlying design choices and characterise the deployability, portability, and runtime implications of profiling approaches in real execution environments.
+
+\subsubsection{Temporal resolution}
+
+Temporal resolution represents the frequency at which measurements are collected. Higher sampling frequencies improve visibility into fast events, but increase runtime overhead, storage requirements, and sensitivity to noise.
+
+Some tools allow temporal resolution to be configured, but the achievable range mainly depends on the underlying measurement sources. External power meters provide the highest sampling frequencies. 
+Hardware-exposed interfaces usually offer a good compromise between resolution and overhead, often operating at frequencies on the order of a kilo hertz. Model-based approaches instead depend on the frequency and quality of the activity metrics used by the model.
+
+\subsubsection{Runtime overhead}
+
+Profiling inevitably perturbs the monitored system. Overhead mainly originates from instrumentation logic, metric collection and processing, storage operations, etc\dots
+
+Overhead therefore constitutes a central trade-off between observability and experimental validity. It is especially determinant when monitored workloads are lightweight.
+
+Different levers exist to reduce the overhead depending on the measurement mechanism. Common approaches include reducing the acquisition frequency, performing attribution or analysis offline rather than online, or selecting lower-overhead operating-system interfaces to access measurement sources. For example, \cite{raffinDissectingSoftwarebasedMeasurement2024} showed that different Linux interfaces used to access RAPL counters exhibit significantly different latency and energy overhead characteristics, especially at high acquisition frequencies or on idle systems.
+
+Some tools provide mechanisms to estimate profiling overhead. However, overhead evaluation is most often reported separately in validation studies. When available, we reference these studies in the taxonomy table.
+
+\subsubsection{Code modification}
+
+Some profiling tools operate transparently from outside the application, while others require manual instrumentation through source-code annotations exposing execution markers, or automatic bytecode rewriting through runtime agents.
+
+Manual instrumentation approaches, allow developers to precisely target the code sections of interest. They nevertheless have two downsides. First, developers must explicitly identify and annotate the execution regions to monitor. Second, energy consumed during the annotated execution interval is generally assumed to originate from the monitored code section itself, while other processes and system activities may still execute in parallel. Therefore these approaches are more reliable when the monitored workload is isolated as much as possible, for instance inside containers or controlled execution environments, as illustrated in \cite{kayembeExploringPrivacySecurity2025} where we used container-isolated browser automating scrcipts to estimate the cost of user interactions on email solution websites.
+
+\subsubsection{Privilege requirements}
+
+Tools also differ in the execution privileges required to access measurement interfaces or profiling facilities. Some approaches operate entirely in user space using standard operating-system interfaces e.g., PAPI for RAPL, whereas others require elevated privileges to access hardware counters.
+
+Privilege requirements directly impact deployability.
+
+\subsubsection{Platform dependency}
+
+Profiling tools may target specific hardware architectures, operating systems, execution environments, or programming languages. Dependencies frequently arise from vendor-specific hardware-exposed energy interfaces, kernel APIs, instrumentation frameworks, or language-specific runtime mechanisms.
+
+The taxonomy therefore distinguishes support for desktop systems, servers, single-board computers (e.g., Raspberry Pi), x86, ARM, and Apple Silicon platforms. For fine-grained code-section attribution, we additionally specify language dependencies when profiling mechanisms rely on language-specific instrumentation frameworks or runtime agents, such as Java bytecode instrumentation.
+
+We additionally specify whether profiling tools can operate inside virtual machines or containers, and whether they provide Kubernetes integration. These aspects naturally relate to both attribution granularity and virtualised environment support. In cloud-native environments, Kubernetes manages workload scheduling and resource allocation in a role conceptually similar to that of an operating system. Energy-aware profiling at pod or container level therefore becomes particularly valuable, as it enables orchestration decisions such as scheduling or scaling to consider energy-related metrics.
 
 \subsection{Maturity and ecosystem}
 
-Finally, tools differ in their level of maturity and surrounding ecosystem, which affects long-term usability and impact.
+Beyond methodological considerations, practical adoption also depends on the maturity and surrounding ecosystem of profiling tools.
 
+\subsubsection{Deployment complexity}
+
+Deployment complexity reflects the operational effort required to configure and integrate the profiler. This includes dependency installation, privilege configuration, instrumentation requirements, orchestration integration, and calibration procedures.
+
+Tools targeting large-scale infrastructures generally favour automated deployment and integration with existing observability ecosystems.
+
+\subsubsection{Accuracy validation}
+
+Profiling tools differ substantially in how their accuracy is evaluated and documented. Some tools provide systematic validation against external power meters, while others only report relative comparisons or theoretical estimations.
+
+Validation methodology is particularly important because attribution errors may remain hidden when no external ground truth exists.
+
+\subsubsection{Availability and licensing}
+
+Availability influences reproducibility and adoption. Open-source tools generally facilitate inspection, extension, and independent validation, whereas proprietary solutions may restrict reproducibility or portability.
+
+\subsubsection{Maintenance status and community adoption}
+
+The long-term usability of a profiling tool depends on active maintenance, compatibility updates, issue resolution, and community adoption. Since profiling tools often depend on evolving hardware and operating-system interfaces, abandoned tools rapidly become obsolete.
+
+\subsubsection{Case studies}
+
+Publicly available case studies. They also provide insight into the operational context and limitations of the tool.
+
+\subsubsection{Additional metrics}
+
+Finally, some tools expose metrics beyond direct energy estimation, including network I/O, disk I/O, carbon-intensity estimation, or embodied-emission allocation. These additional indicators may support broader sustainability analyses but also introduce additional modelling assumptions beyond power measurement itself.
+
+
+\subsection{Discussion}
+
+The proposed taxonomy characterise the challenges introduced in the previous section into observable dimensions enabling systematic comparison between profiling approaches.
+
+Importantly, these dimensions are strongly interdependent. For instance:
 \begin{itemize}
-    \item \textbf{Availability and licensing.} Tools may be open-source or proprietary, with different licence constraints.
-    
-    \item \textbf{Maintenance status.} Tools may be more or less well maintained, e.g. reported issues solved etc. \jay{To quantify this we could set a treshold on the date of maintenance}
-    
-    \item \textbf{Documentation quality.} Clear documentation is important to reduce misuse. \jay{Maybe we drop that one because it's hard to assess, OR we just report existing documentation}
-    
-    \item \textbf{Community adoption.} Tools may be primarily used in academic research, industry, or both.
-    
-    \item \textbf{Ecosystem integration.} Integration with monitoring and visualisation platforms (e.g., Prometheus~\cite{centofantiImpactPowerConsumption2024}, GMT~\cite{hoffmannGreenMetricsTool2025}) facilitates deployment at scale.
+    \item fine-grained attribution generally requires more intrusive activity sources and increases runtime overhead,
+    \item support for virtualised environments constrains the visibility of measurement sources,
+    \item model-based approaches improve portability but may reduce attribution accuracy,
+    \item low-level observability mechanisms may require elevated privileges and reduce deployability.
 \end{itemize}
 
-Together, these dimensions provide a structured view of the design space of software energy measurement tools and form the basis for the comparative table and decision guidelines presented in the following sections.
+Profiling tools can therefore be understood as different compromises within this multidimensional design space. The comparative analysis presented later uses this taxonomy to identify recurring architectural patterns, implicit assumptions, and trade-offs across existing approaches.
 
 \section{Tool selection methodology}
 
@@ -326,7 +536,63 @@ The final outcome of this selection methodology is a set of representative tools
 
 \section{Conclusion}
 		
-\newpage
+\section{Meetings Notes}
+
+\jay{\textbf{Comments from 23-03-26 meeting with JT and Iness}}
+    \begin{itemize}
+    \item \jay{\cite{raffinDissectingSoftwarebasedMeasurement2024} compare the limits (real versus targeted mean and std) of the polling frequency in their Figure 3. We could continue to assess this for the tools we consider in this sok.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\linewidth]{img/polling_frequency.png}
+        \includegraphics[width=0.8\linewidth]{img/power_and_cpu_states.png}
+        \includegraphics[width=0.8\linewidth]{img/execution_time.png}
+    \end{figure}}
+    \item \jay{\cite{raffinDissectingSoftwarebasedMeasurement2024} also discusses overflow issues in RAPL registers. We could add a column for tools that account for this common behavior when reading RAPL data}
+    \item \jt{JT thinks this is not relevent}
+    \item \jay{Actually we could also extend the overhead benchmark in \cite{raffinDissectingSoftwarebasedMeasurement2024} to the tools we consider. }
+    \item \jt{JT: Give this as a project for Arthuro}
+    \begin{figure}[htbp]
+        \centering
+
+    \item \jay{Add a column to specify the type of method used to allocate energy to processes:
+        \begin{itemize}
+            \item statistical sampling (non-invasive but need to somehow check the callstack. This is more suitable for monitoring)
+            \item start/end time markers (in code so invasive and targeted to development)
+            \item process isolation (like the GMT with container)
+            \item model provided with system resources sharing indicators (e.g. CPU \%age)
+        \end{itemize}
+    }
+        
+    \end{figure}
+    
+    
+    
+\end{itemize}
+
+\jay{\textbf{Comments from 03-03-26 meeting with JT and Iness}}
+
+\begin{itemize}
+    \item \jay{Structure : Wrapper + 2 sources of input : Metric providers (This paper \cite{zoniSurveyRuntimePower2023} already conducts a survey for these) \& Resources Utilisation providers.
+    Do we integrate these subcomponents (e.g. Andro watts for Android, RAPL, and tools reviewed in the paper \cite{zoniSurveyRuntimePower2023})?}
+    \item \jay{Security : RAPL put a limit on purpose to the accuracy of its metrics to prevent side-channel attacks. How does that affects the tools considered ? "RAPL however has been nerfed recently through a discovered power-side-channel attack coined Platypus Moritz Lipp showed that it is possible to read the current executed processor instructions and also the memory layouts especially for data stored in the believed to be secure memory enclave from Intel called SGX SGX"}
+    \item \jay{taxonomy : we can build on \cite{jagannadharaoBeginnersGuidePower2024}}
+\end{itemize}
+
+
+\noindent\jay{\textbf{Comments from 17-02-26 meeting with JT and Iness}}
+
+\begin{itemize}
+    \item   \iness{Iness : Is there a sound reason for the existence of so many of these tools?} \\
+            \jt{JT : That's potentially something we'll find out with this study} \\
+            \jay{Jay : I do agree with the fact that it should be an outcome of the study. To me, the classification we create really defines a space of usage scenarios, i.e. needs + constraints. For instance a tool like Kepler might have been designed for data centres operators to monitor energy usage per computing loads and allow energy-aware orchestration of the latter. This translates to a context and its constraints: $(granularity=container/VM, measurment\_target=(CPU, DRAM, storage), measurment\_approach=external\_power\_meters + RAPL, virtualisation\_support, etc...)$. Another use case of a user wanting to assess the energy of a program running on its smartphone would imply another context, other constraints so another point in that space for which there might or not exist a tool}
+    \item   \jt{JT : We might want to add a column for use cases of the tools. The value of such a paper might be different for industry people than us academic fellows or even governance people making standards etc...}\\
+            \iness{Iness : The value of this SoK, from these different perspectives, could be made more explicit in the introduction to strengthen the scientific contribution}.
+
+    \item \jt{JT : For the moment, it is unclear how the GMT differentiates itself from Kepler. Why couldn't the GMT be used in data centre context? }\\
+          \jay{Jay : I think the GMT could be used in a data centre context, provided the DC operator allows access to some metrics (number of CPUs,RAM,... + system-level consumption wether it's real-time or spec-based) as source of truth, and a metric provider (GMT data reporter) is implemented to read and process that data. Such a metric provider exists when running different containers, that uses CPU percentage utilisation as a proxy for system-energy allocation to containers.}
+    
+\end{itemize} 
+
 
 % ------------------------------------------------------------------------------
 % Reference and Cited Works
