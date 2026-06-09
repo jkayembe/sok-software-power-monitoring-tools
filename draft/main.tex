@@ -168,7 +168,7 @@ This choice directly affects attribution results, particularly in low-load or sh
 
 \subsection{Access to Measurement Sources}
 
-A second challenge lies in obtaining reliable measurement and observability data. As discussed previously, profiling tools generally rely on two categories of information sources: hardware-level energy estimations and resource utilisation observations. Accessing these sources depends on the measurement interfaces, observability mechanisms, and privilege models exposed by the underlying platform.
+A second challenge lies in obtaining reliable measurement and observability data. As discussed previously, profiling tools must collect two categories of information sources: hardware-level energy estimations and resource utilisation observations. Accessing these sources depends on the measurement interfaces, observability mechanisms, and privilege models exposed by the underlying platform.
 
 \paragraph{Measurement sources} \label{measurment-sources}
 
@@ -182,34 +182,34 @@ Energy estimation may rely on:
     \item \textbf{software-based models}, using analytical or learned models to estimate energy consumption from observable system metrics such as performance counters (i.e., hardware-exposed event counters) or operating system activity.
 \end{itemize}
 
-Similarly, resource utilisation observations may rely on operating-system activity metrics, tracing facilities, scheduler events, runtime instrumentation, or kernel observability frameworks.
+Similarly, resource utilisation observations may rely on operating-system activity metrics like scheduler events or runtime instrumentation frameworks.
 
 Each source involves trade-offs between accuracy, deployability, and generality.
 
-\paragraph{Operating-system dependencies}
+\paragraph{Platform dependencies}
 
-Profiling tools are also constrained by the operating systems and execution environments they target. Many measurement interfaces, performance counters, tracing facilities, or privilege mechanisms are operating-system specific, limiting the portability of profiling approaches across platforms.
+Profiling tools are also constrained by the operating systems and execution environments they target. Many measurement interfaces, performance counters, or privilege mechanisms are operating-system specific, limiting the portability of profiling approaches across platforms.
 
-As a result, some tools are tightly coupled to a specific operating-system observability stack, while others explicitly implement platform-specific backends to support multiple environments through a unified profiling interface.
+As a result, some tools are specifically tied to a given operating-system, while others implement platform-specific backends to support multiple environments through a unified profiling interface.
 
 \paragraph{Privilege constraints}
 
-Access to low-level measurement and observability data is often restricted for stability and security reasons. In particular, some hardware counters and energy registers have been shown to enable side-channel attacks, leading operating systems and hardware vendors to restrict or filter access to these interfaces.
+Access to low-level measurement and observability data is often restricted for stability and security reasons. In particular, some hardware counters and energy registers have been shown to enable side-channel attacks \todo{Cite a few attacks through RAPL and mitigations}, leading operating systems and hardware vendors to restrict or filter access to these interfaces.
 
 \begin{itemize}
     \item hardware counters and energy registers may require elevated privileges,
     \item hardware-level metrics exposed to user-space applications may be partially filtered, aggregated, or sampled by the operating system.
 \end{itemize}
 
-As a result, profiling tools differ in how they access measurement sources. Some rely on operating-system-exposed interfaces available from user space, such as system files, runtime APIs, or process statistics. Others use privileged mechanisms to interact more directly with operating-system monitoring and tracing mechanisms, for instance through kernel tracing interfaces or eBPF-based (user code executed in kernel sandboxes) instrumentation.
+As a result, profiling tools differ in how they access these sources. Some rely on operating-system-exposed interfaces available from user space. Others use privileged mechanisms to access lower-level observability facilities, such as performance counters, scheduler events, or eBPF-based instrumentation.
 
-These design choices affect deployability, operating-system compatibility, profiling overhead, and the granularity of observable system activity.
+These design choices affect deployability, platform compatibility, profiling overhead, and the granularity of observable system activity.
 
 \subsection{Temporal Resolution}
 
 Energy profiling relies on periodically observing system activity and updating energy attribution estimates over time. The frequency at which these observations and attribution routines are executed directly impacts profiling quality.
 
-Regardless of the underlying profiling mechanism --- whether collecting energy measurements, observing resource utilisation, sampling execution states, or tracking execution intervals --- increasing the observation frequency generally improves temporal precision and attribution accuracy. However, it also increases runtime overhead, data collection costs, and sensitivity to short-term system noise.
+Regardless of the underlying profiling mechanism increasing the observation frequency generally improves temporal precision and attribution accuracy. However, it also increases runtime overhead, data collection costs, and sensitivity to noise.
 
 Conversely, lower observation frequencies reduce profiling overhead but may fail to capture short-lived execution phases or rapid variations in resource usage.
 
@@ -219,15 +219,7 @@ Temporal resolution therefore defines a trade-off between \textbf{accuracy of at
 
 Profiling mechanisms introduce runtime overhead, which may affect the behaviour of the system being observed.
 
-This overhead arises from:
-
-\begin{itemize}
-    \item instrumentation of code or binaries,
-    \item periodic sampling and interrupt handling,
-    \item live logging of estimated energy shares.
-\end{itemize}
-
-Most observation mechanisms must execute online during the monitored program's execution. However, some approaches defer part of the data processing and analysis offline, reducing runtime overhead when live analysis is not required.
+This overhead arises from \emph{(i) instrumentation of code or binaries}, \emph{(ii) periodic sampling and interrupt handling} and \emph{(iii) live logging of estimated energy shares}. Most observation mechanisms must execute online during the monitored program's execution. However, some approaches defer part of the data processing and analysis offline, reducing runtime overhead when live analysis is not required.
 
 As a result, measurements may be biased by the profiling process itself. Minimising and quantifying this overhead is necessary to ensure the validity of observations, yet it is not always explicitly addressed.
 
@@ -248,11 +240,11 @@ This layering creates several issues:
 
 \begin{itemize}
     \item \textbf{limited visibility}, as low-level measurements may not be accessible from within virtualised environments,
-    \item \textbf{(blind) resource multiplexing}, where multiple entities share the same hardware components, not necessarily being aware of it,
+    \item \textbf{(blind) resource sharing}, where multiple entities share the same hardware components, not necessarily being aware of it,
     \item \textbf{attribution ambiguity}, particularly for the energy consumed by the virtualisation layer itself.
 \end{itemize}
 
-To mitigate these limitations, some profiling tools expose \textbf{aggregated energy or power metrics from the host to guest environments} (e.g., via shared files or APIs). However, such approaches introduce additional dependencies on the host operator, who must explicitly provide and expose these measurements to guest environments.
+To address these challenges, some profiling tools expose \textbf{aggregated energy or power metrics from the host to guest environments} (e.g., via shared files or APIs). However, such approaches introduce additional dependencies on the host administrator, who must explicitly provide and expose these measurements to guest environments.
 
 Virtualisation may also require profiling mechanisms to operate simultaneously at multiple levels (e.g., host and guest), increasing instrumentation complexity, profiling overhead, and potential inaccuracies in attribution. As a result, energy profiling in virtualised environments becomes dependent not only on measurement capabilities, but also on the visibility agreements established between host and guest environments.
 
@@ -274,7 +266,7 @@ The previous subsections show that profiling tools must simultaneously balance s
     \item \textbf{Support for virtualised and multi-tenant environments}, where visibility and attribution become distributed across multiple abstraction layers.
 \end{itemize}
 
-These dimensions are interdependent. Improving one aspect can impact the others. For instance, increasing attribution granularity generally requires additional instrumentation and higher observation frequencies, which increases profiling overhead. Similarly, approaches relying on privileged low-level measurements may improve accuracy while reducing portability and deployability.
+ Improving one aspect can often impact the others. For instance, increasing attribution granularity generally requires additional instrumentation and higher observation frequencies, which increases profiling overhead. Similarly, approaches relying on privileged low-level measurements may improve accuracy while reducing portability and deployability.
 
 Profiling tools can therefore be understood as different compromises within this multidimensional design space. The taxonomy introduced in the next section formalises these dimensions to enable structured comparison between existing approaches.
 
@@ -290,7 +282,7 @@ The challenges presented in Section~\ref{challenges} manifest concretely through
 The objective of the proposed taxonomy is to classify profiling tools along dimensions that differentiate how they address these challenges in practice. Rather than listing profiler features, we aim to expose the underlying methodological choices that impact the behaviour, assumptions, and constraints of existing approaches. The taxonomy is the basis of the comparative classification table presented later in this paper.
 
 To structure this design space, we organise the taxonomy around three categories of dimensions:
-\emph{(i) Design choices}: How tools obtain, estimate, and attribute energy consumption, \emph{(ii) Operational constraints} i.e., the practical consequences and trade-offs induced by these design choices, \emph{(iii) Maturity and ecosystem}, gathering extra and more practical information about the usability, maintenance, and adoption of the tools.
+\emph{(i) Design choices}, \emph{(ii) Operational constraints} and \emph{(iii) Maturity and ecosystem}.
 
 \subsection{Design choices}
 
@@ -300,13 +292,13 @@ Design choices correspond to the methodological and architectural decisions take
 
 Granularity describes the software abstraction level to which energy consumption is attributed. Profiling tools may operate at \emph{(i) virtual machine}, \emph{(ii) pod}, \emph{(iii) container}, \emph{(iv) application}, \emph{(v) process}, \emph{(vi) thread}, or \emph{(vii) code-section} level.
 
-Process-level attribution is the most common profiling granularities and often the first step in providing other levels of granularities. These approaches generally rely on operating-system scheduling and accounting statistics, such as CPU time or process resource utilisation, to distribute hardware-level energy consumption among processes. Their accuracy therefore depends both on the quality of the underlying operating-system resource accounting mechanisms and on the assumptions used to distribute shared hardware consumption across concurrent workloads.
+Process-level attribution is the most common profiling granularities and often the first step in providing other levels of granularities. These approaches generally rely on operating-system scheduling and accounting statistics, such as process CPU time or process resource utilisation, to distribute hardware-level energy consumption among processes. Their accuracy therefore depends both on the quality of the underlying operating-system resource accounting mechanisms and on the assumptions used to distribute shared hardware consumption across concurrent workloads.
 
 Virtual-machine-, pod-, and container-level attribution are mainly designed for cloud-native and virtualised environments, where these entities represent the workload units managed by infrastructure operators and orchestration frameworks. Profilers supporting these granularities generally rely on isolation mechanisms such as cgroups or hypervisors to group processes belonging to the same workload. In practice, energy attribution is often first performed at process level, before aggregating the energy shares of the processes associated with the same virtual machine, container, or pod.
 
 Thread-level attribution provides finer insight inside processes by attempting to distribute process-level energy consumption among threads. Achieving this granularity requires access to thread scheduling and execution statistics, generally through operating-system or runtime-level observability mechanisms.
 
-Code-section-level profiling is more dedicated to software engineering and optimisation use cases. These approaches attempt to attribute energy consumption to functions, methods, or code execution regions. They typically rely on two layers of attribution: the profiler must first allocate energy consumption to the monitored process before distributing this process-level energy across internal code sections. This finer decomposition requires additional instrumentation mechanisms such as statistical call-stack sampling or execution markers. Consequently, fine-grained attribution increases runtime overhead, implementation complexity, and potentially invasiveness.
+Code-section-level profiling is more dedicated to software engineering and optimisation use cases. These approaches attempt to attribute energy consumption to functions, methods, or code regions. They typically rely on two layers of attribution: the profiler must first allocate energy consumption to the monitored process before distributing this process-level energy across internal code sections. This finer decomposition requires additional instrumentation mechanisms such as statistical call-stack sampling or execution markers. Consequently, fine-grained attribution increases runtime overhead, implementation complexity, and potentially invasiveness.
 
 \subsubsection{Measurement sources}
 
@@ -421,31 +413,27 @@ We additionally specify whether profiling tools can operate inside virtual machi
 
 \subsection{Maturity and ecosystem}
 
-Beyond methodological considerations, practical adoption also depends on the maturity and surrounding ecosystem of profiling tools.
+Under this dimension, we provide additional information that does not directly influence the profiling methodology itself, but reflects the maturity, usability, and practical adoption of the investigated tools.
 
 \subsubsection{Deployment complexity}
 
-Deployment complexity reflects the operational effort required to configure and integrate the profiler. This includes dependency installation, privilege configuration, instrumentation requirements, orchestration integration, and calibration procedures.
-
-Tools targeting large-scale infrastructures generally favour automated deployment and integration with existing observability ecosystems.
+Deployment complexity reflects the effort required to configure and deploy the profiling tools. This may include dependency installation, privilege configuration, or calibration procedures.
 
 \subsubsection{Accuracy validation}
 
-Profiling tools differ substantially in how their accuracy is evaluated and documented. Some tools provide systematic validation against external power meters, while others only report relative comparisons or theoretical estimations.
-
-Validation methodology is particularly important because attribution errors may remain hidden when no external ground truth exists.
+When available, we provide references to studies evaluating the accuracy of the profiling tools. These studies typically compare the reported measurements against external power meters or other reference measurements.
 
 \subsubsection{Availability and licensing}
 
-Availability influences reproducibility and adoption. Open-source tools generally facilitate inspection, extension, and independent validation, whereas proprietary solutions may restrict reproducibility or portability.
+For each tool, we indicate whether it is publicly available and whether its source code is open-source.
 
-\subsubsection{Maintenance status and community adoption}
+\subsubsection{Maintenance status}
 
-The long-term usability of a profiling tool depends on active maintenance, compatibility updates, issue resolution, and community adoption. Since profiling tools often depend on evolving hardware and operating-system interfaces, abandoned tools rapidly become obsolete.
+We report the presence of recent development activity as an indicator of the tool's current maintenance status.
 
 \subsubsection{Case studies}
 
-Publicly available case studies. They also provide insight into the operational context and limitations of the tool.
+When available, we provide references to publicly available case studies using the profiling tools. These case studies provide additional insight into the operational contexts, capabilities, and limitations of the tools.
 
 \subsubsection{Additional metrics}
 
