@@ -1,19 +1,30 @@
-\documentclass[twocolumn]{article}
+\documentclass[
+  acmsmall,
+  screen,
+  review,
+  anonymous
+]{acmart}
 
-\usepackage{amsmath, amsthm, amssymb, amsfonts}
+% Mathematics
+\usepackage{amsmath,amsthm}
 \usepackage{thmtools}
+
+% Figures
 \usepackage{graphicx}
-\usepackage{setspace}
-\usepackage{geometry}
 \usepackage{float}
-\usepackage{hyperref}
-\usepackage[utf8]{inputenc}
+
+% Language
 \usepackage[english]{babel}
+
+% Miscellaneous
 \usepackage{framed}
 \usepackage[dvipsnames]{xcolor}
-\usepackage{tcolorbox}
-
 \usepackage{todonotes}
+
+% ------------------------------------------------------------------------------
+% Draft comments
+% ------------------------------------------------------------------------------
+
 \newcommand{\blue}[1]{\textcolor{RoyalBlue}{#1}}
 \newcommand{\green}[1]{\textcolor{ForestGreen}{#1}}
 \newcommand{\orange}[1]{\textcolor{Orange}{#1}}
@@ -22,72 +33,26 @@
 \newcommand{\iness}[1]{\textcolor{ForestGreen}{#1}}
 \newcommand{\jt}[1]{\textcolor{Orange}{#1}}
 
-
-\colorlet{LightGray}{White!90!Periwinkle}
-\colorlet{LightOrange}{Orange!15}
-\colorlet{LightGreen}{Green!15}
-
-\newcommand{\HRule}[1]{\rule{\linewidth}{#1}}
-
-\declaretheoremstyle[name=Theorem,]{thmsty}
-\declaretheorem[style=thmsty,numberwithin=section]{theorem}
-\tcolorboxenvironment{theorem}{colback=LightGray}
-
-\declaretheoremstyle[name=Proposition,]{prosty}
-\declaretheorem[style=prosty,numberlike=theorem]{proposition}
-\tcolorboxenvironment{proposition}{colback=LightOrange}
-
-\declaretheoremstyle[name=Principle,]{prcpsty}
-\declaretheorem[style=prcpsty,numberlike=theorem]{principle}
-\tcolorboxenvironment{principle}{colback=LightGreen}
-
-\setstretch{1.2}
-\geometry{
-    textheight=9in,
-    textwidth=5.5in,
-    top=1in,
-    headheight=12pt,
-    headsep=25pt,
-    footskip=30pt
-}
-
-% ------------------------------------------------------------------------------
 \begin{document}
-% ------------------------------------------------------------------------------
-% Cover Page and ToC
-% ------------------------------------------------------------------------------
 
-\title{ \normalsize \textsc{} \\ [2.0cm]
-		\HRule{2.0pt} \\
-		\LARGE SoK : Software Power Monitoring Tools
-		\HRule{2.0pt} \\ [0.6cm] 
-        \LARGE{Paper Draft}
-        \vspace*{10\baselineskip}
-		}
+\title{SoK: Software Power Monitoring Tools}
 
-\date{}
-\author{\textbf{Jason Kayembe, Iness Ben Guirat, Jan-Tobias Mühlberg} \\
-        \normalsize BEAMS - Embedded Systems Design and Security \\
-        \normalsize Université Libre de Bruxelles \\}
+% For anonymous review, do not specify authors.
 
 \maketitle
-\newpage
-
-\tableofcontents
-\newpage
-
 % ------------------------------------------------------------------------------
 
 \section{Introduction \& Motivation}
 
-\paragraph{} The energy consumption of software systems has attracted increasing attention in recent years.
+The energy consumption of software systems has attracted increasing attention in recent years.
 \jay{Why not mentioning that this is driven by concerns for both environmental impact of computing AND operating costs? Personnaly I don't like the idea of emphasising economic benefits of seeking efficient softwares because of the obvious potential for rebound effect}. Digital services continue to scale across a wide range of computing contexts, from mobile and embedded devices to large-scale cloud infrastructures. They are increasingly recognised as not only being passive consumers of hardware resources, but also direct determinants of system-level power and energy demand. Therefore, the ability to measure and reason about software-induced energy consumption is crucial for energy-aware software engineering, and green system design.
 
-\paragraph{} Over the past decade, diverse tools have emerged to measure or estimate the power and energy consumption of software. These tools can differ substantially in their underlying measurement principles, levels of abstraction, deployment environments, and intended use cases. Some tools rely on external power meters or hardware-exposed energy interfaces provided by modern processors (e.g. Intel RAPL), while others estimate energy consumption using models based on performance counters, operating system statistics, or analytical abstractions. Similarly, tools vary in the granularity at which energy is attributed, ranging from whole-system measurements to per-process, per-container, or even per-function estimates. This diversity directly reflects the plenitude of application scenarios, but also makes it difficult to understand the trade-offs involved and to select appropriate tools for a given context.
+Over the past decade, diverse tools have emerged to measure or estimate the power and energy consumption of software. These tools can differ substantially in their underlying measurement principles, levels of abstraction, deployment environments, and intended use cases. Some tools rely on external power meters or hardware-exposed energy interfaces provided by modern processors (e.g. Intel RAPL), while others estimate energy consumption using models based on performance counters, operating system statistics, or analytical abstractions. Similarly, tools vary in the granularity at which energy is attributed, ranging from whole-system measurements to per-process, per-container, or even per-function estimates. This diversity directly reflects the plenitude of application scenarios, but also makes it difficult to understand the trade-offs involved and to select appropriate tools for a given context.
 
-\paragraph{} Existing literature focuses on proposing new tools or evaluating individual techniques in isolation. While several surveys exist \cite{wysockiMethodsImprovingSoftware2025}, they tend to catalogue tools or measurement methods without providing a unifying structure that explains why certain approaches are suitable for specific environments and goals, and why others are not. Additionally, the increasing use of virtualisation and cloud-native environments introduces new complexities such as limited hardware visibility, multi-tenancy, and the lack of access to physical power measurements that are not systematically addressed in existing measurement approaches.
+Existing literature focuses on proposing new tools or evaluating individual techniques in isolation. While several surveys exist \cite{wysockiMethodsImprovingSoftware2025}, they tend to catalogue tools or measurement methods without providing a unifying structure that explains why certain approaches are suitable for specific environments and goals, and why others are not. Additionally, the increasing use of virtualisation and cloud-native environments introduces new complexities such as limited hardware visibility, multi-tenancy, and the lack of access to physical power measurements that are not systematically addressed in existing measurement approaches.
 \todo{Iness: "tools for a given context.", "understand the trade-offs", "given context" these seems the critique of the litterature, hence will this SoK provide answers to these limits? }
-\paragraph{} In this paper, we present a Systematisation of Knowledge (SoK) on software power and energy measurement tools. While we do not aim for an exhaustive survey, our goal is to organise existing tools and approaches along dimensions that capture their main design choices, operational trade-offs, and practical applicability.
+
+In this paper, we present a Systematisation of Knowledge (SoK) on software power and energy measurement tools. While we do not aim for an exhaustive survey, our goal is to organise existing tools and approaches along dimensions that capture their main design choices, operational trade-offs, and practical applicability.
 
 More specifically, we systematise profiling tools according to dimensions including:
 \begin{itemize}
@@ -108,7 +73,7 @@ More specifically, we systematise profiling tools according to dimensions includ
 
 This systematisation exposes common patterns, implicit assumptions, and trade-offs that are often obscured when tools are considered individually.
 
-\paragraph{} The contributions of this SoK are threefold. First, we propose a taxonomy of software energy measurement approaches that clarifies the design space and provides a shared vocabulary for future work. Secondly, we derive a decision framework that supports researchers and practitioners in selecting measurement tools based on their experimental goals and operational constraints. Third, through a comparative analysis of representative tools, we identify open challenges and research gaps. By consolidating and structuring existing knowledge, this paper aims to serve as a foundation for both empirical research and tool development in software energy measurement.
+The contributions of this SoK are threefold. First, we propose a taxonomy of software energy measurement approaches that clarifies the design space and provides a shared vocabulary for future work. Secondly, we derive a decision framework that supports researchers and practitioners in selecting measurement tools based on their experimental goals and operational constraints. Third, through a comparative analysis of representative tools, we identify open challenges and research gaps. By consolidating and structuring existing knowledge, this paper aims to serve as a foundation for both empirical research and tool development in software energy measurement.
 
 \section{Related Work}
 
@@ -125,58 +90,44 @@ To the best of our knowledge, existing surveys either focus on individual tools,
 
 \section{Profiling Challenges} \label{challenges}
 
-Energy profiling of software systems is inherently indirect. While hardware components consume energy, software only influences this consumption through its use of system resources. As a result, profiling tools do not measure software energy consumption directly, but instead estimate and attribute it based on observable signals and modelling assumptions.
+Energy profiling of software systems is inherently indirect. While hardware components consume energy, software only influences this consumption through its use of hardware resources. Consequently, profiling tools do not measure software energy consumption directly, but instead estimate hardware energy and attribute it to software based on observable signals and modelling assumptions.
 
-Most approaches can be abstracted as a combination of two sources of information:  
-(i) system-level energy estimations, obtained from hardware interfaces, external measurements, or models, and  
-(ii) resource utilisation information, describing how software entities use shared hardware resources over time.
+Most approaches can therefore be abstracted as a combination of two sources of information:  
+\emph{(i) hardware-level energy estimations}, obtained from hardware interfaces, external measurements, or models, and  
+\emph{(ii) resource utilisation information}, describing how software entities use shared hardware resources over time.
+Profiling consists in combining these sources to reconstruct an attribution of hardware energy consumption to software entities. This process raises several challenges.
 
-Profiling consists in combining these sources to reconstruct an attribution of energy consumption to software entities. This process raises several fundamental challenges.
+\subsection{Allocation Model}
 
-\subsection{Energy Attribution and Allocation}
+The intrinsic challenge is to define a model that maps observable resource utilisation signals to the actual share of hardware energy consumed by software entities. The quality of this allocation model depends on three main design choices: the software entities to which energy is attributed, the observable signals used to estimate their activity, and the assumptions made to translate this activity into energy shares.
 
-The primary challenge is allocation, i.e., determining how system-level energy consumption should be distributed across software entities.
+\subsubsection{Allocation granularity}
 
-\paragraph{Granularity of attribution}
-
-Attribution can be performed at different levels:
-
-\begin{itemize}
-    \item \textbf{Process-level}, using operating system metrics to distribute energy across processes,
-    \item \textbf{Thread-level}, providing finer visibility within processes,
-    \item \textbf{Code-level}, where energy is attributed to functions or methods.
-\end{itemize}
-
-Increasing granularity improves interpretability but requires stronger assumptions and additional instrumentation.
-
-\paragraph{Attribution mechanisms}
-
-The choice of attribution mechanism is tightly coupled with the targeted granularity.
+A first design choice consists in defining the software entities to which hardware energy will be attributed. Depending on the intended use case, profilers may target:
 
 \begin{itemize}
-    \item At \textbf{process or thread level}, attribution is typically based on \textbf{resource-based allocation}, where system energy is distributed proportionally to observable, often OS-provided, metrics such as CPU utilisation, memory usage, or I/O activity. Consequently, this approach relies on the operating system’s view of resource sharing.
+    \item \textbf{Processes}, providing the energy consumption of individual software processes;
 
-    \item At \textbf{code-level granularity}, resource-based metrics are insufficient, as operating systems do not expose fine-grained utilisation within a process. As a result, two main approaches are used:
+    \item \textbf{Groups of processes}, such as virtual machines, containers, or other workload abstractions, providing the energy consumption of an entire software service;
 
-    \begin{itemize}
-        \item \textbf{Statistical sampling}, where execution states (e.g., call stacks) are periodically observed, and energy is attributed proportionally to the time spent in each code region,
-        
-        \item \textbf{Time-based attribution}, where execution intervals are explicitly delimited (e.g., via instrumentation or tracing), and energy is assigned to these intervals.
-    \end{itemize}
+    \item \textbf{Threads or Code sections}, such as functions or methods, providing fine-grained insight into the internal energy behaviour of an application.
 \end{itemize}
 
-These techniques differ in their intrusiveness and assumptions: sampling provides probabilistic approximations with limited instrumentation, while time-based approaches provide deterministic boundaries at the cost of additional instrumentation or runtime support.
+The selected granularity determines the observability requirements and the complexity of the allocation model. Finer granularities generally provide more actionable information for software optimisation, but require additional observability and stronger modelling assumptions.
 
-\paragraph{Baseline consumption}
+\subsubsection{Activity reconstruction}
 
-A recurring issue is the treatment of baseline (idle) energy consumption. Since part of the system energy is independent of the workload, tools must decide whether to:
+Once the target software entities have been defined, the profiler must estimate their relative share of hardware activity in order to distribute the measured hardware energy.
 
-\begin{itemize}
-    \item subtract an estimated baseline,
-    \item or distribute it across active entities.
-\end{itemize}
+For processes or groups of processes, operating systems already expose accounting information describing resource usage over time. However, this information only provides an indirect view of the actual hardware activity and therefore requires modelling assumptions to translate resource utilisation into energy shares. For instance, allocating CPU energy proportionally to the CPU time reported by the operating system implicitly assumes that CPU time is a good proxy for energy consumption. This assumption becomes less accurate when concurrent processes execute different mixes of instructions or operate at different processor frequencies, resulting in different energy costs for the same CPU time.
 
-This choice directly affects attribution results, particularly in low-load or shared environments where baseline consumption can dominate.
+Estimating activity at finer granularities, such as threads or code sections, is even more challenging because operating systems generally provide little or no direct visibility at this level. Profilers must therefore reconstruct software activity from additional observations obtained during execution.
+
+Consequently, different profiling tools rely on different activity reconstruction mechanisms, each making different assumptions regarding software execution and hardware resource sharing. These choices directly influence attribution accuracy, runtime overhead, and deployment complexity.
+
+\subsubsection{Baseline consumption}
+
+Finally, profiling tools must decide how to handle baseline system consumption. Since operating systems, background services, and idle hardware consume energy independently of the monitored application, tools differ in whether they subtract this baseline or distribute it among the monitored entities. This choice can significantly affect attribution results, particularly in lightly loaded or shared environments.
 
 \subsection{Access to Measurement Sources}
 
