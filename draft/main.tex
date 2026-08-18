@@ -2,8 +2,10 @@
   acmsmall,
   screen,
   review,
+  xcolor={dvipsnames,usenames}
 %   anonymous
 ]{acmart}
+
 
 % Mathematics
 \usepackage{amsmath,amsthm}
@@ -18,21 +20,25 @@
 
 % Miscellaneous
 \usepackage{framed}
-\usepackage[dvipsnames]{xcolor}
-\usepackage{todonotes}
+
+\usepackage{xcolor}
+\usepackage[color=green, textsize=footnotesize, textwidth=15mm]{todonotes}
+\presetkeys{todonotes}{fancyline}{}
+\setlength{\marginparwidth}{15mm}
+\usepackage[english=american,babel=false]{csquotes}
 \usepackage{parskip}
 
 % ------------------------------------------------------------------------------
 % Draft comments
 % ------------------------------------------------------------------------------
 
-\newcommand{\blue}[1]{\textcolor{RoyalBlue}{#1}}
-\newcommand{\green}[1]{\textcolor{ForestGreen}{#1}}
-\newcommand{\orange}[1]{\textcolor{Orange}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\green}[1]{\textcolor{green}{#1}}
+\newcommand{\orange}[1]{\textcolor{orange}{#1}}
 
-\newcommand{\jay}[1]{\textcolor{RoyalBlue}{#1}}
-\newcommand{\iness}[1]{\textcolor{ForestGreen}{#1}}
-\newcommand{\jt}[1]{\textcolor{Orange}{#1}}
+\newcommand{\jay}[1]{\textcolor{blue}{#1}}
+\newcommand{\iness}[1]{\textcolor{green}{#1}}
+\newcommand{\jt}[1]{\textcolor{orange}{#1}}
 
 \begin{document}
 
