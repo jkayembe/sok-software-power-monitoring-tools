@@ -105,6 +105,8 @@ The most closely related studies attempt to provide broader overviews of availab
 
 The work most closely related to ours is the review by Noureddine et al. \cite{noureddineReviewEnergyMeasurement2013} in 2013. The authors compare energy measurement approaches according to dimensions such as monitored resources, energy precision, operating-system modifications, software modifications, and hardware requirements. Several of these dimensions correspond directly to dimensions in our taxonomy, including profiling granularity, deployment complexity, code modification requirements, and the use of external power meters. Our work builds upon this foundation while extending the analysis to modern profiling tools and techniques. In particular, many profilers available today rely on hardware power interfaces such as RAPL, which were not yet widely available when the review was conducted and therefore were not a major consideration in the surveyed approaches.
 
+Cadorel and Saingre \cite{cadorelProtocolAssessAccuracy2024b} address the lack of validation of software-level power allocation models by proposing a formal definition of power division and an associated evaluation protocol. Their approach first measures the active consumption of applications when executed individually, then runs pairs of applications concurrently without CPU contention and compares the allocation produced by the model with the ratio observed during isolated execution. The authors apply this protocol to Scaphandre and PowerAPI using CPU stress workloads, and show that both models can produce allocation errors and context-dependent results, particularly when CPU frequency varies. Their protocol therefore evaluates the allocation between software entities rather than only checking whether the sum of their estimates matches the total machine consumption.
+
 To the best of our knowledge, existing surveys either focus on individual tools, compare a limited set of monitoring approaches, or provide catalogues of available solutions. None systematically characterise the design space of software energy profilers in terms of the dimensions that determine their applicability, trade-offs, and suitability for different usage contexts. This gap motivates the need for a systematisation of knowledge that explains not only which tools exist, but also why different classes of tools are required.
 
 
@@ -121,11 +123,11 @@ In particular, seed tools were selected based on:
     \item relevance to contemporary execution environments, including virtualised and containerised systems.
 \end{itemize}
 
-\subsubsection{\textbf{Seed selection}}
+\textbf{Seed selection}
 
 The selection process was initiated from three well-established seed tools representing different parts of the software energy profiling landscape: \emph{Kepler} \cite{centofantiImpactPowerConsumption2024,amaralKeplerFrameworkCalculate2023,bellalInvestigatingPotentialKepler}, \emph{Green Metrics Tool} \cite{hoffmannGreenMetricsTool2025,kayembeExploringPrivacySecurity2025}, and \emph{e-Surgeon} \cite{noureddineMonitoringEnergyHotspots2015}. These tools were chosen because they are well documented, frequently referenced in the literature, and representative of different measurement and attribution strategies.
 
-\subsubsection{\textbf{Inclusion criteria}}
+\textbf{Inclusion criteria}
 
 Candidate tools were included if they satisfied all of the following criteria:
 
@@ -137,21 +139,20 @@ Candidate tools were included if they satisfied all of the following criteria:
     \item \emph{Representative execution environments.} The tool targets contemporary computing environments, including bare-metal systems, virtual machines, containers or cloud platforms.
 \end{itemize}
 
-\subsubsection{\textbf{Exclusion criteria}}
+\textbf{Exclusion criteria}
 
 Candidate tools were excluded if they met one or more of the following conditions:
 
 \begin{itemize}
     \item \emph{Insufficient documentation.} The measurement methodology, assumptions or evaluation could not be established from publicly available sources.
 
+    \item \emph{Purely theoretical model.} The work proposes a measurement approach without an implemented tool or empirical evaluation.
+    
     \item \emph{Mobile-only platforms.} The tool exclusively targets smartphones or mobile operating systems, as this study focuses on general-purpose computing and cloud environments.
-
-    \item \emph{Obsolete environments.} The tool targets deprecated hardware platforms or software stacks with limited relevance to current systems.
-
-    \item \emph{No publicly available implementation.} The work proposes a measurement approach without an implemented tool or empirical evaluation.
+    
 \end{itemize}
 
-\subsubsection{\textbf{Snowballing strategy}}
+\textbf{Snowballing strategy}
 
 To reduce the bias introduced by the initial seed selection and improve the representativeness of the final dataset, we applied iterative backward and forward snowballing. For each selected tool, we examined:
 
@@ -163,7 +164,7 @@ To reduce the bias introduced by the initial seed selection and improve the repr
 
 Candidate tools identified through snowballing were evaluated against the same inclusion and exclusion criteria. The process was repeated until no additional representative tools satisfying the criteria were identified or the target set of twelve tools had been reached.
 
-\subsubsection{\textbf{Outcome of the selection process}}
+\textbf{Outcome of the selection process}
 
 The resulting dataset comprises twelve representative software energy profiling tools covering different measurement sources, attribution mechanisms, granularities and execution environments. Each tool is characterised using the taxonomy proposed in Section~\ref{taxonomy} and summarised in a comparative table. This analysis forms the basis for identifying the strengths, limitations and design trade-offs of current software energy profiling approaches.
 
@@ -559,17 +560,24 @@ Importantly, these dimensions are strongly interdependent. For instance:
 
 Profiling tools can therefore be understood as different compromises within this multidimensional design space. The comparative analysis presented later uses this taxonomy to identify recurring architectural patterns, implicit assumptions, and trade-offs across existing approaches.
 
-
-\section{Positioning state-of-the-art tools}
+\section{Comparative analysis}
 
 \begin{figure}[p]
     \centering
     \includegraphics[width=0.77\paperheight,angle=90]{img/designspace.png}
-    \caption{Positioning of the state-of-the-art monitoring tools in the design space}
+    \caption{Design space of existing tools}
     \label{fig:design-space}
 \end{figure}
 
-Our analysis shows that software energy profiling tools have gradually specialised towards three distinct application domains.
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=\linewidth]{img/operationalconstraints.png}
+    \caption{Operational constraints of existing tools}
+    \label{fig:operational-constraints}
+\end{figure}
+
+
+Our analysis, presented in figure \ref{fig:design-space} shows that software energy profiling tools have gradually specialised towards three distinct application domains.
 
 The first category targets cloud-native environments. These tools support virtualised workloads through container- or virtual machine-level attribution and integrate with orchestration frameworks such as Kubernetes. As Kubernetes increasingly acts as the operating system of cloud-native applications, exposing energy metrics at the orchestration level enables scheduling, optimisation and monitoring decisions that were previously impossible. Recent frameworks such as GreenCube illustrate this trend by integrating energy-awareness directly into cluster management.
 
@@ -581,7 +589,9 @@ Despite their differences, nearly all recent tools rely on Intel RAPL whenever h
 
 Although model-based attribution currently provides a practical compromise for cloud environments, we believe that cloud providers could significantly improve measurement accuracy by exposing trusted energy metrics directly to guest virtual machines or containers. Hypervisors already observe the physical hardware and execute the attribution mechanisms required to isolate workloads. Exposing these measurements would eliminate the need for guest-side estimation models while enabling consistent and accurate software energy profiling across cloud platforms.
 
-Finally, our analysis highlights several gaps in the current state of the art. Most tools remain Linux-centric despite recent efforts to improve portability. Very few tools consider hardware components beyond the CPU and DRAM. Among the analysed tools, only e-Surgeon \cite{noureddineMonitoringEnergyHotspots2015} explicitly incorporates network activity, while none provides meaningful storage energy attribution. Thread-level attribution also remains largely unexplored. Existing attempts, such as the evaluation of IgProf \cite{khanEnergyProfilingUsing2015}, report limited accuracy, suggesting that reliable fine-grained attribution below the process level remains an open research challenge.
+Our analysis highlights several gaps in the current state of the art. Most tools remain Linux-centric despite recent efforts to improve portability. Very few tools consider hardware components beyond the CPU, GPU and DRAM. Among the analysed tools, only e-Surgeon \cite{noureddineMonitoringEnergyHotspots2015} explicitly incorporates network activity, while none provides meaningful storage energy attribution. Thread-level attribution also remains largely unexplored. Existing attempts, such as the evaluation of IgProf \cite{khanEnergyProfilingUsing2015}, report limited accuracy, suggesting that reliable fine-grained attribution below the process level remains an open research challenge.
+
+To our knowledge, Cadorel and Saingre \cite{cadorelProtocolAssessAccuracy2024b} provide the only validation of a software-level power allocation model against a defined allocation objective. In contrast, existing evaluations \cite{noureddineESurgeonDiagnosingEnergy2012, }commonly verify that the sum of software-level estimates agrees with an external power measurement of the whole system, which validates the global consumption but does not establish whether the consumption is correctly allocated among software entities. We consider the framework of Cadorel and Saingre a promising way to complement this validation, as it provides a fair allocation criterion and does not depend on a particular policy for allocating idle or residual consumption. However, applying their protocol in practice requires estimating the active consumption of each application in isolation. While the authors assume that the application can be run alone on the machine, the operating system, background services and other processes remain active and may contribute to the measured consumption. The monitoring tool itself can also introduce additional activity. An external power meter could remove the latter issue by measuring the machine independently of the monitoring software, but it would not solve the presence of other system activity. The protocol therefore appears most practical in controlled environments where background activity can be kept stable, and its applicability to general-purpose systems remains an open issue. Finally, while Cadorel and Saingre evaluate Scaphandre and PowerAPI, we leave the evaluation of the other tools identified in our study to future work, as a systematic application of their protocol to all considered tools is beyond the scope of this paper. Nevertheless, we recommend this framework as a basis for future validation of software-level allocation models.
 
 \section{Conclusion}
 		
