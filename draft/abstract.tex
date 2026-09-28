@@ -1,0 +1,29 @@
+Software energy consumption has become an increasingly important concern as
+computing systems grow in scale and complexity. A growing ecosystem of
+software-based power monitoring tools aims to make energy consumption
+observable without requiring dedicated external measurement hardware.
+However, these tools differ substantially in what they measure, how they
+obtain or estimate energy consumption, how they attribute hardware-level
+energy to software entities, and at what granularity and in which execution
+environments they operate. These differences complicate both tool selection
+and the interpretation and comparison of reported measurements.
+
+This survey provides a systematic analysis of software power monitoring
+tools and the principles underlying their operation. We first distinguish
+hardware-level energy measurement and estimation from the subsequent
+problem of attributing energy consumption to software activities. Based on
+a systematic review of the literature and existing tools, we develop a
+taxonomy covering measurement sources, energy and activity models,
+attribution mechanisms, monitoring granularity, deployment environments,
+and operational constraints. We use this taxonomy to comparatively analyze
+representative tools and expose the assumptions and trade-offs underlying
+different monitoring approaches. We further examine how software power
+monitoring tools are validated, distinguishing agreement with system-level
+energy measurements from the correctness of software-level energy
+attribution. From this analysis, we derive practical guidance for selecting
+monitoring approaches and identify open challenges concerning attribution
+accuracy, measurement uncertainty, virtualization and multi-tenancy,
+portability, monitoring overhead, and reproducible validation. The
+resulting framework provides a common foundation for interpreting existing
+tools and for designing and evaluating future software energy monitoring
+approaches.
