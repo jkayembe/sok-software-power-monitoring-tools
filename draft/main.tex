@@ -138,7 +138,8 @@ The objective of this study is not to produce an exhaustive catalogue of existin
 itself to twelve representative tools and says it is not intended to be
 exhaustive. That poses a significant challenge for a journal survey.} --
 can we claim that we systematically and exhaustively cover the current
-design space?}
+design space? Also, unsure if twelve was the outcome of the search, or a
+limit imposed on the search?}
 To keep the study tractable while covering the breadth of the design space, the analysis was intentionally limited to twelve tools.
 
 In particular, seed tools were selected based on:
@@ -326,6 +327,11 @@ These methodological choices determine the assumptions, capabilities, and limita
 
 \subsection{Design space}
 
+\todo[inline]{Is there a way to connect design choices to use cases? To
+show how different combinations of granularity, measurement sources,
+allocation methods, and operational constraints arise from different
+requirements. For example, cloud observability, need for instrumentation, code-level optimisation.}
+
 We first characterise the principal methodological choices that distinguish existing software energy profiling approaches.
 
 \subsubsection{\textbf{Granularity}}
@@ -406,7 +412,9 @@ where $E_i$ denotes the energy attributed to software entity $i$ and $E_{\mathrm
 
 \begin{itemize}
 
-    \item \emph{Direct proportional allocation} assumes that the selected activity proxy already represents the activity share of the monitored entities. Typical examples include operating-system maintained per-process resource utilisation statistics such as CPU utilisation, network throughput, or GPU driver statistics. These approaches are straightforward to implement and induce little overhead. Their accuracy, however, depends on how well the selected proxy correlates with the actual hardware activity. The activity share is estimated as
+    \item \emph{Direct proportional allocation} assumes that the selected activity proxy already represents the activity share of the monitored entities. Typical examples include operating-system maintained per-process resource utilisation statistics such as CPU utilisation, network throughput, or GPU driver statistics. These approaches are straightforward to implement and induce little overhead. Their accuracy, however, depends on how well the selected proxy correlates with the actual hardware activity.
+\todo{When is that reasonable? When does it fail?}
+The activity share is estimated as
 
     \begin{equation}
     A_i=\frac{P_i}{\sum_j P_j},
@@ -616,11 +624,31 @@ Although model-based attribution currently provides a practical compromise for c
 
 Our analysis highlights several gaps in the current state of the art. Most tools remain Linux-centric despite recent efforts to improve portability. Very few tools consider hardware components beyond the CPU, GPU and DRAM. Among the analysed tools, only e-Surgeon \cite{noureddineMonitoringEnergyHotspots2015} explicitly incorporates network activity, while none provides meaningful storage energy attribution. Thread-level attribution also remains largely unexplored. Existing attempts, such as the evaluation of IgProf \cite{khanEnergyProfilingUsing2015}, report limited accuracy, suggesting that reliable fine-grained attribution below the process level remains an open research challenge.
 
+\todo{Old merge conflict here :-) Not mine, I think.}
 <<<<<<< HEAD
 To our knowledge, Cadorel and Saingre \cite{cadorelProtocolAssessAccuracy2024b} provide the only validation of a software-level power allocation model against a defined allocation objective. In contrast, existing evaluations \cite{noureddineESurgeonDiagnosingEnergy2012} commonly verify that the sum of software-level share estimates matches with an external power measurement of the whole system, which validates the global consumption but does not confirm whether the consumption is correctly allocated among software entities. We consider the framework of Cadorel and Saingre as a promising way to complement this validation, as it provides a fair allocation criterion and does not depend on a particular policy for allocating idle or residual consumption. However, applying their protocol in practice requires estimating the active consumption of each application in isolation. While the authors assume that the application can be run alone on the machine, the operating system, background services and other processes remain active and may contribute to the measured consumption. The monitoring tool itself can also introduce additional activity. An external power meter could remove the latter issue by measuring the machine independently of the monitoring software, but it would not solve the presence of other system activity. The protocol therefore appears most practical in controlled environments where background activity can be kept small and stable, and its applicability to general-purpose systems remains an open issue. Finally, while Cadorel and Saingre evaluate Scaphandre and PowerAPI, we leave the evaluation of the other tools identified in our study to future work, as a systematic application of their protocol to all considered tools is beyond the scope of this SoK. Nevertheless, we recommend this framework as a basis for future validation of software-level allocation models.
 =======
 To our knowledge, Cadorel and Saingre \cite{cadorelProtocolAssessAccuracy2024b} provide the only validation of a software-level power allocation model against a defined allocation objective. In contrast, existing evaluations \cite{noureddineESurgeonDiagnosingEnergy2012} commonly verify that the sum of software-level estimates agrees with an external power measurement of the whole system, which validates the global consumption but does not establish whether the consumption is correctly allocated among software entities. We consider the framework of Cadorel and Saingre a promising way to complement this validation, as it provides a fair allocation criterion and does not depend on a particular policy for allocating idle or residual consumption. However, applying their protocol in practice requires estimating the active consumption of each application in isolation. While the authors assume that the application can be run alone on the machine, the operating system, background services and other processes remain active and may contribute to the measured consumption. The monitoring tool itself can also introduce additional activity. An external power meter could remove the latter issue by measuring the machine independently of the monitoring software, but it would not solve the presence of other system activity. The protocol therefore appears most practical in controlled environments where background activity can be kept stable, and its applicability to general-purpose systems remains an open issue. Finally, while Cadorel and Saingre evaluate Scaphandre and PowerAPI, we leave the evaluation of the other tools identified in our study to future work, as a systematic application of their protocol to all considered tools is beyond the scope of this paper. Nevertheless, we recommend this framework as a basis for future validation of software-level allocation models.
 >>>>>>> 5ba3c65257057589872c4e894a247ca517690efe
+\todo[inline]{This part is super interesting. Now I have validaion
+questions for every new experiment:
+Is total energy measured accurately?
+  Comparison with an appropriate reference measurement
+Is energy allocated accurately?
+  A reference or protocol that tests the allocation among software entities
+Does the profiler perturb execution?
+  Measurement of runtime and energy overhead
+Are results stable?
+  Repeated measurements and uncertainty analysis
+Does the method generalise?
+  Evaluation across workloads, platforms, and operating conditions
+
+With something like this, readers could interpret the evidence available
+for each tool, rather than treating the magical existence of an accuracy
+evaluation as sufficient.
+}
+
+
 
 \section{Conclusion}
 		
