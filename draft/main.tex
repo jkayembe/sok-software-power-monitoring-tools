@@ -98,10 +98,23 @@ More specifically, we systematise profiling tools according to dimensions includ
 \end{itemize}
 
 This systematisation exposes common patterns, implicit assumptions, and trade-offs that are often obscured when tools are considered individually.
+\todo{Here or in the next paragraph: Highlight the novelty of the taxonomy
+relative to existing surveys. Maybe as transition to the next section.}
 
 The contributions of this SoK are threefold. First, we propose a taxonomy of software energy measurement approaches that clarifies the design space and provides a shared vocabulary for future work. Secondly, we derive a decision framework that supports researchers and practitioners in selecting measurement tools based on their experimental goals and operational constraints. Third, through a comparative analysis of representative tools, we identify open challenges and research gaps. By consolidating and structuring existing knowledge, this paper aims to serve as a foundation for both empirical research and tool development in software energy measurement.
+\todo{Can we turn the comparison into a set of findings about the design
+space, rather than a catalogue of tools and their use cases? Which parts of
+that design space have not yet been explored?}
 
 \section{Related Work}
+
+\todo[inline]{Potentially missing stuff: Pathania et al., Calculating
+Software's Energy Use and Carbon Emissions: A Survey of the State of Art,
+Challenges, and the Way Ahead, \url{https://arxiv.org/abs/2506.09683}; Jay
+et al., An experimental comparison of software-based power meters: focus on
+CPU and GPU, \url{https://hal.univ-lorraine.fr/MIAI/hal-04030223v2}; Aneggi
+et al., Measuring Software Energy in Practice: A Guide to RAPL-Based Tools,
+\url{https://portal.findresearcher.sdu.dk/en/publications/measuring-software-energy-in-practice-a-guide-to-rapl-based-tools/}}
 
 Several studies focus on individual software energy profiling tools. These studies are valuable because they provide detailed insights into the design, capabilities, and limitations of specific profilers, which we later use to position them within our taxonomy. Examples include evaluations of Kepler's suitability for cloud power observability \cite{bellalInvestigatingPotentialKepler}, the Green Metrics Tool \cite{hoffmannGreenMetricsTool2025}, e-Surgeon for diagnosing energy leaks in application servers \cite{noureddineESurgeonDiagnosingEnergy2012}, and CNCF's review of cloud-native sustainability tooling \cite{cncfExploringKeplersPotentials2023}. Similarly, Noureddine \cite{noureddinePowerJoularJoularJXMultiPlatform2022} presents PowerJoular and JoularJX, highlighting their multi-platform support and demonstrating how software energy measurements can be used to compare programming language choices across platforms. Di Nucci et al. \cite{dinucciSoftwarebasedEnergyProfiling2017} discuss the energy profiling capabilities of IgProf and its integration into software optimisation workflows.
 
