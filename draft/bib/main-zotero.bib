@@ -1,3 +1,16 @@
+@inproceedings{ahmadPerformanceAssessmentDynamic2018,
+  title = {Performance {{Assessment}} of {{Dynamic Analysis Based Energy Estimation Tools}}},
+  booktitle = {2018 {{International Symposium}} on {{Performance Evaluation}} of {{Computer}} and {{Telecommunication Systems}} ({{SPECTS}})},
+  author = {Ahmad, Raja Wasim and Hamid, Siti Hafizah Ab and Gani, Abdullah and Obaidat, Mohammad S. and Shuja, Junaid and Rehman, Faisal and Khan, Atta Ur Rehman},
+  year = 2018,
+  month = jul,
+  pages = {1--12},
+  doi = {10.1109/SPECTS.2018.8574182},
+  urldate = {2026-09-07},
+  abstract = {Recently, the preference of users shifted the computational platform to resource constrained smartphone devices as users prefer to work while on the go. The shift of information access paradigm on smartphone devices demands high functionality applications to enrich user experience that as a result surges battery's charge consumption rate. Energy estimation schemes consider smartphone component's power measurement or code analysis methods for energy estimation of smartphone applications. This work assesses the performance overhead of existing dynamic analysis based energy estimation tools. It investigates estimation time, energy overhead, and resources consumption rate of existing estimation tools. It also analyzes the performance overhead of simulation/emulation based application profiling methods for smartphone applications.},
+  keywords = {Application energy,Benchmark testing,Energy consumption,Estimation,Measurement,Performance evaluation,Power measurement,Power Tutor,Profiling,Tools,Wireless fidelity}
+}
+
 @inproceedings{amaralKeplerFrameworkCalculate2023,
   title = {Kepler: {{A Framework}} to {{Calculate}} the {{Energy Consumption}} of {{Containerized Applications}}},
   shorttitle = {Kepler},
@@ -70,6 +83,23 @@
   keywords = {Cache optimization,Energy efficiency,Parallel computing,read-jay,Singular value decomposition}
 }
 
+@inproceedings{chowdhuryGreenOracleEstimatingSoftware2016,
+  title = {{{GreenOracle}}: Estimating Software Energy Consumption with Energy Measurement Corpora},
+  shorttitle = {{{GreenOracle}}},
+  booktitle = {Proceedings of the 13th {{International Conference}} on {{Mining Software Repositories}}},
+  author = {Chowdhury, Shaiful Alam and Hindle, Abram},
+  year = 2016,
+  month = may,
+  series = {{{MSR}} '16},
+  pages = {49--60},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/2901739.2901763},
+  urldate = {2026-09-07},
+  abstract = {Software energy consumption is a relatively new concern for mobile application developers. Poor energy performance can harm adoption and sales of applications. Unfortunately for the developers, the measurement of software energy consumption is expensive in terms of hardware and difficult in terms of expertise. Many prior models of software energy consumption assume that developers can use hardware instrumentation and thus cannot evaluate software running within emulators or virtual machines. Some prior models require actual energy measurements from the previous versions of applications in order to model the energy consumption of later versions of the same application.In this paper, we take a big-data approach to software energy consumption and present a model that can estimate software energy consumption mostly within 10\% error (in joules) and does not require the developer to train on energy measurements of their own applications. This model leverages a big-data approach whereby a collection of prior applications' energy measurements allows us to train, transmit, and apply the model to estimate any foreign application's energy consumption for a test run. Our model is based on the dynamic traces of system calls and CPU utilization.},
+  isbn = {978-1-4503-4186-8}
+}
+
 @misc{cncfExploringKeplersPotentials2023,
   title = {Exploring {{Kepler}}'s Potentials: Unveiling Cloud Application Power Consumption},
   shorttitle = {Exploring {{Kepler}}'s Potentials},
@@ -98,6 +128,39 @@
   urldate = {2026-06-09},
   abstract = {Power estimation of software processes provides critical indicators to drive scheduling or power capping heuristics. State-of-the-art power estimation solutions only provide coarse-grained support for power estimation. In this paper, we therefore propose a middleware for assembling and configuring software-defined power meters. Software-defined power meters provide real-time and accurate power estimation of software processes. In particular, our solution automatically learns an application-agnostic power model, which can be used to estimate the power consumption of applications.Our approach, named BitWatts, builds on a distributed actor middleware to collect process usage and infer fine-grained power consumption without imposing any hardware investment (e.g., power meters).},
   isbn = {978-1-4503-3220-0}
+}
+
+@inproceedings{colmantProcesslevelPowerEstimation2015,
+  title = {Process-Level Power Estimation in {{VM-based}} Systems},
+  booktitle = {Proceedings of the {{Tenth European Conference}} on {{Computer Systems}}},
+  author = {Colmant, Maxime and Kurpicz, Mascha and Felber, Pascal and Huertas, Lo{\"i}c and Rouvoy, Romain and Sobe, Anita},
+  year = 2015,
+  month = apr,
+  series = {{{EuroSys}} '15},
+  pages = {1--14},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/2741948.2741971},
+  urldate = {2026-09-07},
+  abstract = {Power estimation of software processes provides critical indicators to drive scheduling or power capping heuristics. State-of-the-art solutions can perform coarse-grained power estimation in virtualized environments, typically treating virtual machines (VMs) as a black box. Yet, VM-based systems are nowadays commonly used to host multiple applications for cost savings and better use of energy by sharing common resources and assets.In this paper, we propose a fine-grained monitoring middleware providing real-time and accurate power estimation of software processes running at any level of virtualization in a system. In particular, our solution automatically learns an application-agnostic power model, which can be used to estimate the power consumption of applications.Our middleware implementation, named BitWatts, builds on a distributed actor implementation to collect process usage and infer fine-grained power consumption without imposing any hardware investment (e.g., power meters). BitWatts instances use high-throughput communication channels to spread the power consumption across the VM levels and between machines. Our experiments, based on CPU- and memory-intensive benchmarks running on different hardware setups, demonstrate that BitWatts scales both in number of monitored processes and virtualization levels. This non-invasive monitoring solution therefore paves the way for scalable energy accounting that takes into account the dynamic nature of virtualized environments.},
+  isbn = {978-1-4503-3238-5}
+}
+
+@inproceedings{dinucciPETrASoftwareBasedTool2017a,
+  title = {{{PETrA}}: {{A Software-Based Tool}} for {{Estimating}} the {{Energy Profile}} of {{Android Applications}}},
+  shorttitle = {{{PETrA}}},
+  booktitle = {2017 {{IEEE}}/{{ACM}} 39th {{International Conference}} on {{Software Engineering Companion}} ({{ICSE-C}})},
+  author = {Di Nucci, Dario and Palomba, Fabio and Prota, Antonio and Panichella, Annibale and Zaidman, Andy and De Lucia, Andrea},
+  year = 2017,
+  month = may,
+  pages = {3--6},
+  publisher = {IEEE},
+  address = {Buenos Aires},
+  doi = {10.1109/ICSE-C.2017.18},
+  urldate = {2026-09-07},
+  abstract = {Energy efficiency is a vital characteristic of any mobile application, and indeed is becoming an important factor for user satisfaction. For this reason, in recent years several approaches and tools for measuring the energy consumption of mobile devices have been proposed. Hardware-based solutions are highly precise, but at the same time they require costly hardware toolkits. Model-based techniques require a possibly difficult calibration of the parameters needed to correctly create a model on a specific hardware device. Finally, software-based solutions are easier to use, but they are possibly less precise than hardware-based solution. In this demo, we present PETRA, a novel software-based tool for measuring the energy consumption of Android apps. With respect to other tools, PETRA is compatible with all the smartphones with Android 5.0 or higher, not requiring any device specific energy profile. We also provide evidence that our tool is able to perform similarly to hardwarebased solutions.},
+  isbn = {978-1-5386-1589-8},
+  langid = {english}
 }
 
 @inproceedings{dinucciSoftwarebasedEnergyProfiling2017,
@@ -145,6 +208,20 @@
   keywords = {read-jay}
 }
 
+@inproceedings{flinnPowerScopeToolProfiling1999,
+  title = {{{PowerScope}}: A Tool for Profiling the Energy Usage of Mobile Applications},
+  shorttitle = {{{PowerScope}}},
+  booktitle = {Proceedings {{WMCSA}}'99. {{Second IEEE Workshop}} on {{Mobile Computing Systems}} and {{Applications}}},
+  author = {Flinn, J. and Satyanarayanan, M.},
+  year = 1999,
+  month = feb,
+  pages = {2--10},
+  doi = {10.1109/MCSA.1999.749272},
+  urldate = {2026-09-08},
+  abstract = {We describe the design and implementation of PowerScope, a tool for profiling energy usage by applications. PowerScope maps energy consumption to program structure, in much the same way that CPU profilers map processor cycles to specific processes and procedures. Our approach combines hardware instrumentation to measure current level with kernel software support to perform statistical sampling of system activity. Postprocessing software maps the sample data to program structure and produces a profile of energy usage by process and procedure. Using PowerScope, we have been able to reduce the energy consumption of an adaptive video playing application by 46\%.},
+  keywords = {Application software,Current measurement,Energy consumption,Hardware,Instruments,Kernel,Performance evaluation,Sampling methods,Software measurement,Software performance}
+}
+
 @inproceedings{guegainAndroWattsUnpackingPower2025,
   title = {{{AndroWatts}}: {{Unpacking}} the {{Power Consumption}} of {{Mobile Device}}'s {{Components}}},
   shorttitle = {{{AndroWatts}}},
@@ -190,6 +267,22 @@
   abstract = {Concerns about the environmental footprint of machine learning are increasing. While studies of energy use and emissions of ML models are a growing subfield, most ML researchers and developers still do not incorporate energy measurement as part of their work practices. While measuring energy is a crucial step towards reducing carbon footprint, it is also not straightforward. This paper introduces the main considerations necessary for making sound use of energy measurement tools and interpreting energy estimates, including the use of at-the-wall versus on-device measurements, sampling strategies and best practices, common sources of error, and proxy measures. It also contains practical tips and real-world scenarios that illustrate how these considerations come into play. It concludes with a call to action for improving the state of the art of measurement methods and standards for facilitating robust comparisons between diverse hardware and software environments.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning,Electrical Engineering and Systems Science - Signal Processing}
+}
+
+@inproceedings{jagroepProfilingEnergyProfilers2015,
+  title = {Profiling Energy Profilers},
+  booktitle = {Proceedings of the 30th {{Annual ACM Symposium}} on {{Applied Computing}}},
+  author = {Jagroep, Erik and {van der Werf}, Jan Martijn E. M. and Jansen, Slinger and Ferreira, Miguel and Visser, Joost},
+  year = 2015,
+  month = apr,
+  series = {{{SAC}} '15},
+  pages = {2198--2203},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/2695664.2695825},
+  urldate = {2026-09-07},
+  abstract = {While energy is directly consumed by hardware, it is the software that provides the instructions to do so. Energy profilers provide a means to measure the energy consumption of software, enabling the user to take measures in making software more sustainable. Although each energy profiler has access to roughly the same data, the reported measurements can differ significantly between energy profilers. In this research, energy profilers are evaluated through a series of experiments on their functionality and the accuracy of the reported measurements. The results show that there is still work to be done before these software tools can be safely used for their intended purpose. As a start, a correction factor is suggested for the energy profilers.},
+  isbn = {978-1-4503-3196-8}
 }
 
 @misc{kayembeExploringPrivacySecurity2025,
@@ -266,6 +359,34 @@
   keywords = {Application-level data management,Energy consumption}
 }
 
+@inproceedings{malavoltaFrameworkAutomaticExecution2021,
+  title = {A Framework for the Automatic Execution of Measurement-Based Experiments on {{Android}} Devices},
+  booktitle = {Proceedings of the 35th {{IEEE}}/{{ACM International Conference}} on {{Automated Software Engineering}}},
+  author = {Malavolta, Ivano and Grua, Eoin Martino and Lam, Cheng-Yu and {de Vries}, Randy and Tan, Franky and Zielinski, Eric and Peters, Michael and Kaandorp, Luuk},
+  year = 2021,
+  month = jan,
+  series = {{{ASE}} '20},
+  pages = {61--66},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/3417113.3422184},
+  urldate = {2026-09-07},
+  abstract = {Conducting measurement-based experiments is fundamental for assessing the quality of Android apps in terms of, e.g., energy consumption, CPU, and memory usage. However, orchestrating such experiments is not trivial as it requires large boilerplate code, careful setup of measurement tools, and the adoption of various empirical best practices scattered across the literature. All together, those factors are slowing down the scientific advancement and harming experiments' replicability in the mobile software engineering area.In this paper we present Android Runner (AR), a framework for automatically executing measurement-based experiments on native and web apps running on Android devices. In AR, an experiment is defined once in a descriptive fashion, and then its execution is fully automatic, customizable, and replicable. AR is implemented in Python and it can be extended with third-party profilers.AR has been used in more than 25 scientific studies primarily targeting performance and energy efficiency.},
+  isbn = {978-1-4503-8128-4}
+}
+
+@inproceedings{noureddineBetterUnderstandingEnergy2014,
+  title = {Towards a Better Understanding of the Energy Consumption of Software Systems},
+  author = {Noureddine, Adel},
+  year = 2014,
+  month = mar,
+  publisher = {Lille 1},
+  doi = {10.70675/122b8657za966z488aza2ddz7918eb8dcbe1},
+  urldate = {2026-09-07},
+  abstract = {Vers une meilleure compr\'ehension de la consommation \'energ\'etique des syst\`emes logiciels           La consommation \'energ\'etique augmente dans les technologies informatiques, notamment \`a cause de l'augmentation de l'utilisation des services web et distribu\'ee, l'informatique dans les nuages, ou les appareils mobiles. Par cons\'equent, des approches de gestion de l'\'energie ont \'et\'e d\'evelopp\'ees, de l'optimisation du code des logiciels, \`a des strat\'egies d'adaptation bas\'ees sur l'utilisation des ressources mat\'erielles. Afin de r\'epondre \`a ces lacunes, nous pr\'esentons dans cette th\`ese, des mod\`eles \'energ\'etiques, approches et outils pour estimer fid\`element la consommation \'energ\'etique des logiciels, au niveau de l'application, et au niveau du code, et pour inf\'erer le mod\`ele d'\'evolution \'energ\'etique des m\'ethodes bas\'e sur leurs param\`etres d'entr\'ees. Nous proposons aussi Jalen et Jalen Unit, des frameworks \'energ\'etiques pour estimer la consommation \'energ\'etique de chaque portion de code de l'application, et pour inf\'erer le mod\`ele d'\'evolution \'energ\'etique des m\'ethodes en se basant sur des \'etudes et exp\'eriences empiriques. En utilisant des mod\`eles \'energ\'etiques et d'outils d'estimations logicielles, nous pouvons proposer des informations \'energ\'etiques pr\'ecises sans avoir besoin de wattm\`etres ou d'investissement de mat\'eriels de mesures \'energ\'etiques. Les informations \'energ\'etiques que nous proposons, offrent aussi aux approches de gestion \'energ\'etique des mesures directes et pr\'ecises pour leurs approches d'adaptations et d'optimisations \'energ\'etiques. Ces informations \'energ\'etiques \'etablissent aussi un mod\`ele d'\'evolution \'energ\'etique des logiciels en se basant sur leurs param\`etres d'entr\'ees. Cela offre aux d\'eveloppeurs une connaissance plus profonde sur l'efficacit\'e \'energ\'etique dans les logiciels.         ,            With the rise of the usage of computers and mobile devices, and the higher price of electricity, energy management of software has become a necessity for sustainable software, devices and IT services. Energy consumption in IT is rising through the rise of web and distributed services, cloud computing, or mobile devices. However, these approaches do not use proper energy information for their adaptations rendering themselves limited and not energy-aware. They do not provide an energy feedback of software, and limited information is available on how and where energy is spend in software code. To address these shortcomings, we present, in this thesis, energy models, approaches and tools in order to accurately estimate the energy consumption of software at the application level, at the code level, and for inferring energy evolution models based on the method's own input parameters. We also propose Jalen and Jalen Unit, energy frameworks for estimating how much energy each portion of code consumes, and for inferring energy evolution models based on empirical benchmarking of software methods. By using software estimations and energy models, we are able to provide accurate energy information without the need of power meters or hardware energy investment. The energy information we provide also gives energy management approaches direct and accurate energy measurements for their adaptations and optimizations. Provided energy information also draws a model of energy consumption evolution of software based on the values of their input parameters. This gives developers knowledge on energy efficiency in software leading to choose some code over others based on their energy performance.},
+  langid = {english}
+}
+
 @techreport{noureddineESurgeonDiagnosingEnergy2012,
   type = {Technical {{Report}}},
   title = {E-{{Surgeon}}: {{Diagnosing Energy Leaks}} of {{Application Servers}}},
@@ -277,6 +398,23 @@
   institution = {INRIA},
   urldate = {2026-02-17},
   abstract = {GreenIT has emerged as a discipline concerned with the optimization of software solutions with regards to energy consumption. In this domain, most of the state-of-the-art solutions concentrate on coarse-grained approaches to monitor the energy consumption of a device or a process. However, none of the existing solutions addresses in-process energy monitoring to provide in-depth analysis of a process energy consumption. In this paper, we therefore report on a fine-grained real-time energy monitoring framework we developed to diagnose energy leaks with a better accuracy than the state-of-the-art. Concretely, our approach adopts a 2-layer architecture including OS-level and process-level energy monitoring. OS-level energy monitoring estimates the energy consumption of processes according to different hardware devices (CPU, network, memory). Process-level energy monitoring focuses on Java-based applications and builds on OS-level energy monitoring to provide an estimation of energy consumption at the granularity of classes and methods. We argue that this per-method analysis of energy consumption provides better insights to the application in order to identify potential energy leaks. In particular, our preliminary validation demonstrates that we can diagnose energy hotspots of Jetty application servers and monitor their variations when stressing web applications.}
+}
+
+@inproceedings{noureddineJolinarAnalysingEnergy2016,
+  title = {Jolinar: Analysing the Energy Footprint of Software Applications (Demo)},
+  shorttitle = {Jolinar},
+  booktitle = {Proceedings of the 25th {{International Symposium}} on {{Software Testing}} and {{Analysis}}},
+  author = {Noureddine, Adel and Islam, Syed and Bashroush, Rabih},
+  year = 2016,
+  month = jul,
+  pages = {445--448},
+  publisher = {ACM},
+  address = {Saarbr\"ucken Germany},
+  doi = {10.1145/2931037.2948706},
+  urldate = {2026-09-07},
+  abstract = {Monitoring energy consumption of applications is crucial for energy optimisation and improvements in software systems. With the recent emphasis on energy efficiency, it is vital that software engineers have an understanding of the energy consumed by the code they write. In this paper, we present Jolinar, a tool that bridges the gap between energy measurements and accessibility to software engineers and even end-users. The tool builds on top of recent energy models to provide an accurate, light and easy-to-use interface for energy measurements. The target audience of Jolinar is both software engineers and non-technical end-users who want to monitor their applications' energy footprint. We show that end-users can use Jolinar's GUI to determine the energy consumed by the software they are using, and software engineers can use the tool to analyse energy consumption of systems to make energy-conscious decisions.},
+  isbn = {978-1-4503-4390-9},
+  langid = {english}
 }
 
 @article{noureddineMonitoringEnergyHotspots2015,
@@ -353,6 +491,25 @@
   abstract = {Every day, we experience the effects of the global warming: extreme weather events, major forest fires, storms, global warming, etc.The scientific community acknowledges that this crisis is a consequence of human activities where Information and Communications Technologies (ICT) are an increasingly important contributor.Computer scientists need tools for measuring the footprint of the code they produce and for optimizing it. Running Average Power Limit (RAPL) is a low-level interface designed by Intel that provides a measure of the energy consumption of a CPU (and more) without the need for additional hardware. Since 2017, it is available on most computing devices, including non-Intel devices such as AMD processors.More and more people are using RAPL for energy measurement, mostly like a black box without deep knowledge of its behavior.Unfortunately, this causes mistakes when implementing measurement tools.In this paper, we propose to come back to the basic mechanisms that allow to use RAPL measurements and present a critical analysis of their operations. In addition to long-established mechanisms, we explore the suitability of the recent eBPF technology (formerly and abbreviation for extended Berkeley Packet Filter) for working with RAPL.For each mechanism, we release an implementation in Rust that avoids the pitfalls we detected in existing tools, improving correctness, timing accuracy and performance. These new implementations have desirable properties for monitoring and profiling parallel applications.We also provide an experimental study with multiple benchmarks and processor models (Intel and AMD) in order to evaluate the efficiency of the various mechanisms and their impact on parallel software.These experiments show that no mechanism provides a significant performance advantage over the others. However, they differ significantly in terms of ease-of-use and resiliency.We believe that this work will help the community to develop correct, resilient and lightweight measurement tools.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Performance}
+}
+
+@article{sanlialpEnergyEfficiencyAnalysis2022,
+  title = {Energy {{Efficiency Analysis}} of {{Code Refactoring Techniques}} for {{Green}} and {{Sustainable Software}} in {{Portable Devices}}},
+  author = {{\c S}anl{\i}alp, {\.I}brahim and {\"O}zt{\"u}rk, Muhammed Maruf and Yi{\u g}it, Tuncay},
+  year = 2022,
+  month = jan,
+  journal = {Electronics},
+  volume = {11},
+  number = {3},
+  pages = {442},
+  publisher = {Multidisciplinary Digital Publishing Institute},
+  issn = {2079-9292},
+  doi = {10.3390/electronics11030442},
+  urldate = {2026-09-07},
+  abstract = {Code refactoring is a time-consuming and effort-intensive process that is applied for making improvements to source codes. There exist several refactoring techniques to improve software quality. Some of them aim to reduce the energy consumption of the software. However, the combination of applied refactoring techniques is crucial to the success rate. In addition, to provide sustainable services on portable devices such as mobile phones and laptops, which rely on batteries, improving and optimizing the energy efficiency is important. This study focuses on examining the effect of code refactoring techniques on energy consumption. A total of 25 different source codes of applications programmed in the C\# and Java languages are selected for the study, and combinations obtained from refactoring techniques are applied to these source codes. The combinations applied are analyzed using the maintainability index. Power consumption estimation tools are used to measure the energy consumption of the original and refactored codes. The results show that the combinations significantly improve the software's energy efficiency. The results will provide a better understanding of the relationship between the energy efficiency of software and refactoring techniques. Moreover, they will help developers to improve their object-oriented code in terms of both energy efficiency and sustainability.},
+  copyright = {http://creativecommons.org/licenses/by/3.0/},
+  langid = {english},
+  keywords = {code refactoring,energy consumption,energy efficiency,green and sustainable software,maintainability index,object-oriented code,sustainability}
 }
 
 @misc{tararaRAPLSGXEnergy,
