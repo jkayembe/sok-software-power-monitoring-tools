@@ -20,6 +20,11 @@
 
 % Miscellaneous
 \usepackage{framed}
+\usepackage{pifont}
+\usepackage{longtable,array}
+\usepackage{booktabs}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
 
 \usepackage{xcolor}
 \usepackage[color=green, textsize=footnotesize, textwidth=15mm]{todonotes}
@@ -42,7 +47,7 @@
 
 \begin{document}
 
-\title{SoK: Software Power Monitoring Tools}
+\title{SoK: Software Energy Profiling Tools}
 
 % \author{Jason Kayembe}
 
@@ -70,7 +75,7 @@
 \input{abstract.tex}
 \end{abstract}
 
-\keywords{\todo{todo}}
+\keywords{software energy profiling, energy attribution, software-defined power models, RAPL, green software, virtualisation}
 
 \maketitle
 % ------------------------------------------------------------------------------
@@ -79,94 +84,52 @@
 
 The energy consumption of software systems has attracted increasing attention in recent years. Digital services continue to scale across a wide range of computing contexts, from mobile and embedded devices to large-scale cloud infrastructures. They are increasingly recognised as not only being passive consumers of hardware resources, but also direct determinants of system-level power and energy demand. Therefore, the ability to measure and reason about software-induced energy consumption is crucial for energy-aware software engineering, and green system design.
 
-Over the past decade, diverse tools have emerged to measure or estimate the power and energy consumption of software. These tools can differ substantially in their underlying measurement principles, abstraction level and intended use cases. Some tools rely on external power meters or hardware-exposed energy interfaces provided by modern processors, e.g. Intel RAPL or Nvidia NVLM, while others estimate energy consumption using models that may be trained or theoretically designed to estimate system power based on hardware performance counters, operating system statistics, or analytical relations. Tools also vary in the granularity at which energy is attributed, ranging from whole-system measurements to per-process, per-virtual-machine, or even per-function estimates. This diversity directly reflects the multitude of use-case scenarios, but also makes it difficult to understand the trade-offs involved and to select appropriate tools for a given context.
+Over the past decade, diverse tools have emerged to measure or estimate the power and energy consumption of software. These tools can differ substantially in their underlying measurement principles, abstraction level and intended use cases. Some tools rely on external power meters or hardware-exposed energy interfaces provided by modern processors, e.g. Intel RAPL or Nvidia NVML, while others estimate energy consumption using models that may be trained or theoretically designed to estimate system power based on hardware performance counters, operating system statistics, or analytical relations. Tools also vary in the granularity at which energy is attributed, ranging from whole-system measurements to per-process, per-virtual-machine, or even per-function estimates. This diversity directly reflects the multitude of use-case scenarios, but also makes it difficult to understand the trade-offs involved and to select appropriate tools for a given context.
 
-Existing literature focuses on proposing new tools or evaluating individual techniques in isolation. While several surveys exist \cite{wysockiMethodsImprovingSoftware2025}, they tend to catalogue tools or measurement methods without providing a unifying structure that explains why certain approaches are suitable for specific environments and goals, and why others are not. Additionally, the increasing use of virtualisation and cloud-native environments introduces new complexities such as limited hardware visibility, multi-tenancy, and the lack of access to physical power measurements that are not systematically addressed in existing measurement approaches.
-\todo{Iness: "tools for a given context.", "understand the trade-offs", "given context" these seems the critique of the litterature, hence will this SoK provide answers to these limits?}
+Existing literature focuses on proposing new tools or evaluating individual techniques in isolation. While several surveys and comparative studies exist \cite{wysockiMethodsImprovingSoftware2025,jayExperimentalComparisonSoftwarebased2023,pathaniaCalculatingSoftwaresEnergy2025,aneggiMeasuringSoftwareEnergy2026}, they tend to catalogue or benchmark tools and to give tool-specific recommendations, without providing a unifying structure that explains why certain approaches are suitable for specific environments and goals, and why others are not. Additionally, the increasing use of virtualisation and cloud-native environments introduces new complexities such as limited hardware visibility, multi-tenancy, and the lack of access to physical power measurements that are not systematically addressed in existing measurement approaches.
 
-In this paper, we present a Systematisation of Knowledge (SoK) on software power and energy measurement tools. While we do not aim for an exhaustive survey, our goal is to organise existing tools and approaches along dimensions that capture their main design choices, operational trade-offs, and practical applicability.
+In this paper, we present a Systematisation of Knowledge (SoK) on software energy profiling tools, i.e. tools that attribute hardware energy or power consumption to software entities. In the literature, such tools are also referred to as software-defined power meters \cite{colmantBitWattsProcesslevelPower2014,fieniSmartWattsSelfCalibratingSoftwareDefined2020,fieniPowerAPIPythonFramework2024}, software-based power meters \cite{jayExperimentalComparisonSoftwarebased2023}, or process-level power models \cite{cadorelProtocolAssessAccuracy2024b}. While we do not aim for an exhaustive survey, our goal is to examine in depth how a representative set of tools attribute hardware energy to software entities, and to organise existing tools and approaches along dimensions that capture their main design choices, operational trade-offs, and practical applicability.
 
-More specifically, we systematise profiling tools according to dimensions including: \todo{Make it a paragraph}
-\begin{itemize}
+More specifically, we systematise profiling tools along their granularity, i.e. the software entities to which energy is attributed, their measurement sources, i.e. how hardware energy and software activity are obtained, their allocation model, i.e. how hardware energy is distributed among software entities, including the treatment of idle consumption, and their support for virtualised and cloud-native environments. We complement these design choices with the operational constraints they induce: accuracy validation, temporal resolution, overhead, code modification, privilege requirements and platform dependencies.
 
-    \item \emph{Granularity}: what software entities are attributed energy consumption,
+This systematisation exposes common patterns, implicit assumptions, and trade-offs that are often obscured when tools are considered individually. In contrast to existing surveys, which group tools into energy calculators, energy measurement software and power profiling software \cite{jayExperimentalComparisonSoftwarebased2023}, according to how they calculate energy and carbon emissions \cite{pathaniaCalculatingSoftwaresEnergy2025}, or according to the data they collect and produce \cite{aneggiMeasuringSoftwareEnergy2026}, our taxonomy is organised around how tools attribute hardware energy to software entities.
 
-    \item \emph{Measurement sources}: how energy and activity information are obtained,
+The contributions of this SoK are fourfold. First, we identify the challenges of attributing hardware energy to software entities, and the methods through which existing tools address them. Secondly, we propose a taxonomy that organises these methods into a design space and the operational constraints they induce, and apply it to fourteen tools in a comparative table. Third, from this comparison, we relate design choices to the use cases they serve, derive recommended practices and the tools that come closest to them, and identify research gaps. Fourth, we propose a set of validation questions that developers, users and evaluators of profiling tools can answer with the comparative table, so that the evidence behind reported results can be interpreted. By consolidating and structuring existing knowledge, this paper aims to serve as a foundation for both empirical research and tool development in software energy profiling.
 
-    \item \emph{Allocation model}: how system-level energy is distributed across software entities,
+\section{Related Work}\label{sec:related-work}
 
-    \item \emph{Virtualised environment support}: how profiling is supported in virtualised and cloud-native infrastructures,
+Several studies focus on individual software energy profiling tools. These studies are valuable because they provide detailed insights into the design, capabilities, and limitations of specific profilers, which we later use to position them within our taxonomy. Examples include evaluations of Kepler's suitability for cloud power observability \cite{bellalInvestigatingPotentialKepler}, the Green Metrics Tool \cite{hoffmannGreenMetricsTool2025}, e-Surgeon for diagnosing energy leaks in application servers \cite{noureddineESurgeonDiagnosingEnergy2012}, and CNCF's review of cloud-native sustainability tooling \cite{cncfExploringKeplersPotentials2023}. Similarly, Noureddine \cite{noureddinePowerJoularJoularJXMultiPlatform2022} presents PowerJoular and JoularJX, highlighting their multi-platform support and demonstrating how software energy measurements can be used to compare programming language choices across platforms. Khan et al. \cite{khanEnergyProfilingUsing2015} present the energy profiling module of IgProf, which attributes RAPL measurements to functions through statistical sampling.
 
-    \item \emph{Operational constraints}: accuracy, temporal resolution, runtime overhead, code modification requirement, privilege requirements, portability, and platform dependencies,
+A second category of work compares a limited number of tools or measurement approaches to investigate specific design choices. Jagroep et al. \cite{jagroepProfilingEnergyProfilers2015} attempted to evaluate fourteen energy profilers against a wall-plug power meter, but could install only six of them and make two operational, Joulemeter and EC Tools. pTop and PowerTOP, for instance, did not produce any energy estimate in their setting. The estimates of Joulemeter and EC Tools differed significantly from the measured consumption in most scenarios, and the authors suggest correction factors of about 5\%. Centofanti et al. \cite{centofantiImpactPowerConsumption2024} evaluate several techniques for monitoring power consumption in cloud environments, including Kepler, Scaphandre, external smart power meters, and system-level measurements. Their results show that measured consumption can vary significantly depending on the selected monitoring approach. Raffin and Trystram \cite{raffinDissectingSoftwarebasedMeasurement2024} compare multiple mechanisms for accessing RAPL measurements, including direct Model-Specific Register (MSR) access, operating-system interfaces, and eBPF. Their study highlights important trade-offs regarding measurement latency, implementation complexity, and overhead. Notably, they conclude that higher-level interfaces such as perf-events often provide the best balance between efficiency and usability, while excessive sampling frequencies may significantly increase energy consumption by preventing processors from entering low-power states.
 
-    \item \emph{Maturity and ecosystem}: deployment complexity, availability and licensing, validation, maintenance status, documentation quality, case studies, community adoption, and additional metrics provided by the tool.
+Other related studies attempt to provide broader overviews of available energy measurement and monitoring tools. Wysocki et al. \cite{wysockiMethodsImprovingSoftware2025} survey methods for improving software energy efficiency and identify profiling tools as essential instruments for quantifying optimisation gains. Pathania et al. \cite{pathaniaCalculatingSoftwaresEnergy2025} survey 21 tools for calculating the energy consumption and carbon emissions of software, and classify the underlying approaches as monitoring, estimation or black-box approaches. This taxonomy characterises how energy is obtained rather than how it is attributed, and the authors identify the lack of process-level visibility as one of the main challenges of existing tools. Jagannadharao et al. \cite{jagannadharaoBeginnersGuidePower2024} provide a comprehensive introduction to power and energy measurement for computing systems and machine learning workloads, including a catalogue of available measurement and estimation tools. Zoni et al. \cite{zoniSurveyRuntimePower2023} survey run-time power monitoring approaches for edge systems and propose a taxonomy of hardware-level power estimation techniques. Their work focuses primarily on the generation of hardware power metrics, whereas our study focuses on how software profiling tools allocate hardware energy consumption to software entities.
 
-\end{itemize}
+Cadorel and Saingre \cite{cadorelProtocolAssessAccuracy2024b} address the lack of validation of software-level power allocation models by proposing a formal definition of power division and an associated evaluation protocol. Their approach first measures the active consumption of applications when executed individually, then runs pairs of applications concurrently without CPU contention and compares the allocation produced by the model with the ratio observed during isolated execution. The authors apply this protocol to Scaphandre and to PowerAPI, in its version implementing the SmartWatts formula \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020,fieniPowerAPIPythonFramework2024}, using CPU stress workloads, and show that both models can produce allocation errors and context-dependent results, particularly when CPU frequency varies. Their protocol therefore evaluates the allocation between software entities rather than only checking whether the sum of their estimates matches the total machine consumption. This version of PowerAPI differs from the original PowerAPI library used in e-Surgeon \cite{noureddineMonitoringEnergyHotspots2015}, which estimates CPU power from the processor frequency and voltage.
 
-This systematisation exposes common patterns, implicit assumptions, and trade-offs that are often obscured when tools are considered individually.
-\todo{Here or in the next paragraph: Highlight the novelty of the taxonomy
-relative to existing surveys. Maybe as transition to the next section.}
+The work most closely related to ours is the review by Noureddine et al. \cite{noureddineReviewEnergyMeasurement2013} in 2013, whose comparison table is also reproduced in Noureddine's thesis \cite{noureddineBetterUnderstandingEnergy2014}. The authors group energy measurement approaches into hardware measurement, power models and software measurement, and compare them according to dimensions such as monitored resources, energy precision, operating-system modifications, software modifications, and hardware investment. Several of these dimensions correspond directly to dimensions in our taxonomy, including profiling granularity, deployment complexity, code modification requirements, and the use of external power meters. However, the power model of each tool is described individually, and the comparison does not characterise how hardware energy is distributed among software entities. Our work builds upon this foundation in three respects. First, we abstract the allocation models of existing tools into common top-down and bottom-up formulations, and distinguish four activity share estimation strategies, the handling of idle consumption, and the support of virtualised environments. Secondly, we extend the analysis to modern profiling tools and techniques. In particular, many profilers available today rely on hardware power interfaces such as RAPL, which were not yet widely available when the review was conducted and therefore were not a major consideration in the surveyed approaches. Third, the analysed tools result from an explicit selection process based on seed tools, inclusion and exclusion criteria, and snowballing (Section~\ref{sec:profiler-selection}).
 
-The contributions of this SoK are threefold. First, we propose a taxonomy of software energy measurement approaches that clarifies the design space and provides a shared vocabulary for future work. Secondly, we derive a decision framework that supports researchers and practitioners in selecting measurement tools based on their experimental goals and operational constraints. Third, through a comparative analysis of representative tools, we identify open challenges and research gaps. By consolidating and structuring existing knowledge, this paper aims to serve as a foundation for both empirical research and tool development in software energy measurement.
-\todo{Can we turn the comparison into a set of findings about the design
-space, rather than a catalogue of tools and their use cases? Which parts of
-that design space have not yet been explored?}
+Two more recent studies are also closely related to ours. Jay et al. \cite{jayExperimentalComparisonSoftwarebased2023} qualitatively and experimentally compare nine software-based power meters, including Scaphandre, PowerAPI with the SmartWatts formula, and Perf. Their qualitative comparison relies on criteria such as hardware compatibility, reporting scope, virtualisation support, the hardware interface used, the software power model, the default sampling frequency, licensing, and documentation quality, several of which overlap with our operational constraints. Their evaluation against an external power meter shows that the power profiles of RAPL- and NVML-based tools are strongly correlated with the physical measurements, but with a non-constant offset, which the authors attribute to components not covered by these interfaces, such as fans and the power supply unit. However, tools are grouped into energy calculators, energy measurement software and power profiling software, and the allocation model is reduced to a single comparison criterion. Process-level attribution is only evaluated for PowerAPI and Scaphandre, whose estimates diverge for concurrent memory-intensive workloads, and the authors note that they cannot determine which estimate is correct without a reference. Finally, sub-process granularities are not covered, and cloud-native tools such as Kepler are outside their scope. Our work is complementary: rather than benchmarking tools, we systematise the design choices through which they attribute hardware energy to software entities, and use their experimental results as evidence where relevant.
 
-\section{Related Work}
+Aneggi et al. \cite{aneggiMeasuringSoftwareEnergy2026} compare ten open-source RAPL-based tools and classify them into raw data tools, derived metrics tools, collectors and middleware, according to the data they collect and produce. They additionally characterise the attribution method of each tool as time-window, proportional, model-based or formula-based attribution. This dimension partly overlaps our allocation model: proportional and model-based attribution roughly correspond to our directly proportional and proxy reconstruction strategies, and time-window attribution to execution markers delimiting the whole workload. However, their study is restricted to RAPL-based tools and to host, process and cgroup granularities. It therefore does not cover statistical sampling or code-section attribution, and does not characterise how tools handle idle consumption.
 
-\todo[inline]{Potentially missing stuff: Pathania et al., Calculating
-Software's Energy Use and Carbon Emissions: A Survey of the State of Art,
-Challenges, and the Way Ahead, \url{https://arxiv.org/abs/2506.09683}; Jay
-et al., An experimental comparison of software-based power meters: focus on
-CPU and GPU, \url{https://hal.univ-lorraine.fr/MIAI/hal-04030223v2}; Aneggi
-et al., Measuring Software Energy in Practice: A Guide to RAPL-Based Tools,
-\url{https://portal.findresearcher.sdu.dk/en/publications/measuring-software-energy-in-practice-a-guide-to-rapl-based-tools/}}
-
-Several studies focus on individual software energy profiling tools. These studies are valuable because they provide detailed insights into the design, capabilities, and limitations of specific profilers, which we later use to position them within our taxonomy. Examples include evaluations of Kepler's suitability for cloud power observability \cite{bellalInvestigatingPotentialKepler}, the Green Metrics Tool \cite{hoffmannGreenMetricsTool2025}, e-Surgeon for diagnosing energy leaks in application servers \cite{noureddineESurgeonDiagnosingEnergy2012}, and CNCF's review of cloud-native sustainability tooling \cite{cncfExploringKeplersPotentials2023}. Similarly, Noureddine \cite{noureddinePowerJoularJoularJXMultiPlatform2022} presents PowerJoular and JoularJX, highlighting their multi-platform support and demonstrating how software energy measurements can be used to compare programming language choices across platforms. Di Nucci et al. \cite{dinucciSoftwarebasedEnergyProfiling2017} discuss the energy profiling capabilities of IgProf and its integration into software optimisation workflows.
-
-A second category of work compares a limited number of tools or measurement approaches to investigate specific design choices. Centofanti et al. \cite{centofantiImpactPowerConsumption2024} evaluate several techniques for monitoring power consumption in cloud environments, including Kepler, Scaphandre, external smart power meters, and system-level measurements. Their results show that measured consumption can vary significantly depending on the selected monitoring approach. Raffin and Trystram \cite{raffinDissectingSoftwarebasedMeasurement2024} compare multiple mechanisms for accessing RAPL measurements, including direct Model-Specific Register (MSR) access, operating-system interfaces, and eBPF. Their study highlights important trade-offs regarding measurement latency, implementation complexity, and overhead. Notably, they conclude that higher-level interfaces such as perf-events often provide the best balance between efficiency and usability, while excessive sampling frequencies may significantly increase energy consumption by preventing processors from entering low-power states.
-
-Other related studies attempt to provide broader overviews of available energy measurement and monitoring tools. Wysocki et al. \cite{wysockiMethodsImprovingSoftware2025} survey methods for improving software energy efficiency and identify profiling tools as essential instruments for quantifying optimisation gains. Jagannadharao et al. \cite{jagannadharaoBeginnersGuidePower2024} provide a comprehensive introduction to power and energy measurement for computing systems and machine learning workloads, including a catalogue of available measurement and estimation tools. Zoni et al. \cite{zoniSurveyRuntimePower2023} survey run-time power monitoring approaches for edge systems and propose a taxonomy of hardware-level power estimation techniques. Their work focuses primarily on the generation of hardware power metrics, whereas our study focuses on how software profiling tools allocate hardware energy consumption to software entities.
-
-Cadorel and Saingre \cite{cadorelProtocolAssessAccuracy2024b} address the lack of validation of software-level power allocation models by proposing a formal definition of power division and an associated evaluation protocol. Their approach first measures the active consumption of applications when executed individually, then runs pairs of applications concurrently without CPU contention and compares the allocation produced by the model with the ratio observed during isolated execution. The authors apply this protocol to Scaphandre and PowerAPI using CPU stress workloads, and show that both models can produce allocation errors and context-dependent results, particularly when CPU frequency varies. Their protocol therefore evaluates the allocation between software entities rather than only checking whether the sum of their estimates matches the total machine consumption.
-
-The work most closely related to ours is the review by Noureddine et al. \cite{noureddineReviewEnergyMeasurement2013} in 2013. The authors compare energy measurement approaches according to dimensions such as monitored resources, energy precision, operating-system modifications, software modifications, and hardware requirements. Several of these dimensions correspond directly to dimensions in our taxonomy, including profiling granularity, deployment complexity, code modification requirements, and the use of external power meters. Our work builds upon this foundation while extending the analysis to modern profiling tools and techniques. In particular, many profilers available today rely on hardware power interfaces such as RAPL, which were not yet widely available when the review was conducted and therefore were not a major consideration in the surveyed approaches.\todo{I think this paper should be further elaborated. SInce it is the closest one to your paper therefore I think you should explain more how your paper provides a much stronger controbution. from this paragraph it sounds like the only difference is just the number of tools. what about the classes? the methodology?...}
-
-To the best of our knowledge, existing surveys either focus on individual tools, compare a limited set of monitoring approaches, or provide catalogues of available solutions. None systematically characterise the design space of software energy profilers in terms of the dimensions that determine their applicability, trade-offs, and suitability for different usage contexts. This gap motivates the need for a systematisation of knowledge that explains not only which tools exist, but also why different classes of tools are required.
+To the best of our knowledge, existing surveys either focus on individual tools, compare a limited set of monitoring approaches, experimentally evaluate tools against physical measurements, or classify available solutions according to their output or measurement approach. None systematically characterise the design space of software energy profilers in terms of the dimensions that determine their applicability, trade-offs, and suitability for different usage contexts. This gap motivates the need for a systematisation of knowledge that explains not only which tools exist, but also why different classes of tools are required.
 
 
 \section{Methodology}
 
-\subsection{Profiler selection}
-\todo{I think this first paragraph should be put at the end of 3.1. Starting with seed selection, inclusion, exclusion and snowballing will make the methodology clear for the readers and then you add further comments such as 12 tools, open source etc...}
-The objective of this study is not to produce an exhaustive catalogue of existing software energy profiling tools, but rather to analyse a representative set covering the main measurement approaches currently adopted in the literature and in practice.
-\todo{As a reviewer I might write: \enquote{The study explicitly limits
-itself to twelve representative tools and says it is not intended to be
-exhaustive. That poses a significant challenge for a journal survey.} --
-can we claim that we systematically and exhaustively cover the current
-design space? Also, unsure if twelve was the outcome of the search, or a
-limit imposed on the search?}
-To keep the study tractable while covering the breadth of the design space, the analysis was intentionally limited to twelve tools.
-
-In particular, seed tools were selected based on:
-\begin{itemize}
-    \item prior use in peer-reviewed academic publications,
-    \item availability of public documentation or source code,
-    \item relevance to contemporary execution environments, including virtualised and containerised systems.
-\end{itemize}
-
+\subsection{Profiler selection}\label{sec:profiler-selection}
 \textbf{Seed selection}
 
-The selection process was initiated from three well-established seed tools representing different parts of the software energy profiling landscape: \emph{Kepler} \cite{centofantiImpactPowerConsumption2024,amaralKeplerFrameworkCalculate2023,bellalInvestigatingPotentialKepler}, \emph{Green Metrics Tool} \cite{hoffmannGreenMetricsTool2025,kayembeExploringPrivacySecurity2025}, and \emph{e-Surgeon} \cite{noureddineMonitoringEnergyHotspots2015}. These tools were chosen because they are well documented, frequently referenced in the literature, and representative of different measurement and attribution strategies.
+The selection process was initiated from three seed tools representing different parts of the software energy profiling landscape: \emph{Kepler} \cite{centofantiImpactPowerConsumption2024,amaralKeplerFrameworkCalculate2023,bellalInvestigatingPotentialKepler}, \emph{Green Metrics Tool} \cite{hoffmannGreenMetricsTool2025}, and \emph{e-Surgeon} \cite{noureddineMonitoringEnergyHotspots2015}. Kepler had been evaluated in previous studies \cite{centofantiImpactPowerConsumption2024,bellalInvestigatingPotentialKepler}. The Green Metrics Tool is described in a peer-reviewed publication \cite{hoffmannGreenMetricsTool2025} and combines container-level attribution with execution time markers, and we had also used it in our previous work \cite{kayembeExploringPrivacySecurity2025}. e-Surgeon was identified through exploratory keyword searches. Seed tools were additionally required to provide public documentation or source code, and to be relevant to contemporary execution environments, including virtualised and containerised systems. Together, they cover different measurement and attribution strategies, from container-level attribution in cloud-native environments to code-level attribution in Java applications.
 
 \textbf{Inclusion criteria}
 
 Candidate tools were included if they satisfied all of the following criteria:
 
 \begin{itemize}
-    \item \emph{Scientific grounding.} The tool is described in a peer-reviewed publication or a sufficiently documented technical report, allowing its measurement methodology and assumptions to be analysed.
-    
-    \item \emph{Software energy profiling.} The tool provides energy or power measurements attributable to software entities (e.g., process, container or application), rather than only exposing hardware measurements.
+    \item \emph{Peer-reviewed.} The tool is described in at least one peer-reviewed publication.
+
+    \item \emph{Software energy attribution.} The tool provides energy or power measurements attributable to software entities (e.g., process, container or application), rather than only exposing hardware measurements.
 
     \item \emph{Representative execution environments.} The tool targets contemporary computing environments, including bare-metal systems, virtual machines, containers or cloud platforms.
 \end{itemize}
@@ -176,12 +139,12 @@ Candidate tools were included if they satisfied all of the following criteria:
 Candidate tools were excluded if they met one or more of the following conditions:
 
 \begin{itemize}
-    \item \emph{Insufficient documentation.} The measurement methodology, assumptions or evaluation could not be established from publicly available sources.
+    \item \emph{Undisclosed methodology.} The measurement sources, power model or allocation mechanism of the tool cannot be established from its publications, documentation or source code, so that the tool cannot be characterised with the taxonomy of Section~\ref{taxonomy}.
 
-    \item \emph{Purely theoretical model.} The work proposes a measurement approach without an implemented tool or empirical evaluation.
-    
+    \item \emph{Unavailable implementation.} No implementation of the tool can be obtained, either because none was released or because it is no longer distributed.
+
     \item \emph{Mobile-only platforms.} The tool exclusively targets smartphones or mobile operating systems, as this study focuses on general-purpose computing and cloud environments.
-    
+
 \end{itemize}
 
 \textbf{Snowballing strategy}
@@ -194,35 +157,95 @@ To reduce the bias introduced by the initial seed selection and improve the repr
     \item comparative studies discussing related software energy profiling tools.
 \end{itemize}
 
-Candidate tools identified through snowballing were evaluated against the same inclusion and exclusion criteria. The process was repeated until no additional representative tools satisfying the criteria were identified or the target set of twelve tools had been reached.
+Candidate tools identified through snowballing were evaluated against the same inclusion and exclusion criteria, and each newly selected tool was in turn used as a starting point for snowballing. A few candidates were also identified through exploratory keyword searches and screened in the same way. Snowballing was stopped for practical reasons, before reaching saturation. In particular, we did not follow all the tools discussed in the surveys and comparative studies of Jagroep et al. \cite{jagroepProfilingEnergyProfilers2015}, Jay et al. \cite{jayExperimentalComparisonSoftwarebased2023}, Pathania et al. \cite{pathaniaCalculatingSoftwaresEnergy2025} and Aneggi et al. \cite{aneggiMeasuringSoftwareEnergy2026}, as characterising a tool with our taxonomy requires examining its publications, documentation and source code along every dimension. Appendix~\ref{app:not-analysed} lists the candidate tools identified in these sources but not analysed.
+
+\begin{table}[t]
+\caption{Screening of the considered tools against the inclusion and exclusion criteria of Section~\ref{sec:profiler-selection}. A \cmark{} indicates that the tool satisfies the inclusion criterion or is not affected by the exclusion criterion, and a \xmark{} the opposite. Inclusion criteria: PR, peer-reviewed; SEA, software energy attribution; REE, representative execution environment. Exclusion criteria: UM, undisclosed methodology; UI, unavailable implementation; MO, mobile-only platform. $^{*}$jRAPL and IgProf attribute the whole hardware energy of an interval to the code executed during it, without separating the monitored process from concurrent activity (see Section~\ref{sec:profiler-selection}).}
+\label{tab:inclusion-exclusion}
+\small
+\begin{tabular}{@{}lccc@{\hspace{1.2em}}cccl@{}}
+\toprule
+ & \multicolumn{3}{c}{\textbf{Inclusion}} & \multicolumn{3}{c}{\textbf{Exclusion}} & \\
+\cmidrule(r{1.2em}){2-4}\cmidrule(lr){5-7}
+\textbf{Tool} & \textbf{PR} & \textbf{SEA} & \textbf{REE} & \textbf{UM} & \textbf{UI} & \textbf{MO} & \textbf{Status}\\
+\midrule
+BitWatts & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected\\
+e-Surgeon (Jalen) & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected\\
+e-Surgeon (PowerAPI) & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected\\
+Green Metrics Tool & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected\\
+IgProf & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected$^{*}$\\
+Joular Core & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected\\
+JoularJX & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected\\
+jRAPL & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected$^{*}$\\
+Kepler ($\leq$ 0.9) & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected\\
+Kepler ($\geq$ 0.10) & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected\\
+KubeWatt & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected\\
+PowerJoular & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected\\
+Scaphandre & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected\\
+SmartWatts & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & Selected\\
+\midrule
+Android Runner & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark & Excluded\\
+AndroWatts & \cmark & \xmark & \cmark & \cmark & \cmark & \xmark & Excluded\\
+eprof & \cmark & \cmark & \cmark & \cmark & \xmark & \cmark & Excluded\\
+GreenOracle & \cmark & \xmark & \cmark & \cmark & \cmark & \xmark & Excluded\\
+Intel Power Gadget & \cmark & \xmark & \cmark & \cmark & \cmark & \cmark & Excluded\\
+Jolinar & \cmark & \cmark & \cmark & \xmark & \xmark & \cmark & Excluded\\
+Joule Profiler & \cmark & \xmark & \cmark & \cmark & \cmark & \cmark & Excluded\\
+Joulemeter & \cmark & \cmark & \cmark & \xmark & \xmark & \cmark & Excluded\\
+PETrA & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark & Excluded\\
+PowerScope & \cmark & \cmark & \xmark & \cmark & \xmark & \cmark & Excluded\\
+PowerTOP & \cmark & \cmark & \cmark & \xmark & \cmark & \cmark & Excluded\\
+pTop & \cmark & \cmark & \cmark & \cmark & \xmark & \cmark & Excluded\\
+RAPL & \cmark & \xmark & \cmark & \cmark & \cmark & \cmark & Excluded\\
+s-tui & \cmark & \xmark & \cmark & \cmark & \cmark & \cmark & Excluded\\
+Trepn Profiler & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark & Excluded\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \textbf{Outcome of the selection process}
 
-The resulting dataset comprises twelve representative software energy profiling tools covering different measurement sources, attribution mechanisms, granularities and execution environments. Each tool is characterised using the taxonomy proposed in Section~\ref{taxonomy} and summarised in a comparative table. This analysis forms the basis for identifying the strengths, limitations and design trade-offs of current software energy profiling approaches.
+Table~\ref{tab:inclusion-exclusion} reports the screening of all considered tools against these criteria, and Appendix~\ref{app:considered-tools} describes each of them. The selected tools cover different measurement sources, attribution mechanisms, granularities and execution environments. Each tool is characterised using the taxonomy proposed in Section~\ref{taxonomy} and summarised in a comparative table. This analysis forms the basis for identifying the strengths, limitations and design trade-offs of current software energy profiling approaches.
 
-\subsection{Taxonomy construction}
-\todo{dont strat the sentence with negative form "our objective was NOT	...". Instead something positive form and strong "Our goal in this paper is to construct a taxonomy that captures the principal design choices shaping software energy profiling". Readers and reviews indeed are not expecting "arbitrary charactritics"}
-Our objective was not to define arbitrary characteristics for comparing tools, but to construct a taxonomy that captures the principal design choices shaping software energy profiling. To achieve this, we first identified the recurring challenges reported in the literature and then defined a set of observable dimensions describing how different tools address these challenges.
+\textbf{Scope of the selection}
 
-The development of the taxonomy was conducted iteratively alongside the tool selection process. As we identified candidate tools and examined their publications, documentation and source code, we progressively extracted recurring design choices, implementation strategies and trade-offs. Whenever we observed that a particular aspect significantly influenced the performance, the limits or implementation of several tools, we introduced it as a taxonomy dimension. Conversely, characteristics that did not meaningfully distinguish tools or were specific to a single implementation were discarded.
+The selection aims to cover the main measurement and attribution approaches currently adopted in the literature and in practice, rather than to catalogue every existing software energy profiling tool. The number of available tools is large and keeps growing: recent surveys and comparative studies together discuss several dozen tools \cite{jagroepProfilingEnergyProfilers2015,jayExperimentalComparisonSoftwarebased2023,pathaniaCalculatingSoftwaresEnergy2025,aneggiMeasuringSoftwareEnergy2026}, many of which are energy calculators or hardware monitoring utilities that do not attribute energy to software entities. Since the taxonomy was built iteratively along with the tool selection (Section~\ref{sec:taxonomy-construction}), the analysis of further tools may reveal mechanisms that it does not yet capture, and we do not claim that it is complete. The contribution of this study therefore lies in the depth of the analysis rather than in its breadth. All selected tools are open-source. For each selected tool, we examine how hardware energy is allocated to software entities, which assumptions this allocation relies on, how idle consumption is handled and how virtualised environments are supported, aspects that existing surveys reduce to a single criterion or do not address (Section~\ref{sec:related-work}). Tools that rely on the same approach as an already selected tool add little to the systematisation, whereas excluded candidates may still document approaches that are no longer implemented in available tools. We therefore also draw on excluded tools when they illustrate a design choice, as discussed in Section~\ref{sec:taxonomy-construction}.
+
+\textbf{Time-window attribution}
+
+Several candidate tools report the energy of the whole hardware over the execution of a command, a phase or a code block, such as jRAPL \cite{liuDataOrientedCharacterizationApplicationLevel2015}, Joule Profiler \cite{woirhayeJouleProfilerPhasebased2026}, EnergiBridge \cite{aneggiMeasuringSoftwareEnergy2026} and PyJoules \cite{pathaniaCalculatingSoftwaresEnergy2025}. These tools do not separate the monitored software from concurrent activity. They nevertheless attribute energy to software, under the strong assumption that the monitored software is responsible for the whole energy consumed by the hardware during the interval. This assumption becomes more valid as the monitored workload is better isolated from other activity on the machine. IgProf \cite{khanEnergyProfilingUsing2015} applies the same assumption at each sampling interval, attributing the whole RAPL energy consumed since the previous sample to the current call stack. We include jRAPL and IgProf as representatives of this approach at code-section granularity, and do not analyse the other tools of this kind.
+
+\subsection{Taxonomy construction}\label{sec:taxonomy-construction}
+Our goal is to construct a taxonomy that captures the principal design choices shaping software energy profiling. To achieve this, we first identified the recurring challenges reported in the literature, building on the considerations listed by Jagannadharao et al. \cite{jagannadharaoBeginnersGuidePower2024} for energy measurement, such as the level of the measurement goal (system, application or code), idle power draw, measurements on shared resources, and in-band versus out-of-band measurements. We then defined a set of observable dimensions describing how different tools address these challenges.
+
+The development of the taxonomy was conducted iteratively alongside the tool selection process. As we identified candidate tools and examined their publications, documentation and source code, we progressively extracted recurring design choices, implementation strategies and trade-offs. Whenever we observed that a particular aspect significantly influenced the performance, the limits or implementation of several tools, we introduced it as a taxonomy dimension. Conversely, characteristics that did not meaningfully distinguish tools or were specific to a single implementation were discarded. Candidate tools that were eventually excluded also contributed to this process. For instance, eprof \cite{schubertProfilingSoftwareEnergy2012} and PowerScope \cite{flinnPowerScopeToolProfiling1999} informed the treatment of asynchronous energy consumption, Joulemeter \cite{kansalVirtualMachinePower2010} the attribution of energy to virtual machines from the host, and pTop \cite{doPTopProcesslevelPower2009} the allocation strategies based on device states.
 
 This iterative process allowed the selection of representative tools, the identification of profiling challenges, and the refinement of the taxonomy to mutually inform one another. As our understanding of existing approaches evolved, both the set of analysed tools and the taxonomy itself were refined. The resulting taxonomy is therefore grounded in the practical design decisions observed across representative software energy profiling tools and remains structured around the fundamental challenges discussed in the following section.
 
 
 \section{Profiling Challenges} \label{challenges}
 
-Energy profiling of software systems is inherently indirect. While hardware components consume energy, software only influences this consumption through its use of hardware resources. Consequently, profiling tools do not measure software energy consumption directly, but instead estimate hardware energy and attribute it to software based on observable signals and modelling assumptions. In its most general form, the energy attributed to software entity $i$ can be expressed as
+Energy profiling of software systems is inherently indirect. While hardware components consume energy, software only influences this consumption through its use of hardware resources. Consequently, profiling tools do not measure software energy consumption directly, but instead estimate hardware energy and attribute it to software based on observable signals and modelling assumptions. Existing approaches follow one of two formulations. \emph{Top-down} approaches first obtain the energy consumed by a hardware component, and then attribute a share of this measured total to each software entity:
 
 \begin{equation}
-E_i = A_i * E_{\mathrm{hardware}},
+E_i = A_i \, E_{\mathrm{hardware}},
 \label{eq:general-attribution}
 \end{equation}
 
 where $E_{\mathrm{hardware}}$ denotes the energy consumed by a hardware component over the considered time interval, and $A_i$ represents the estimated share of this energy attributable to software entity $i$.
 
-Most approaches can therefore be abstracted as a combination of two sources of information:
-\emph{(i) hardware-level energy estimation}, which determines $E_{\mathrm{hardware}}$ from hardware interfaces, external measurements, or software models, and
-\emph{(ii) software activity share estimation}, which estimates $A_i$ from observable software activity signals.
+\emph{Bottom-up} approaches instead estimate the energy of each software entity directly, using a model $M$ that maps the activity observed for this entity to energy:
+
+\begin{equation}
+E_i = M(\mathbf{P}_i),
+\label{eq:bottom-up-attribution}
+\end{equation}
+
+where $\mathbf{P}_i$ denotes the vector of activity metrics observed for software entity $i$. In this case, the hardware-level energy is reconstructed rather than measured, as $E_{\mathrm{hardware}} = \sum_j E_j + E_{\mathrm{idle}}$. Some bottom-up tools additionally rescale their estimates so that they sum to a measured total \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}. The share of each entity nevertheless remains determined by the model, and the agreement with the measured total then holds by construction. Among the analysed tools, BitWatts \cite{colmantProcesslevelPowerEstimation2015} and SmartWatts \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020} follow this formulation, as well as the trained regressors offered by Kepler up to version 0.9 \cite{amaralKeplerFrameworkCalculate2023,SustainablecomputingioKepler2026}, although its default model is top-down. Earlier tools such as Joulemeter \cite{kansalVirtualMachinePower2010}, pTop \cite{doPTopProcesslevelPower2009} and eprof \cite{schubertProfilingSoftwareEnergy2012} were also bottom-up.
+
+In both cases, approaches can be abstracted as a combination of two sources of information:
+\emph{(i) hardware-level energy estimation}, which determines $E_{\mathrm{hardware}}$ from hardware interfaces, external measurements, or model-based estimation, or provides the reference used to calibrate $M$, and
+\emph{(ii) software activity share estimation}, which estimates $A_i$, or the inputs $\mathbf{P}_i$ of $M$, from observable software activity signals.
 Profiling then consists in combining these two sources to reconstruct an attribution of hardware energy consumption to software entities. This process raises several challenges.
 
 \subsection{Allocation Model}
@@ -247,19 +270,25 @@ The selected granularity determines the observability requirements and the compl
 
 Once the target software entities have been defined, the profiler must estimate their relative share of hardware activity in order to distribute the measured hardware energy.
 
-For processes or groups of processes, operating systems and orchestration frameworks already expose accounting information describing resource usage over time. However, this information only provides an indirect view of the actual hardware activity and therefore requires modelling assumptions to translate resource utilisation into energy shares. For instance, allocating CPU energy proportionally to the CPU time reported by the operating system implicitly assumes that CPU time is a good proxy for its energy consumption. This assumption becomes less accurate when concurrent processes execute different mixes of instructions or operate at different processor frequencies, resulting in different energy costs for the same CPU time.
+For processes or groups of processes, operating systems and orchestration frameworks already expose accounting information describing resource usage over time. However, this information only provides an indirect view of the actual hardware activity and therefore requires modelling assumptions to translate resource utilisation into energy shares. For instance, allocating CPU energy proportionally to the CPU time reported by the operating system implicitly assumes that CPU time is a good proxy for its energy consumption. This assumption becomes less accurate when concurrent processes execute different mixes of instructions or operate at different processor frequencies, resulting in different energy costs for the same CPU time \cite{kansalVirtualMachinePower2010,noureddineMonitoringEnergyHotspots2015}. In simulation, Li and John \cite{liRuntimeModelingEstimation2003} measured average powers ranging from 14 to 54\,W across operating-system service routines, strongly correlated with the instructions per cycle. Hardware performance counters provide a finer view of hardware activity, such as retired instructions, cycles or cache misses, and are therefore used by several tools to reconstruct activity shares \cite{colmantProcesslevelPowerEstimation2015,fieniSmartWattsSelfCalibratingSoftwareDefined2020}. Reading them in counting mode through the Linux perf\_event interface incurs a negligible overhead, which however increases sharply when more events are monitored than hardware counters are available and must be multiplexed \cite{nowakOverheadProfilingUsing2014}. The number of counters that can be monitored simultaneously is limited, and the available events vary across processor models \cite{kansalVirtualMachinePower2010,nowakOverheadProfilingUsing2014}.
 
 Estimating activity shares at finer granularities, such as threads or code sections, is even more challenging because operating systems generally provide no direct visibility at this level. Profilers must therefore reconstruct software activity shares from additional observations obtained during execution. Some mechanisms require manual or automatic instrumentation of the code to insert execution markers delimiting execution intervals. These markers enable process-level energy to be distributed across code sections, but introduce code modification requirements.
 
 Consequently, different profiling tools rely on different activity reconstruction mechanisms, each making different assumptions regarding software execution and hardware resource sharing. While the type of activity reconstruction used depends on the intended granularity, it directly influences attribution accuracy, runtime overhead, and deployment complexity.
 
-\subsubsection{\textbf{Baseline consumption}}
+\subsubsection{\textbf{Idle consumption}}
 
-Finally, profiling tools must decide how to handle baseline system consumption. Since operating systems, background services, and idle hardware consume energy independently of the monitored application, tools differ in whether they subtract this baseline or distribute it among the monitored entities. This choice affects attribution results, particularly in lightly loaded contexts.
+Finally, profiling tools must decide how to handle idle system consumption. Since operating systems, background services, and idle hardware consume energy independently of the monitored application, tools differ in whether they subtract this idle consumption or distribute it among the monitored entities. This choice affects attribution results, particularly in lightly loaded contexts.
+
+\subsection{Asynchronous Energy Consumption}
+
+Part of the energy consumed by a system is not consumed while the software entity responsible for it is executing. Disk writes may be buffered by the operating system and committed later, network packets are handled through interrupts, and I/O operations may be batched by the hypervisor \cite{kansalVirtualMachinePower2010,schubertProfilingSoftwareEnergy2012}. Approaches that attribute the energy measured at a given time to the entities active at that time therefore charge this asynchronous energy to whichever entity happens to be running. Kansal et al. \cite{kansalVirtualMachinePower2010} note that such attribution ignores buffered I/O and parallel tasks on multi-core processors, resulting in high estimation errors. This consumption is not marginal: Schubert et al. \cite{schubertProfilingSoftwareEnergy2012} report that asynchronous disk requests accounted for up to 33\% of the total energy in their file-processing experiment.
+
+This problem is especially relevant when the hardware-level energy is obtained from an external wall-plug power meter, which only measures the consumption of the whole system. We argue that decomposing this consumption into hardware domains, each associated with its own activity proxy, limits the misattribution to the domains concerned. Correctly attributing asynchronous device energy further requires linking each device request to the entity that issued it, for instance by recording the call stack when the request is created \cite{schubertProfilingSoftwareEnergy2012}, or at least isolating the consumption that occurs during interrupt handling in a dedicated entity \cite{flinnPowerScopeToolProfiling1999}.
 
 \subsection{Access to Measurement Sources}
 
-As discussed previously, profiling tools must collect two categories of information: hardware-level energy estimations and software activity share estimations. A second challenge consists in accessing these sources reliably.
+As discussed previously, profiling tools must collect two categories of information: hardware-level energy estimations and software activity share estimations. Another challenge consists in accessing these sources reliably.
 
 \subsubsection{\textbf{Platform dependencies}}
 
@@ -267,7 +296,7 @@ Profiling tools are also constrained by the operating systems and execution envi
 
 \subsubsection{\textbf{Privilege constraints}}
 
-Access to measurement sources can be restricted for security reasons. In particular, some hardware counters and energy registers have been shown to enable side-channel attacks \todo{Cite a few attacks through RAPL and mitigations}, leading operating systems and hardware vendors to restrict or filter access to these interfaces.
+Access to measurement sources can be restricted for security reasons. In particular, some hardware counters and energy registers have been shown to enable side-channel attacks \cite{lippPLATYPUSSoftwarebasedPower2021}, leading operating systems and hardware vendors to restrict or filter access to these interfaces. For instance, Lipp et al. \cite{lippPLATYPUSSoftwarebasedPower2021} showed that unprivileged access to RAPL could be exploited to extract cryptographic keys, and reading RAPL through the Linux powercap interface has since been restricted to privileged users \cite{noureddinePowerJoularJoularJXMultiPlatform2022}.
 
 \begin{itemize}
     \item hardware counters and energy registers may require elevated privileges,
@@ -278,11 +307,11 @@ As a result, profiling tools differ in how they access these sources. Some rely 
 
 \subsection{Temporal Resolution}
 
-Energy profiling relies on periodically observing system activity and updating energy attribution estimates over time. The frequency at which these observations and attribution routines are executed directly impacts profiling quality. Regardless of the underlying profiling mechanism, increasing the observation frequency generally improves temporal precision hence attribution accuracy. However, it also increases runtime overhead and sensitivity to noise. Conversely, lower observation frequencies reduce profiling overhead but may fail to capture short-lived execution events. Temporal resolution therefore defines a trade-off between accuracy and measurement overhead.
+Energy profiling relies on periodically observing system activity and updating energy attribution estimates over time. The frequency at which these observations and attribution routines are executed directly impacts profiling quality. Increasing the observation frequency generally improves temporal precision, but only up to the update rate of the underlying measurement sources. To capture an operation, the observation period must be shorter than the operation itself, whereas RAPL registers are updated approximately every millisecond, so that code executing faster than this interval cannot be reliably measured without synchronisation \cite{khanEnergyProfilingUsing2015,khanRAPLActionExperiences2018}. Higher observation frequencies also increase runtime overhead and sensitivity to noise, and excessive sampling may even increase energy consumption by preventing processors from entering low-power states \cite{raffinDissectingSoftwarebasedMeasurement2024}. Conversely, lower observation frequencies reduce profiling overhead but may fail to capture short-lived execution events. Temporal resolution therefore defines a trade-off between accuracy and measurement overhead.
 
 \subsection{Profiling Overhead}
 
-Profiling mechanisms introduce runtime overhead. This overhead arises from \emph{(i) instrumentation of code or binaries}, \emph{(ii) periodic sampling and interrupt handling} and \emph{(iii) live logging of estimated energy shares}. It generally increases with the profiler's complexity. Most observation mechanisms must execute online during the monitored program's execution. However, some approaches defer part of the data processing and analysis offline, reducing runtime overhead when live analysis is not required. In any case, measurements may be biased by the profiling process itself. Minimising and quantifying this overhead is necessary to ensure the validity of observations, yet it is not always explicitly addressed.
+Profiling mechanisms introduce runtime overhead. This overhead arises from \emph{(i) instrumentation of code or binaries}, \emph{(ii) periodic sampling and interrupt handling} and \emph{(iii) live logging of estimated energy shares}. It can affect both the execution time of the monitored workload and the energy consumed by the system. It depends on the observation mechanism and on the amount of data collected and processed online. Most observation mechanisms must execute online during the monitored program's execution. However, some approaches defer part of the data processing and analysis offline, reducing runtime overhead when live analysis is not required. In any case, measurements may be biased by the profiling process itself. Minimising and quantifying this overhead is necessary to ensure the validity of observations, yet it is not always explicitly addressed.
 
 \subsection{Virtualisation and Multi-Tenancy}
 
@@ -308,7 +337,7 @@ These challenges highlight that software energy profiling fundamentally consists
 
     \item \emph{Deployability}, characterised by hardware requirements, platform dependencies, privilege constraints, and code modification requirements,
 
-    \item \emph{Profiling overhead}, resulting from the execution of the profiler itself and increasing with its complexity.
+    \item \emph{Profiling overhead}, resulting from the execution of the profiler itself.
 
     \item \emph{Support for virtualised and multi-tenant environments}, depending on the visibility provided across software abstraction layers.
 
@@ -329,26 +358,24 @@ In the previous section we identified the fundamental challenges of software ene
 
 The objective of the proposed taxonomy is to formalise the methodological choices through which profiling tools address these challenges into dimensions enabling a systematic comparison. Rather than cataloguing profiler features, we classify tools according to how they estimate hardware-level energy, reconstruct software activity shares, and attribute energy consumption to software entities.
 
-These methodological choices determine the assumptions, capabilities, and limitations of each profiler, and consequently its position within the operational constraints space. Accordingly, we first describe the possible \emph{(i) design space} available to profiling tools. We then introduce the \emph{(ii) operational constraints space} used to assess the trade-offs induced by these choices, before finally describing the \emph{(iii) maturity and ecosystem} dimensions used to complement the comparison.
+These methodological choices determine the assumptions, capabilities, and limitations of each profiler, and consequently its position within the operational constraints space. Accordingly, we first describe the possible \emph{(i) design space} available to profiling tools. We then introduce the \emph{(ii) operational constraints space} used to assess the trade-offs induced by these choices.
 
 \subsection{Design space}
 
-\todo[inline]{Is there a way to connect design choices to use cases? To
-show how different combinations of granularity, measurement sources,
-allocation methods, and operational constraints arise from different
-requirements. For example, cloud observability, need for instrumentation, code-level optimisation.}
+Section~\ref{sec:use-cases} relates the combinations of these design choices to the use cases they serve.
 
 We first characterise the principal methodological choices that distinguish existing software energy profiling approaches.
 
 \subsubsection{\textbf{Granularity}}
 
-This design choice describes the software abstraction level to which energy consumption is attributed. Profiling tools may operate at \emph{(i) virtual machine}, \emph{(ii) pod}, \emph{(iii) container}, \emph{(iv) application}, \emph{(v) process}, \emph{(vi) thread}, or \emph{(vii) code-section} level.
+This design choice describes the software abstraction level to which energy consumption is attributed. Profiling tools may operate at \emph{(i) virtual machine}, \emph{(ii) pod}, \emph{(iii) container}, \emph{(iv) application}, \emph{(v) process}, \emph{(vi) thread}, or \emph{(vii) code-section} level. Some tools additionally report an \emph{(viii) operating-system} level.
 
 \begin{itemize}
     \item Process-level attribution is the most common profiling granularity and often the first step in providing other levels of granularities. These approaches generally rely on operating-system scheduling and accounting statistics, such as per-process CPU time or other resource utilisation, to distribute hardware-level energy consumption among processes. Their accuracy therefore depends both on the quality of the underlying operating-system resource accounting mechanisms and on the assumptions used to distribute shared hardware consumption across concurrent workloads.
-    \item Virtual-machine-, pod-, and container-level attribution are mainly designed for cloud-native and virtualised environments, where these entities represent the workload units managed by infrastructure operators and orchestration frameworks. Profilers supporting these granularities generally rely on isolation mechanisms such as cgroups or hypervisors to group processes belonging to the same workload. In practice, energy attribution is first performed at process level, before aggregating the energy shares of the processes associated with the same virtual machine, container, or pod.
+    \item Virtual-machine-, pod-, and container-level attribution are mainly designed for cloud-native and virtualised environments, where these entities represent the workload units managed by infrastructure operators and orchestration frameworks. Profilers supporting these granularities generally rely on isolation mechanisms such as cgroups or hypervisors to group processes belonging to the same workload. In practice, energy attribution is often first performed at process level, before aggregating the energy shares of the processes associated with the same virtual machine, container, or pod, although some tools, such as SmartWatts \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}, monitor control groups directly. Attributing energy to virtual machines from the host, as done by SmartWatts \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}, falls under this granularity and should not be confused with the virtualised environment support discussed below.
     \item Thread-level attribution provides finer insight inside processes by attempting to distribute process-level energy consumption among threads. Achieving this granularity requires a first level of process energy attribution, and access to thread scheduling and execution statistics, generally through operating-system or runtime-level observability tools.
-    \item Code-section-level profiling is more dedicated to software engineering and optimisation use cases. These approaches attempt to attribute energy consumption to functions, methods, or code regions. As for thread-level attribution, they typically rely on two layers of attribution: the profiler must first allocate energy consumption to the monitored process before distributing this process-level energy across internal code sections. This finer decomposition requires additional instrumentation mechanisms such as statistical call-stack sampling or execution markers. Consequently, fine-grained attribution increases implementation complexity hence runtime overhead and may require code modification.
+    \item Code-section-level profiling is more dedicated to software engineering and optimisation use cases. These approaches attempt to attribute energy consumption to functions, methods, or code regions. As for thread-level attribution, they typically rely on two layers of attribution: the profiler must first allocate energy consumption to the monitored process before distributing this process-level energy across internal code sections. Some tools skip the first layer: IgProf \cite{khanEnergyProfilingUsing2015} attributes the whole RAPL energy of each sampling interval to the current call stack, and jRAPL \cite{liuDataOrientedCharacterizationApplicationLevel2015} the whole energy measured between two markers to the delimited code. This finer decomposition requires additional instrumentation mechanisms such as statistical call-stack sampling or execution markers. Consequently, fine-grained attribution increases implementation complexity hence runtime overhead and may require code modification.
+    \item Operating-system-level attribution isolates the energy consumed by kernel and system activities, which would otherwise be charged to the monitored processes or left unattributed. SmartWatts \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020} achieves this through dedicated control groups for kernel and system activities. Li and John \cite{liRuntimeModelingEstimation2003} show that the power of operating-system service routines varies widely, so that estimating operating-system energy from a single average power leads to errors of 20 to 50\% in simulation, whereas routine-level models driven by the instructions per cycle remain within 1\%.
 \end{itemize}
 
 
@@ -360,7 +387,7 @@ This decomposition provides insight into which hardware resources are responsibl
 
 Each hardware domain may rely on different hardware-level energy estimation and software activity share proxy. For instance, a profiler may estimate CPU and DRAM energy using hardware-exposed interfaces while relying on models for GPU or network energy. Likewise, software activity shares may be reconstructed from different proxies depending on the monitored component, such as CPU utilisation, memory-access counters, GPU runtime statistics, or network throughput.
 
-The taxonomy therefore characterises, independently for the CPU, DRAM, GPU, network interfaces, and system-level consumption, both the hardware-level energy estimation and the software activity share proxy used by a profiler.\todo{independetly of not for? complex sentence}
+For each of the CPU, DRAM, GPU, network interfaces and the whole system, the taxonomy therefore records the hardware-level energy estimation and the activity share proxy used by a profiler.
 
 \paragraph{\textbf{Hardware-level energy estimation}}
 
@@ -371,8 +398,10 @@ As discussed in Section~\ref{challenges}, profiling first requires an estimate o
 
     \item \emph{Hardware-exposed interfaces}, implemented by hardware vendors to estimate the energy consumed by domains such as the CPU, DRAM, GPU, or sometimes the whole system. These measurements are exposed through dedicated registers accessed via operating-system interfaces, kernel drivers, or vendor APIs. They generally provide low-overhead, high-frequency capability, but remain dependent on hardware vendors, operating systems, and privilege restrictions.
 
-    \item \emph{Software models}, which estimate energy from observable metrics such as processor frequency, CPU utilisation, performance counters, or other system activity metrics. These models may be analytical or pre-trained from reference measurements. They improve portability and compatibility with virtualised environments, but introduce modelling assumptions and calibration requirements that may reduce accuracy.
+    \item \emph{Model-based estimation}, which estimates energy from observable metrics such as processor frequency, CPU utilisation, performance counters, or other system activity metrics, using what is commonly referred to as power models \cite{colmantProcesslevelPowerEstimation2015,fieniSmartWattsSelfCalibratingSoftwareDefined2020}. These models may be analytical or pre-trained from reference measurements. They improve portability and compatibility with virtualised environments, but introduce modelling assumptions and calibration requirements that may reduce accuracy.
 \end{itemize}
+
+For model-based estimation, the reference used to calibrate the model and the moment at which this calibration takes place should be distinguished from the source used at runtime. BitWatts \cite{colmantProcesslevelPowerEstimation2015} and eprof \cite{schubertProfilingSoftwareEnergy2012} calibrate their models offline against an external power meter, which is therefore not needed at runtime, whereas SmartWatts \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020} recalibrates its models online against RAPL whenever its estimation error exceeds a threshold.
 
 The selected energy estimation mechanism therefore directly influences the trade-off between measurement accuracy, deployability, and portability.
 
@@ -402,25 +431,11 @@ Regardless of the selected proxy, the underlying assumption is that the observed
 
 \paragraph{\textbf{Activity share estimation}}
 
-Once software activity proxies have been collected, profiling tools differ in how they estimate the share of hardware activity attributable to software entities before distributing the corresponding energy consumption. Existing approaches mainly rely on four estimation strategies. Regardless of the strategy, the objective is to estimate the activity share $A_i$ of software entity $i$, such that
-\todo{should we add a table of notation ?}
-\begin{equation}
-A_i \in [0,1]
-\end{equation}
-
-from which the attributed energy is obtained as
-
-\begin{equation}
-E_i = E_{\mathrm{tot}} A_i,
-\end{equation}
-
-where $E_i$ denotes the energy attributed to software entity $i$ and $E_{\mathrm{tot}}$ the measured energy of the monitored hardware component.
+Once software activity proxies have been collected, profiling tools differ in how they estimate the share of hardware activity attributable to software entities before distributing the corresponding energy consumption. Existing approaches mainly rely on four estimation strategies. For top-down approaches, the objective is to estimate the activity share $A_i \in [0,1]$ of software entity $i$, from which the attributed energy is obtained with Equation~\ref{eq:general-attribution}. Bottom-up approaches correspond to the proxy reconstruction strategy.
 
 \begin{itemize}
 
-    \item \emph{Direct proportional allocation} assumes that the selected activity proxy already represents the activity share of the monitored entities. Typical examples include operating-system maintained per-process resource utilisation statistics such as CPU utilisation, network throughput, or GPU driver statistics. These approaches are straightforward to implement and induce little overhead. Their accuracy, however, depends on how well the selected proxy correlates with the actual hardware activity.
-\todo{When is that reasonable? When does it fail?}
-The activity share is estimated as
+    \item \emph{Directly proportional to proxy} allocation assumes that the selected activity proxy already represents the activity share of the monitored entities. Typical examples include operating-system maintained per-process resource utilisation statistics such as CPU utilisation, network throughput, or GPU driver statistics, as used by Scaphandre \cite{centofantiImpactPowerConsumption2024,Scaphandre}, Kepler \cite{amaralKeplerFrameworkCalculate2023,SustainablecomputingioKepler2026}, the Green Metrics Tool \cite{hoffmannGreenMetricsTool2025}, PowerAPI \cite{noureddineMonitoringEnergyHotspots2015}, PowerJoular \cite{noureddinePowerJoularJoularJXMultiPlatform2022}, Joular Core \cite{noureddineJoularCoreUniversal2026,JoularJoularcore2026} and KubeWatt \cite{pijnackerContainerlevelEnergyObservability2025}. These approaches are straightforward to implement and induce little overhead. Their accuracy, however, depends on how well the selected proxy correlates with the actual hardware activity, which is mainly the case when concurrent entities run homogeneous workloads. Otherwise, equal utilisation shares may correspond to different energy contributions. First, the energy cost of a CPU cycle depends on the processor frequency. A CPU-intensive task may run at a higher frequency than a memory-bound one, so that both receive the same share for 50\% of CPU utilisation each, while the former actually consumes more energy \cite{noureddineMonitoringEnergyHotspots2015,pahlkeUnlockEnergyConsumption2024}. Second, the processor consumes different amounts of energy depending on its sleep states, so that time spent in low-power states does not have the same energy cost as active time \cite{kansalVirtualMachinePower2010,pahlkeUnlockEnergyConsumption2024}. Kansal et al. \cite{kansalVirtualMachinePower2010} illustrate these limits with three benchmarks running at 100\% CPU utilisation while drawing between 25 and 28\,W. The activity share is estimated as
 
     \begin{equation}
     A_i=\frac{P_i}{\sum_j P_j},
@@ -428,16 +443,16 @@ The activity share is estimated as
 
     where $P_i$ denotes the selected activity proxy for software entity $i$.
 
-    \item \emph{Model-based attribution} first reconstructs the activity proxy from multiple low-level execution statistics, such as Hardware Performance Counters (HPCs), before performing energy attribution. These statistics can be combined through analytical or learned models, for example regression models trained offline. We distinguish this class because, similarly to statistical sampling, it introduces an additional inference step between metric collection and energy allocation. The activity share is estimated as
+    \item \emph{Proxy reconstruction} first reconstructs the activity proxy from multiple low-level execution statistics, such as Hardware Performance Counters (HPCs), before performing energy attribution. These statistics can be combined through analytical or learned models, for example regression models trained offline or calibrated online. We distinguish this class because, similarly to statistical sampling, it introduces an additional inference step between metric collection and energy allocation. This strategy corresponds to the bottom-up formulation of Equation~\ref{eq:bottom-up-attribution}, as used by BitWatts \cite{colmantProcesslevelPowerEstimation2015} and SmartWatts \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}. Estimates are not necessarily consistent with the measured hardware energy: BitWatts reports the model estimates directly \cite{colmantProcesslevelPowerEstimation2015}, whereas SmartWatts rescales them to the measured dynamic power, so that the attributed energies sum to the measured dynamic energy \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}. When the estimates are rescaled to a measured total, the activity share is estimated as
 
     \begin{equation}
-    A_i=\frac{f(\mathbf{P}_i)}
-    {\sum_j f(\mathbf{P}_j)},
+    A_i=\frac{M(\mathbf{P}_i)}
+    {\sum_j M(\mathbf{P}_j)},
     \end{equation}
 
-    where $\mathbf{P}_i$ denotes the vector of execution statistics associated with software entity $i$, and $f(\cdot)$ the reconstruction model.
+    where $\mathbf{P}_i$ denotes the vector of execution statistics associated with software entity $i$, and $M(\cdot)$ the reconstruction model.
 
-    \item \emph{Statistical sampling} periodically samples execution state information, typically the process call stack, to estimate which code regions were active during execution. The relative frequency with which functions appear in the collected samples is then used to estimate their share of the process activity before distributing process-level energy accordingly. These approaches avoid explicit code instrumentation, but their accuracy depends on the sampling frequency and the representativeness of the collected samples \cite{noureddineReviewEnergyMeasurement2013}. The activity share is estimated as
+    \item \emph{Statistical sampling} periodically samples execution state information, typically the process call stack, to estimate which code regions were active during execution. The relative frequency with which functions appear in the collected samples is then used to estimate their share of the process activity before distributing process-level energy accordingly. These approaches avoid explicit code instrumentation, but their accuracy depends on the sampling frequency and the representativeness of the collected samples \cite{noureddineReviewEnergyMeasurement2013}. Examples include IgProf \cite{khanEnergyProfilingUsing2015}, JoularJX \cite{noureddinePowerJoularJoularJXMultiPlatform2022} and the call-stack sampling version of Jalen \cite{noureddineMonitoringEnergyHotspots2015}. IgProf, however, distributes the whole RAPL energy rather than the energy of the profiled process, so that the energy of concurrent activity is charged to its functions \cite{khanEnergyProfilingUsing2015}. A variant weights samples by energy rather than by time: eprof \cite{schubertProfilingSoftwareEnergy2012} sets hardware counter thresholds so that each sample represents a fixed amount of modelled energy, thereby combining proxy reconstruction and statistical sampling. The activity share is estimated as
 
     \begin{equation}
     A_i=\frac{N_i}{\sum_j N_j},
@@ -445,7 +460,7 @@ The activity share is estimated as
 
     where $N_i$ denotes the number of samples in which software entity $i$ was observed.
 
-    \item \emph{Execution markers} explicitly delimit execution regions using time markers inserted manually or automatically into the application. Process-level energy consumption is subsequently distributed across the execution intervals defined by these markers. Such approaches can provide precise fine-grained attribution, but generally require source-code modification, bytecode instrumentation, or runtime instrumentation, thereby increasing deployment complexity and runtime overhead \cite{noureddineReviewEnergyMeasurement2013}. The activity share is estimated as
+    \item \emph{Execution time markers} explicitly delimit execution regions using time markers inserted manually or automatically into the application. Process-level energy consumption is subsequently distributed across the execution intervals defined by these markers. Such approaches can provide precise fine-grained attribution, but generally require source-code modification, bytecode instrumentation, or runtime instrumentation, thereby increasing deployment complexity and runtime overhead \cite{noureddineReviewEnergyMeasurement2013}. Examples include jRAPL \cite{liuDataOrientedCharacterizationApplicationLevel2015}, which attributes the whole hardware energy measured between two markers to the delimited code (see Section~\ref{sec:profiler-selection}), the bytecode instrumentation version of Jalen \cite{noureddineMonitoringEnergyHotspots2015} and the Green Metrics Tool \cite{hoffmannGreenMetricsTool2025,DocsgreencodingioDocsPrologue}. The activity share is estimated as
 
     \begin{equation}
     A_i=
@@ -457,6 +472,8 @@ The activity share is estimated as
 
 \end{itemize}
 
+Some tools rely on strategies that these four classes do not fully capture. pTop \cite{doPTopProcesslevelPower2009} estimates the disk and network energy of each process from the time it spends in each device state, and eprof \cite{schubertProfilingSoftwareEnergy2012} attributes the asynchronous energy of disk and network requests by recording the call stack when the kernel creates the request. Finally, SmartWatts \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020} defines dedicated control groups for kernel and system activities, so that their consumption is reported separately from the monitored applications.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\columnwidth]{img/call-stack-and-time-markers.png}
@@ -466,73 +483,103 @@ The activity share is estimated as
 
 These estimation strategies represent different trade-offs between attribution fidelity, runtime overhead, portability, and deployment complexity.
 
-\paragraph{\textbf{Baseline modelling and calibration}}
+\paragraph{\textbf{Idle modelling and calibration}}
 
-Even when no monitored application is running, computing systems still consume energy due to the operating system, background services, and idle hardware activity. Profiling tools therefore differ in how they account for this baseline consumption before attribution. Three main strategies can be distinguished.
+Even when no monitored application is running, computing systems still consume energy due to the operating system, background services, and idle hardware activity. Profiling tools differ in whether they estimate this idle consumption, and in how they treat it once estimated. We denote by $E_{\mathrm{idle}}$ the idle energy over the considered interval, and by
+\[
+E_{\mathrm{dynamic}} = E_{\mathrm{hardware}} - E_{\mathrm{idle}}
+\]
+the remaining dynamic energy. Three idle policies can be distinguished.
 
 \begin{itemize}
 
-\item \emph{Dynamic-only attribution} removes the baseline energy before attribution and distributes only the dynamic consumption across the monitored entities:
+\item \emph{Idle not distinguished}: the idle energy is not estimated, and is therefore distributed along with the dynamic energy according to the activity shares:
 
 \begin{equation}
-E_i = E_{\mathrm{dynamic}} A_i,
+E_i = E_{\mathrm{hardware}} A_i.
 \end{equation}
 
-where
-
-\[
-E_{\mathrm{dynamic}} = E_{\mathrm{tot}} - E_{\mathrm{idle}}.
-\]
-
-\item \emph{Whole-system attribution} does not distinguish baseline and dynamic energy, and allocates the total measured energy proportionally:
+\item \emph{Idle kept separate}: the idle energy is estimated and reported at the hardware level, but only the dynamic energy is allocated to the monitored entities:
 
 \begin{equation}
-E_i = E_{\mathrm{tot}} A_i.
+E_i = E_{\mathrm{dynamic}} A_i.
 \end{equation}
 
-\item \emph{Separate baseline attribution} explicitly distinguishes idle and dynamic energy, allocating each component independently:
+\item \emph{Idle allocated proportionally}: both components are allocated, each with its own share:
 
 \begin{equation}
 E_i =
 E_{\mathrm{dynamic}}A_i^{\mathrm{dyn}}
 +
-E_{\mathrm{idle}}A_i^{\mathrm{idle}},
+E_{\mathrm{idle}}A_i^{\mathrm{idle}}.
 \end{equation}
 
-where the activity shares used for dynamic and idle energy may differ depending on the profiling tool.
+The idle share does not necessarily follow the activity of the entity. Kepler, up to version 0.9, allocates idle power in proportion to the resources assigned to each container, such as its number of CPU cores, following the Greenhouse Gas Protocol \cite{cncfExploringKeplersPotentials2023,bellalInvestigatingPotentialKepler}. When $A_i^{\mathrm{idle}} = A_i^{\mathrm{dyn}}$, this policy amounts to not distinguishing idle energy. From version 0.10, Kepler instead keeps the idle power unallocated, and distributes only the active power among workloads according to their CPU time \cite{PowerAttributionKepler}.
 \end{itemize}
 
-Estimating $E_{\mathrm{idle}}$ generally relies on one of three approaches: profiling the system while idle over a short period, estimating the active-to-idle ratio from system activity indicators such as overall CPU utilisation, or approximating the baseline as the minimum observed system power.
+A single tool may support several policies. SmartWatts keeps the idle consumption separate by default, but distributes it among the monitored entities according to their activity when the idle consumption is set to zero \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}. The Green Metrics Tool reports the energy of each container both without and with a share of the idle consumption, both computed from the CPU utilisation of the containers \cite{DocsgreencodingioDocsMeasuring}, and Joular Core optionally subtracts an idle CPU power, calibrated automatically or set manually, before attributing CPU power to a process or application \cite{OverviewJoularCore}.
+
+Estimating $E_{\mathrm{idle}}$ generally relies on one of four approaches, which estimate the idle power $\hat{P}_{\mathrm{idle}}$ as follows:
+
+\begin{itemize}
+\item profiling the system while idle over a short period,
+\[
+\hat{P}_{\mathrm{idle}} = \frac{1}{n}\sum_{k=1}^{n} P_{\mathrm{hardware}}(t_k),
+\]
+where $t_1,\dots,t_n$ are sampling instants at which no workload is running. Robust statistics may replace the mean, SmartWatts for instance using the median minus $1.5$ times the interquartile range of the idle samples \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020};
+\item estimating the active-to-idle ratio from system activity indicators such as the overall CPU utilisation $U(t) \in [0,1]$,
+\[
+\hat{P}_{\mathrm{idle}}(t) = \bigl(1-U(t)\bigr)\,P_{\mathrm{hardware}}(t),
+\]
+as done by Kepler from version 0.10 \cite{PowerAttributionKepler};
+\item approximating the idle power as the minimum observed system power,
+\[
+\hat{P}_{\mathrm{idle}} = \min_{t} P_{\mathrm{hardware}}(t),
+\]
+Kepler up to version 0.9 for instance taking the minimum power observed in the lowest observed utilisation state \cite{SustainablecomputingioKepler2026};
+\item using the intercept of a calibrated regression model $\hat{P}_{\mathrm{hardware}} = M(\mathbf{P})$,
+\[
+\hat{P}_{\mathrm{idle}} = M(\mathbf{0}),
+\]
+which may depend on the processor frequency \cite{colmantProcesslevelPowerEstimation2015}. The model may also be evaluated at a reference activity level rather than at zero, KubeWatt for instance evaluating its regression at the CPU utilisation of the idle control plane \cite{pijnackerContainerlevelEnergyObservability2025}.
+\end{itemize}
+
+The idle energy is then obtained as $E_{\mathrm{idle}} = \int_{\Delta t} \hat{P}_{\mathrm{idle}}(t)\,\mathrm{d}t$.
+
+Tools may also differ in what they consider as idle consumption. KubeWatt includes in its idle power, which its authors call static power, the consumption of the Kubernetes control plane when no workload is running, the control-plane containers being specified by the user, and excludes these containers from the dynamic attribution \cite{pijnackerContainerlevelEnergyObservability2025}. In contrast, Kepler attributes energy to control-plane containers as to any other container, as shown by the energy it reports for the \texttt{kube-system} namespace \cite{pijnackerContainerlevelEnergyObservability2025}. The same idle policy may therefore lead to different attributed energies depending on the scope given to idle consumption.
 
 These choices can significantly influence attribution results, particularly when idle or background consumption represents a substantial fraction of the total system power.
 
 \subsubsection{\textbf{Virtualised environment support}}
 
-Virtualisation introduces additional attribution challenges because applications running inside virtual machines generally do not have direct access to the usual hardware-level energy estimation sources exposed on the host system.
+Virtualisation introduces additional attribution challenges because applications running inside virtual machines generally do not have direct access to the usual hardware-level energy estimation sources exposed on the host system. We therefore consider that a tool supports virtualised environments when it can attribute energy to software entities from inside the virtual machine or container.
 
-As a result, profiling tools supporting virtualised environments typically rely on two main approaches. Some use pre-trained or calibrated models to estimate the energy share of the virtual machine from observable guest-level activity metrics such as CPU utilisation, allocated cores and memory. Others deploy monitoring components on the host system capable of estimating virtual-machine-level energy consumption, then expose these estimations to the guest environment through shared files.
+As a result, profiling tools supporting virtualised environments typically rely on three main approaches. Some use pre-trained or calibrated models to estimate the energy share of the virtual machine from observable guest-level activity metrics such as CPU utilisation, allocated cores and memory. Others deploy monitoring components on the host system capable of estimating virtual-machine-level energy consumption, then expose these estimations to the guest environment through a host-to-guest channel, such as shared files, a paravirtual serial device as in BitWatts \cite{colmantProcesslevelPowerEstimation2015}, or the network.
 
-Some tools targeting code-section-level attribution, rely on another profiler to obtain process-level attribution before refining the attribution within the application itself. Their support for virtualised environments therefore depends on the virtualisation support provided by the process-level profiler.
+Finally, some tools targeting code-section-level attribution rely on another profiler to obtain process-level attribution before refining the attribution within the application itself. Their support for virtualised environments therefore depends on the virtualisation support provided by the process-level profiler.
 
-These two approaches differ in how they trade portability for accuracy and dependence on the host environment. Model-based approaches are more portable and do not require host operators to explicitly expose energy measurements to guest environments, but they introduce additional modelling uncertainties. Conversely, host-assisted approaches may provide more accurate estimations, at the cost of stronger dependencies on the underlying infrastructure and monitoring stack.
+The first two approaches differ in how they trade portability for accuracy and dependence on the host environment. Model-based approaches are more portable and do not require host operators to explicitly expose energy measurements to guest environments, but they introduce additional modelling uncertainties. Conversely, host-assisted approaches may provide more accurate estimations, at the cost of stronger dependencies on the underlying infrastructure and monitoring stack.
 
 \subsection{Operational constraints}
 
 Operational constraints describe the practical conditions and limitations under which profiling tools operate. They are strongly influenced by the underlying design choices and characterise the deployability, portability, and runtime implications of profiling approaches in real execution environments.
 
+\subsubsection{\textbf{Accuracy validation}}
+
+When available, we provide references to studies evaluating the accuracy of the profiling tools. These studies typically compare the reported measurements against external power meters or other reference measurements.
+
 \subsubsection{\textbf{Temporal resolution}}
 
 Temporal resolution represents the frequency at which measurements are collected. Higher sampling frequencies improve visibility into fast events, but increase runtime overhead, storage requirements, and sensitivity to noise.
-Some tools allow temporal resolution to be configured, but the achievable range mainly depends on the underlying measurement sources. Both hardware-level energy estimation and software activity proxies expose metrics at finite update rates, and the effective temporal resolution is therefore bounded by the slowest. For hardware-level energy estimation, external power meters provide the highest sampling frequencies. 
-Hardware-exposed interfaces usually offer a good compromise between resolution and overhead, often operating at frequencies on the order of a kilo hertz.
+Some tools allow temporal resolution to be configured, but the achievable range mainly depends on the underlying measurement sources. Both hardware-level energy estimation and software activity proxies expose metrics at finite update rates, and the effective temporal resolution is therefore bounded by the slowest. For hardware-level energy estimation, the sampling frequency of external power meters varies widely with the instrument, BitWatts for instance reporting up to 40\,Hz when connected to its power meter \cite{colmantProcesslevelPowerEstimation2015}. Hardware-exposed interfaces usually offer a good compromise between resolution and overhead: RAPL registers are updated approximately every millisecond, i.e. on the order of a kilohertz \cite{khanRAPLActionExperiences2018}, whereas platform sensors accessed through IPMI provide coarser and less accurate readings \cite{khanRAPLActionExperiences2018}.
 
-\subsubsection{\textbf{Runtime overhead}}
+\subsubsection{\textbf{Overhead}}
 
-Profiling inevitably perturbs the monitored system. Overhead originates from the profiling tool own activity including instrumentation logic, metric collection and processing, storage operations, etc\dots. It can be determinant when monitored workloads are lightweight.
+Profiling inevitably perturbs the monitored system. Overhead originates from the profiling tool own activity including instrumentation logic, metric collection and processing, storage operations, etc\dots. It can be determinant when monitored workloads are lightweight. Reported overheads take two forms: an execution-time overhead, generally expressed as a percentage, and a power or energy overhead, expressed in watts, such as the 0.33\,W consumed by the SmartWatts sensor \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}.
 
-Different levers exist to reduce the overhead depending on the measurement mechanism. Common approaches include reducing the acquisition frequency, performing attribution or analysis offline rather than online, or selecting lower-overhead operating-system interfaces to access measurement sources. For example, \cite{raffinDissectingSoftwarebasedMeasurement2024} showed that different Linux interfaces used to access RAPL counters exhibit significantly different latency and energy overhead characteristics, especially at high acquisition frequencies or on idle systems.
+Different levers exist to reduce the overhead depending on the measurement mechanism. Common approaches include reducing the acquisition frequency, performing attribution or analysis offline rather than online, or selecting lower-overhead operating-system interfaces to access measurement sources. For example, \cite{raffinDissectingSoftwarebasedMeasurement2024} showed that different Linux interfaces used to access RAPL counters exhibit significantly different latency and energy overhead characteristics, especially at high acquisition frequencies or on idle systems. At a 1\,kHz polling frequency, Diamond and Stoico \cite{diamondWhatCostEnergy2026} measured execution-time overheads ranging from 0.25\% to 46.75\% across existing RAPL-based tools, mainly caused by redundant system calls and by computations performed within the sampling loop, whereas simpler implementations kept execution times close to a no-tool baseline. Activity reconstruction is comparatively cheap: reading hardware performance counters in counting mode incurs a negligible overhead, as long as no more events are monitored than hardware counters are available \cite{nowakOverheadProfilingUsing2014}.
 
-As identified in the design space, profiling software energy at sub-process granularities can be achieved through two state-of-the-art techniques : statistical sampling or execution time-markers through code instrumentation. In his work \cite{noureddineBetterUnderstandingEnergy2014} Adel Noureddine showed that code instrumentation has a considerably higher overhead than statistical sampling.
+As identified in the design space, profiling software energy at sub-process granularities can be achieved through two state-of-the-art techniques : statistical sampling or execution time-markers through code instrumentation. Noureddine et al. \cite{noureddineMonitoringEnergyHotspots2015} showed that code instrumentation has a considerably higher overhead than statistical sampling: on individual Tomcat requests, the sampling version of Jalen increases the response time by 3\% and its instrumentation version by 129\%.
 
 Some tools provide mechanisms to estimate profiling overhead. However, overhead evaluation is most often reported separately in validation studies. When available, we reference these studies in the taxonomy table.
 
@@ -546,7 +593,9 @@ When code instrumentation is required, we indicate it and distinguish between ma
 
 \subsubsection{\textbf{Privilege requirements}}
 
-Profiling tools also differ in the privileges required to access measurement sources. Some operate entirely in user space using standard operating-system interfaces (e.g., PAPI), while others require elevated privileges to access restricted hardware interfaces such as RAPL Model-Specific Registers (MSRs) or Hardware Performance Counters (HPCs). Certain approaches also rely on kernel-level facilities, such as eBPF programs, kprobes, or dedicated kernel modules, whose deployment generally requires administrative privileges.
+Profiling tools also differ in the privileges required to access measurement sources. Some operate entirely in user space using standard operating-system interfaces or libraries such as PAPI, although such access to RAPL now generally requires elevated privileges (see Section~\ref{challenges}), while others require elevated privileges to access restricted hardware interfaces such as RAPL Model-Specific Registers (MSRs) or Hardware Performance Counters (HPCs). Certain approaches also rely on kernel-level facilities, such as eBPF programs, kprobes, or dedicated kernel modules, whose deployment generally requires administrative privileges.
+
+The interface used to access a given source also matters. Raffin and Trystram \cite{raffinDissectingSoftwarebasedMeasurement2024} show that reading RAPL through MSRs, the powercap interface, perf\_events or eBPF leads to different latencies and overheads, and we therefore also report the interface used by each tool to access RAPL.
 
 Privilege requirements directly impact deployability, particularly in environments where users may lack administrative access. We therefore distinguish between tools that \emph{(i) operate entirely in user space}, \emph{(ii) require elevated privileges to access measurement interfaces}, and \emph{(iii) depend on additional kernel-level instrumentation or modules}.
 
@@ -556,36 +605,7 @@ Profiling tools may target specific hardware architectures, operating systems, e
 
 The taxonomy therefore distinguishes support for desktop systems, servers, single-board computers (e.g., Raspberry Pi), x86, ARM, and Apple Silicon platforms. For fine-grained code-section attribution, we additionally specify language dependencies when profiling mechanisms rely on language-specific instrumentation frameworks or runtime agents, such as Java bytecode instrumentation.
 
-We additionally specify whether profiling tools can operate inside virtual machines or containers, and whether they provide Kubernetes integration. These aspects naturally relate to both attribution granularity and virtualised environment support. In cloud-native environments, Kubernetes manages workload scheduling and resource allocation in a role conceptually similar to that of an operating system. Energy profiling at pod or container level therefore becomes particularly valuable, as it enables orchestration decisions such as scheduling or scaling to consider energy-related metrics.
-
-\subsection{Maturity and ecosystem}
-
-Under this dimension, we provide additional information that does not directly influence the profiling methodology itself, but reflects the maturity, usability, and practical adoption of the investigated tools.
-
-\subsubsection{\textbf{Deployment complexity}}
-
-Deployment complexity reflects the effort required to configure and deploy the profiling tools. This may include dependency installation, privilege configuration, or calibration procedures.
-
-\subsubsection{\textbf{Accuracy validation}}
-
-When available, we provide references to studies evaluating the accuracy of the profiling tools. These studies typically compare the reported measurements against external power meters or other reference measurements.
-
-\subsubsection{\textbf{Availability and licensing}}
-
-For each tool, we indicate whether it is publicly available and whether its source code is open-source.
-
-\subsubsection{\textbf{Maintenance status}}
-
-We report the presence of recent development activity as an indicator of the tool's current maintenance status.
-
-\subsubsection{\textbf{Case studies}}
-
-When available, we provide references to publicly available case studies using the profiling tools. These case studies provide additional insight into the operational contexts, capabilities, and limitations of the tools.
-
-\subsubsection{\textbf{Additional metrics}}
-
-Finally, some tools expose metrics beyond direct energy estimation, including network I/O, disk I/O, carbon-intensity estimation, or embodied-emission allocation. These additional indicators may support broader sustainability analyses but also introduce additional modelling assumptions beyond power measurement itself.
-
+We additionally specify whether profiling tools can attribute energy when running inside virtual machines or containers, following the definition of virtualised environment support given in the design space, and whether they provide Kubernetes integration. These aspects naturally relate to both attribution granularity and virtualised environment support. In cloud-native environments, Kubernetes manages workload scheduling and resource allocation in a role conceptually similar to that of an operating system. Energy profiling at pod or container level therefore becomes particularly valuable, as it enables orchestration decisions such as scheduling or scaling to consider energy-related metrics.
 
 \subsection{Discussion}
 
@@ -618,102 +638,83 @@ Profiling tools can therefore be understood as different compromises within this
 \end{figure}
 
 
-Our analysis, presented in figure \ref{fig:design-space} shows that software energy profiling tools have gradually specialised towards three distinct application domains. \todo{I think the table (not figure) is kind of a major contrbution hence it should have better introduction this this sentence. Maybe first introduce the categories and then say something like " We classify these into a detailed table etc..."}
+\subsection{Use cases}\label{sec:use-cases}
 
-The first category targets cloud-native environments. These tools support virtualised workloads through container- or virtual machine-level attribution and integrate with orchestration frameworks such as Kubernetes. As Kubernetes increasingly acts as the operating system of cloud-native applications, exposing energy metrics at the orchestration level enables scheduling, optimisation and monitoring decisions that were previously impossible. Recent frameworks such as GreenCube illustrate this trend by integrating energy-awareness directly into cluster management.
+Our analysis, presented in Figure~\ref{fig:design-space}, shows that the analysed tools address three distinct use cases, which differ in the software entities they target and in the users they serve.
 
-The second category focuses on process-level attribution. These tools estimate the energy consumption of running applications with little or no application modification, making them suitable for software benchmarking. Several recent tools also extend this capability across multiple operating systems. For example, PowerJoular and Joular Core \cite{noureddinePowerJoularJoularJXMultiPlatform2022} broaden platform support beyond Linux, allowing developers to compare the energy behaviour of the same application across heterogeneous hardware and operating systems. Such portability is particularly valuable when evaluating implementation choices. For instance, a Java implementation may be more energy efficient than its Python equivalent on one platform while the opposite may hold on another.
+\textbf{Virtualised workloads.} A first group of tools attributes energy to virtual machines, containers or pods. Two situations should be distinguished. In the first, attribution is performed on the host for the infrastructure operator, as in Kepler \cite{amaralKeplerFrameworkCalculate2023,PowerAttributionKepler}, KubeWatt \cite{pijnackerContainerlevelEnergyObservability2025} and SmartWatts \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}. In the second, the energy attributed on the host is exposed to the guest, so that tenants can in turn attribute it to their own processes, as in BitWatts \cite{colmantProcesslevelPowerEstimation2015}, Scaphandre \cite{Scaphandre}, PowerJoular \cite{noureddinePowerJoularJoularJXMultiPlatform2022} and Joular Core \cite{noureddineJoularCoreUniversal2026}. When the host exposes nothing, guest-side tools fall back on pre-trained models, as in Kepler and the Green Metrics Tool. As Kubernetes increasingly acts as the operating system of cloud-native applications, exposing energy metrics at the orchestration level enables scheduling, optimisation and monitoring decisions that were previously impossible.
 
-The third category targets software development and code optimisation. Rather than attributing energy to complete processes, these tools estimate the consumption of functions or user-defined code regions to help developers identify optimisation opportunities. As far as we know, language-independent support for code-region attribution remains very limited. The Green Metrics Tool \cite{DocsgreencodingioDocsPrologue} provides such functionality by combining container isolation, container-level attribution and execution time markers. However, developers must manually instrument the application by placing these markers, making the approach semi-automatic. We recently applied this methodology to evaluate the energy consumption of simulated user interactions with webmail front-ends \cite{kayembeExploringPrivacySecurity2025}. Among language-specific solutions, JoularJX \cite{noureddinePowerJoularJoularJXMultiPlatform2022} currently provides one of the most complete solutions for Java applications.
+\textbf{Process-level attribution.} A second group attributes energy to processes or applications with little or no application modification, as Scaphandre, PowerJoular, Joular Core and the PowerAPI library of e-Surgeon \cite{noureddineMonitoringEnergyHotspots2015}. These tools are general-purpose, and serve as the building block of other granularities: virtualised workloads are attributed by aggregating processes, and most code-section tools first rely on a process-level attribution, JoularJX for instance obtaining process energy from PowerJoular \cite{noureddinePowerJoularJoularJXMultiPlatform2022}. Process-level energy can also drive runtime adaptation: the excluded pTop exposed the energy of each process through an API that applications and schedulers could query, and used it to adapt an application so as to extend battery lifetime \cite{doPTopProcesslevelPower2009}. Several recent tools also broaden platform support beyond Linux. PowerJoular \cite{noureddinePowerJoularJoularJXMultiPlatform2022} and Joular Core \cite{noureddineJoularCoreUniversal2026,JoularJoularcore2026} rely on the same attribution principle on different platforms, so that the energy behaviour of the same program can be compared across heterogeneous hardware and operating systems. Such comparisons answer questions of a different kind than attribution on a given machine, such as which algorithm or programming language to use on a given platform. Noureddine \cite{noureddinePowerJoularJoularJXMultiPlatform2022} illustrates this with three implementations of the same algorithm, the Python version consuming much more energy than the C version on an Intel laptop, but less on Raspberry Pi devices.
 
-Despite their differences, nearly all recent tools rely on Intel RAPL whenever hardware support is available. Earlier work often relied on analytical models to estimate CPU energy because hardware counters were unavailable or inaccessible. Today, modelling is primarily used for a different purpose: enabling attribution in virtualised environments where direct hardware measurements cannot be assigned to individual containers or virtual machines. These models are increasingly data-driven and architecture-specific rather than analytical.
+\textbf{Code-section attribution.} A third group targets software development and optimisation, attributing energy to functions, methods or user-defined code regions, as IgProf \cite{khanEnergyProfilingUsing2015}, JoularJX \cite{noureddinePowerJoularJoularJXMultiPlatform2022}, Jalen \cite{noureddineMonitoringEnergyHotspots2015} and jRAPL \cite{liuDataOrientedCharacterizationApplicationLevel2015}. As far as we know, language-independent support for code-region attribution remains very limited. The Green Metrics Tool \cite{hoffmannGreenMetricsTool2025,DocsgreencodingioDocsPrologue} provides such functionality by combining container isolation, container-level attribution and execution time markers. However, developers must manually instrument the application by placing these markers, making the approach semi-automatic. We recently applied this methodology to evaluate the energy consumption of simulated user interactions with webmail front-ends \cite{kayembeExploringPrivacySecurity2025}. Among language-specific solutions, JoularJX \cite{noureddinePowerJoularJoularJXMultiPlatform2022} combines statistical sampling with an intermediate thread-level attribution for Java applications, and relies on PowerJoular for hardware-exposed interfaces, inheriting its multi-platform support. RAPL wrappers equipped with execution time markers also exist for several languages, such as jRAPL for Java \cite{liuDataOrientedCharacterizationApplicationLevel2015} and PyJoules for Python \cite{jayExperimentalComparisonSoftwarebased2023,pathaniaCalculatingSoftwaresEnergy2025}, as well as language-independent tools delimiting commands or phases, such as EnergiBridge \cite{aneggiMeasuringSoftwareEnergy2026} and Joule Profiler \cite{woirhayeJouleProfilerPhasebased2026}. However, these tools do not first allocate energy to the monitored process: the whole hardware energy measured between two markers is attributed to the delimited code (Section~\ref{sec:profiler-selection}), which is only valid when the workload is isolated.
 
-Although model-based attribution currently provides a practical compromise for cloud environments, we believe that cloud providers could significantly improve measurement accuracy by exposing trusted energy metrics directly to guest virtual machines or containers. Hypervisors already observe the physical hardware and execute the attribution mechanisms required to isolate workloads. Exposing these measurements would eliminate the need for guest-side estimation models while enabling consistent and accurate software energy profiling across cloud platforms.
+These use cases partly correspond to the tool categories of Aneggi et al. \cite{aneggiMeasuringSoftwareEnergy2026}, who recommend collectors for continuous monitoring in production and Kubernetes environments, tools computing derived metrics for lightweight manual profiling, and tools exposing raw RAPL data for high-precision experiments on bare metal, where overhead must be minimal.
 
-Our analysis highlights several gaps in the current state of the art. Most tools remain Linux-centric despite recent efforts to improve portability. Very few tools consider hardware components beyond the CPU, GPU and DRAM. Among the analysed tools, only e-Surgeon \cite{noureddineMonitoringEnergyHotspots2015} explicitly incorporates network activity, while none provides meaningful storage energy attribution. Thread-level attribution also remains largely unexplored. Existing attempts, such as the evaluation of IgProf \cite{khanEnergyProfilingUsing2015}, report limited accuracy, suggesting that reliable fine-grained attribution below the process level remains an open research challenge.
+\subsection{Hardware-level energy estimation}
 
-To our knowledge, Cadorel and Saingre \cite{cadorelProtocolAssessAccuracy2024b} provide the only validation of a software-level power allocation model against a defined allocation objective. In contrast, existing evaluations \cite{noureddineESurgeonDiagnosingEnergy2012} commonly verify that the sum of software-level estimates agrees with an external power measurement of the whole system, which validates the global consumption but does not establish whether the consumption is correctly allocated among software entities. We consider the framework of Cadorel and Saingre a promising way to complement this validation, as it provides a fair allocation criterion and does not depend on a particular policy for allocating idle or residual consumption. However, applying their protocol in practice requires estimating the active consumption of each application in isolation. While the authors assume that the application can be run alone on the machine, the operating system, background services and other processes remain active and may contribute to the measured consumption. The monitoring tool itself can also introduce additional activity. An external power meter could remove the latter issue by measuring the machine independently of the monitoring software, but it would not solve the presence of other system activity. The protocol therefore appears most practical in controlled environments where background activity can be kept stable, and its applicability to general-purpose systems remains an open issue. Finally, while Cadorel and Saingre evaluate Scaphandre and PowerAPI, we leave the evaluation of the other tools identified in our study to future work, as a systematic application of their protocol to all considered tools is beyond the scope of this paper. Nevertheless, we recommend this framework as a basis for future validation of software-level allocation models.
+Nearly all recent tools rely on hardware-exposed interfaces whenever they are available, and existing studies suggest that these interfaces are accurate enough for most analyses. Khan et al. \cite{khanRAPLActionExperiences2018} report a correlation of about 0.99 between RAPL and the AC power of the machine, and a mean absolute percentage error of 1.7\% when estimating wall-plug power from RAPL. Its accuracy nevertheless depends on the processor generation, early implementations estimating energy from models rather than measuring it, and DRAM measurements may deviate by up to 20\% \cite{khanRAPLActionExperiences2018}. Jay et al. \cite{jayExperimentalComparisonSoftwarebased2023} similarly find RAPL- and NVML-based measurements strongly correlated with a wall-plug power meter, with a non-constant offset attributed to components that these interfaces do not cover. GPU measurements, however, require more care. Yang et al. \cite{yangParttimePowerMeasurements2024} show that the power reported by \texttt{nvidia-smi} is within 5\% of an external measurement in most cases, but that its energy measurements are less reliable: the reported power is updated only every 20 to 100\,ms and, on A100 and H100 GPUs, covers only 25\% of the runtime. Naive energy measurements thus deviated by up to 70\%, an error reduced to about 5\% by repeating the workload and shifting its phase. Earlier work often relied on analytical models to estimate CPU energy because such interfaces were unavailable or inaccessible \cite{noureddineMonitoringEnergyHotspots2015,doPTopProcesslevelPower2009}. Today, models are mainly used where hardware measurements are not accessible, in particular inside virtual machines.
 
-\todo[inline]{This part is super interesting. Now I have validaion
-questions for every new experiment:
-Is total energy measured accurately?
-  Comparison with an appropriate reference measurement
-Is energy allocated accurately?
-  A reference or protocol that tests the allocation among software entities
-Does the profiler perturb execution?
-  Measurement of runtime and energy overhead
-Are results stable?
-  Repeated measurements and uncertainty analysis
-Does the method generalise?
-  Evaluation across workloads, platforms, and operating conditions
+We also recommend decomposing the system consumption into hardware domains, each associated with its own activity proxy. As discussed in Section~\ref{challenges}, this decomposition limits the misattribution of asynchronous energy to the domains concerned. The coverage of each domain should nevertheless be known. Raffin and Trystram \cite{raffinDissectingSoftwarebasedMeasurement2024} note that the Intel documentation remains vague about recent RAPL domains such as PSYS, of which contradictory descriptions can be found. PowerJoular uses PSYS exclusively when it is available \cite{noureddinePowerJoularJoularJXMultiPlatform2022}, so that the consumption of the whole SoC is distributed with a single CPU-based proxy. Similarly, Aneggi et al. \cite{aneggiMeasuringSoftwareEnergy2026} recommend verifying which RAPL domains are exposed on the target architecture, as some domains are often unavailable, and reporting clearly when a value is estimated rather than measured.
 
-With something like this, readers could interpret the evidence available
-for each tool, rather than treating the magical existence of an accuracy
-evaluation as sufficient.
-}
+The interface used to read these sources also matters. Raffin and Trystram \cite{raffinDissectingSoftwarebasedMeasurement2024} recommend reading RAPL through perf\_events whenever possible rather than through MSRs or eBPF, and adapting the acquisition frequency to the load of the machine, as high frequencies reduce the time spent in low-power states. Diamond and Stoico \cite{diamondWhatCostEnergy2026} further show that avoiding redundant system calls and computations in the sampling loop keeps the overhead close to that of a no-tool baseline, even at 1\,kHz.
+
+\subsection{Virtualised environments}
+
+Guest-side models minimise the reliance on the infrastructure operator, but their accuracy is uncertain. On bare-metal Kubernetes clusters, Centofanti et al. \cite{centofantiImpactPowerConsumption2024} found that Kepler consistently reported a lower power than a wall-plug smart plug across all CPU loads, a configuration that Pijnacker et al. identify as relying on the pre-trained power model \cite{pijnackerContainerlevelEnergyObservability2025}. To our knowledge, the accuracy of such models inside virtual machines has not been evaluated against a reference measurement. We therefore see these models as a workaround for operators that do not expose energy to their tenants, rather than as a solution. The technology required to expose it already exists: BitWatts forwards the power of each virtual machine to the guest through a VirtioSerial channel \cite{colmantProcesslevelPowerEstimation2015}, Scaphandre exposes it through a shared file system on Qemu/KVM hypervisors \cite{Scaphandre}, and PowerJoular and Joular Core read it from a file written by the host instance \cite{noureddinePowerJoularJoularJXMultiPlatform2022,JoularJoularcore2026}. Unlike their tenants, infrastructure operators have access to the hardware-level energy sources of the host and can attribute this energy to each virtual machine. We believe that cloud providers could significantly improve the accuracy of software energy profiling in the cloud by exposing to each virtual machine or container only its precomputed share of the host energy, rather than raw hardware readings, which have been exploited as a power side channel \cite{lippPLATYPUSSoftwarebasedPower2021}: each tenant then only sees what it consumes.
+
+\subsection{Idle consumption}
+
+Tools differ both in their idle policy and in what they consider as idle consumption (Section~\ref{taxonomy}). The resulting energies are therefore not comparable across tools, and the policy applied should be reported along with the results. Some tools let the user choose it: SmartWatts allocates the idle consumption when it is set to zero \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}, and the Green Metrics Tool reports both policies \cite{DocsgreencodingioDocsMeasuring}. The estimation of the idle power itself also differs in reliability. SmartWatts discards the samples collected while processes are created or terminated \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}, and the base initialisation mode of KubeWatt checks that only control-plane pods are running before measuring the idle power of the cluster \cite{pijnackerContainerlevelEnergyObservability2025}. Kepler up to version 0.9 instead takes the minimum power observed in the lowest observed utilisation state \cite{SustainablecomputingioKepler2026}, which depends on the activity of the machine during the observation. Moreover, an idle estimate computed once cannot follow changes of the machine state: Bellal et al. \cite{bellalInvestigatingPotentialKepler} show that Kepler keeps a fixed idle estimate, so that the reduction of idle power when idle cores enter deeper C-states is wrongly subtracted from the dynamic power of the running containers. What is included in the idle consumption also matters. In Kubernetes, control-plane containers run because workloads are deployed, and part of their consumption remains when no workload is running. KubeWatt includes this consumption in its idle power and excludes control-plane containers from the dynamic attribution, the additional control-plane consumption caused by the load being attributed to the containers causing it \cite{pijnackerContainerlevelEnergyObservability2025}. Kepler, in contrast, does not include the consumption of control-plane containers in its idle power, and attributes energy to them as to any other container \cite{pijnackerContainerlevelEnergyObservability2025}, although they run only to serve the deployed workloads.
+
+\subsection{Activity reconstruction}
+
+Most analysed tools allocate CPU energy in proportion to the CPU utilisation reported by the operating system, i.e. the CPU time of each entity over the sampling interval, and therefore do not account for the processor frequency, although the energy cost of a CPU cycle depends on it (Section~\ref{taxonomy}). On a bare-metal server, Bellal et al. \cite{bellalInvestigatingPotentialKepler} show that Kepler overestimates the dynamic power of a container by up to 15 times, and reports a decreasing power as the frequency increases for a constant workload, because the CPU usage of the workload decreases. Few tools address this limitation. BitWatts uses one power model per processor frequency, including TurboBoost frequencies, calibrated offline against an external wall-plug power meter \cite{colmantProcesslevelPowerEstimation2015}. SmartWatts also maintains one model per frequency, derives the average frequency from the APERF and MPERF registers, and recalibrates its models online against RAPL whenever the error exceeds a threshold, so that they adapt to the running workloads \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}. The PowerAPI library of e-Surgeon accounts for the frequency and voltage of the processor when estimating CPU power, but allocates it to processes in proportion to their CPU time \cite{noureddineMonitoringEnergyHotspots2015}. Even frequency-aware tools remain imperfect: Cadorel and Saingre \cite{cadorelProtocolAssessAccuracy2024b} report allocation errors of SmartWatts that depend on the context, particularly when the CPU frequency varies.
+
+\subsection{Components beyond CPU, memory and GPU}
+
+Although several tools measure GPU energy, only Kepler allocates it to software entities among the analysed tools, in proportion to the GPU utilisation of each process reported through NVML, a feature that is experimental in versions 0.10 and later \cite{SustainablecomputingioKepler2026}. The other tools report GPU energy at the device or machine level only \cite{noureddinePowerJoularJoularJXMultiPlatform2022,DocsgreencodingioDocsMeasuring}. Very few tools consider hardware components beyond the CPU, GPU and DRAM. Among the analysed tools, only e-Surgeon \cite{noureddineMonitoringEnergyHotspots2015} explicitly incorporates network activity, estimating the network power of a process from the power of each state of the network card, provided by the manufacturer, and the time spent transmitting, then allocating it to methods in proportion to the bytes they read and write. None of the analysed tools provides meaningful storage energy attribution. Moreover, the energy of such devices is often consumed asynchronously (Section~\ref{challenges}). eprof \cite{schubertProfilingSoftwareEnergy2012} attributes asynchronous disk and network energy to the code that issued each request, by recording the call stack when the kernel creates it, and reports that asynchronous disk requests accounted for up to 33\% of the total energy in one experiment. As its implementation is no longer available, we found no available tool attributing asynchronous device energy to code sections. Thread-level attribution also remains rare: among the analysed tools, only JoularJX \cite{noureddinePowerJoularJoularJXMultiPlatform2022} and Jalen \cite{noureddineMonitoringEnergyHotspots2015} distribute process energy to threads before methods. The authors of IgProf, which accounts neither for threads nor for other processes, found no clear relation between the energy and the time spent in the functions of multi-threaded software \cite{khanEnergyProfilingUsing2015}. Finally, most tools remain Linux-centric despite recent efforts to improve portability. On Windows, Scaphandre and Joular Core read RAPL through a dedicated kernel driver \cite{Scaphandre,OverviewJoularCore}.
+
+\subsection{Allocation validation}
+
+To our knowledge, Schubert et al. \cite{schubertProfilingSoftwareEnergy2012} first evaluated attribution independently of any power model, by profiling a CPU-intensive and a memory-intensive computation separately and then combined in a single program, and verifying that each function retains the energy attributed to it when run alone, with deviations of up to 13.9\% for individual functions. Cadorel and Saingre \cite{cadorelProtocolAssessAccuracy2024b} formalise this idea into a protocol that evaluates software-level power allocation against a defined allocation objective, and apply it to concurrent applications. In contrast, other evaluations \cite{noureddineESurgeonDiagnosingEnergy2012} commonly verify that the sum of software-level estimates agrees with an external power measurement of the whole system, which validates the global consumption but does not establish whether the consumption is correctly allocated among software entities. We consider the framework of Cadorel and Saingre a promising way to complement this validation, as it provides a fair allocation criterion and does not depend on a particular policy for allocating idle or residual consumption. However, applying their protocol in practice requires estimating the active consumption of each application in isolation. While the authors assume that the application can be run alone on the machine, the operating system, background services and other processes remain active and may contribute to the measured consumption. The monitoring tool itself can also introduce additional activity. An external power meter could remove the latter issue by measuring the machine independently of the monitoring software, but it would not solve the presence of other system activity. The protocol therefore appears most practical in controlled environments where background activity can be kept stable, and its applicability to general-purpose systems remains an open issue. Finally, while Cadorel and Saingre evaluate Scaphandre and PowerAPI, we leave the evaluation of the other tools identified in our study to future work, as a systematic application of their protocol to all considered tools is beyond the scope of this paper. Nevertheless, we recommend this framework as a basis for future validation of software-level allocation models.
+
+\subsection{Towards state-of-the-art attribution}
+
+Combining the mechanisms identified in this study, we recommend that profiling tools:
+\begin{itemize}
+    \item rely on hardware-exposed interfaces as hardware-level energy source when available, after verifying the domains they cover,
+    \item decompose the system consumption into hardware domains, each with its own activity proxy,
+    \item read RAPL through perf\_events, and keep the sampling loop free of redundant system calls and computations,
+    \item reconstruct activity shares from hardware performance counters rather than CPU time alone, in counting mode and without multiplexing,
+    \item account for the processor frequency in the allocation, and recalibrate their models online,
+    \item at code-section granularities, first allocate energy to the profiled process, then distribute this process energy among its threads and code sections,
+    \item attribute process energy to code sections through statistical sampling rather than code instrumentation, whose overhead is considerably higher,
+    \item define explicitly what they consider as idle consumption, how they estimate it, and which idle policy they apply,
+    \item support virtualised environments by exposing host-side attribution to guests through two instances, rather than through guest-side models.
+\end{itemize}
+
+No analysed tool implements all of these practices. For virtualised workloads and process-level attribution, SmartWatts \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020} comes closest, combining RAPL, frequency-aware models built on the hardware performance counter events most correlated with RAPL, online calibration, a checked idle estimation and a separate accounting of kernel activities, but it does not expose its estimates to guests. BitWatts \cite{colmantProcesslevelPowerEstimation2015} provides this exposure, but calibrates its models offline against an external wall-plug power meter. For code-section attribution, JoularJX \cite{noureddinePowerJoularJoularJXMultiPlatform2022} comes closest, combining statistical sampling, an intermediate thread-level attribution and the multi-platform support of PowerJoular, but it inherits its CPU-time-based process attribution and is restricted to Java.
 
 
 
 \section{Conclusion}
-		
-\section{Meetings Notes}
 
-\jay{\textbf{Comments from 23-03-26 meeting with JT and Iness}}
-    \begin{itemize}
-    \item \jay{\cite{raffinDissectingSoftwarebasedMeasurement2024} compare the limits (real versus targeted mean and std) of the polling frequency in their Figure 3. We could continue to assess this for the tools we consider in this sok.
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.8\linewidth]{img/polling_frequency.png}
-        \includegraphics[width=0.8\linewidth]{img/power_and_cpu_states.png}
-        \includegraphics[width=0.8\linewidth]{img/execution_time.png}
-    \end{figure}}
-    \item \jay{\cite{raffinDissectingSoftwarebasedMeasurement2024} also discusses overflow issues in RAPL registers. We could add a column for tools that account for this common behavior when reading RAPL data}
-    \item \jt{JT thinks this is not relevent}
-    \item \jay{Actually we could also extend the overhead benchmark in \cite{raffinDissectingSoftwarebasedMeasurement2024} to the tools we consider. }
-    \item \jt{JT: Give this as a project for Arthuro}
-    \begin{figure}[htbp]
-        \centering
+In this paper, we systematised software energy profiling tools, i.e. tools that attribute hardware energy to software entities. We first identified the challenges of this attribution: the allocation model, asynchronous energy consumption, access to measurement sources, temporal resolution, profiling overhead, and virtualisation. We then proposed a taxonomy that organises the methods addressing these challenges into a design space, covering granularity, hardware-level energy estimation and activity share proxies, four activity share estimation strategies, three idle policies and three approaches to virtualised environment support, and into the operational constraints these choices induce. We applied this taxonomy to fourteen tools selected through seed tools, inclusion and exclusion criteria and snowballing, and used it to characterise how each of them allocates hardware energy, which assumptions this allocation relies on, how it handles idle consumption and how it supports virtualised environments.
 
-    \item \jay{Add a column to specify the type of method used to allocate energy to processes:
-        \begin{itemize}
-            \item statistical sampling (non-invasive but need to somehow check the callstack. This is more suitable for monitoring)
-            \item start/end time markers (in code so invasive and targeted to development)
-            \item process isolation (like the GMT with container)
-            \item model provided with system resources sharing indicators (e.g. CPU \%age)
-        \end{itemize}
-    }
-        
-    \end{figure}
-    
-    
-    
-\end{itemize}
+Our analysis shows that the analysed tools serve three use cases: virtualised workloads, process-level attribution and code-section attribution. Recent tools largely converge on hardware-exposed interfaces as hardware-level energy source, and mainly differ in how they reconstruct activity shares and handle idle consumption. From the mechanisms identified, we derived a set of recommended practices and identified the tools that come closest to them, SmartWatts for virtualised workloads and process-level attribution, and JoularJX for code-section attribution, although none implements all of them.
 
-\jay{\textbf{Comments from 03-03-26 meeting with JT and Iness}}
+We also identified several gaps. Only Kepler allocates GPU energy to software entities, few tools consider hardware components beyond the CPU, DRAM and GPU, none of the available tools attributes asynchronous device energy to code sections, and thread-level attribution remains largely unexplored. The accuracy of guest-side models inside virtual machines has, to our knowledge, not been evaluated against a reference measurement, although the mechanisms required for infrastructure operators to expose host-side attribution to their tenants already exist. Finally, the allocation among software entities, rather than the total consumption, has been validated for very few tools.
 
-\begin{itemize}
-    \item \jay{Structure : Wrapper + 2 sources of input : Metric providers (This paper \cite{zoniSurveyRuntimePower2023} already conducts a survey for these) \& Resources Utilisation providers.
-    Do we integrate these subcomponents (e.g. Andro watts for Android, RAPL, and tools reviewed in the paper \cite{zoniSurveyRuntimePower2023})?}
-    \item \jay{Security : RAPL put a limit on purpose to the accuracy of its metrics to prevent side-channel attacks. How does that affects the tools considered ? "RAPL however has been nerfed recently through a discovered power-side-channel attack coined Platypus Moritz Lipp showed that it is possible to read the current executed processor instructions and also the memory layouts especially for data stored in the believed to be secure memory enclave from Intel called SGX SGX"}
-    \item \jay{taxonomy : we can build on \cite{jagannadharaoBeginnersGuidePower2024}}
-\end{itemize}
+This last gap concerns not only tool developers, but also every study that relies on these tools. Validation results are often reported as a single accuracy figure, whose meaning depends on what was actually evaluated. The main outcome of this study is therefore the comparative table summarised in Figures~\ref{fig:design-space} and~\ref{fig:operational-constraints}. We suggest that anyone developing, using or assessing a profiling tool fill it in, communicate it and consult it, as it gathers the information needed to answer the following validation questions: the accuracy validation dimension informs the first two questions, the overhead dimension the third, and the measurement sources, allocation model and idle policy the last.
 
-
-\noindent\jay{\textbf{Comments from 17-02-26 meeting with JT and Iness}}
-
-\begin{itemize}
-    \item   \iness{Iness : Is there a sound reason for the existence of so many of these tools?} \\
-            \jt{JT : That's potentially something we'll find out with this study} \\
-            \jay{Jay : I do agree with the fact that it should be an outcome of the study. To me, the classification we create really defines a space of usage scenarios, i.e. needs + constraints. For instance a tool like Kepler might have been designed for data centres operators to monitor energy usage per computing loads and allow energy-aware orchestration of the latter. This translates to a context and its constraints: $(granularity=container/VM, measurment\_target=(CPU, DRAM, storage), measurment\_approach=external\_power\_meters + RAPL, virtualisation\_support, etc...)$. Another use case of a user wanting to assess the energy of a program running on its smartphone would imply another context, other constraints so another point in that space for which there might or not exist a tool}
-    \item   \jt{JT : We might want to add a column for use cases of the tools. The value of such a paper might be different for industry people than us academic fellows or even governance people making standards etc...}\\
-            \iness{Iness : The value of this SoK, from these different perspectives, could be made more explicit in the introduction to strengthen the scientific contribution}.
-
-    \item \jt{JT : For the moment, it is unclear how the GMT differentiates itself from Kepler. Why couldn't the GMT be used in data centre context? }\\
-          \jay{Jay : I think the GMT could be used in a data centre context, provided the DC operator allows access to some metrics (number of CPUs,RAM,... + system-level consumption wether it's real-time or spec-based) as source of truth, and a metric provider (GMT data reporter) is implemented to read and process that data. Such a metric provider exists when running different containers, that uses CPU percentage utilisation as a proxy for system-energy allocation to containers.}
-    
-\end{itemize} 
-
-\cite{cadorelProtocolAssessAccuracy2024b}
+\begin{enumerate}
+    \item \emph{Is the total energy measured accurately?} The hardware-level energy should be compared with an appropriate reference, such as a wall-plug power meter, while accounting for the hardware domains that the measurement source covers.
+    \item \emph{Is the energy allocated accurately?} The allocation among software entities should be tested against a defined allocation objective, for instance by comparing the energy attributed to applications executed in isolation and concurrently \cite{schubertProfilingSoftwareEnergy2012,cadorelProtocolAssessAccuracy2024b}.
+    \item \emph{Does the profiler perturb the execution?} The execution-time and energy overhead of the profiler should be measured against an execution without the tool \cite{diamondWhatCostEnergy2026}.
+    \item \emph{Are the results stable?} Measurements should be repeated and reported with their uncertainty \cite{yangParttimePowerMeasurements2024}.
+    \item \emph{Do the results generalise?} The evaluation should cover different workloads, platforms and operating conditions, such as processor frequency scaling, idle-state transitions and concurrent workloads \cite{bellalInvestigatingPotentialKepler}.
+    \item \emph{Are the attribution assumptions reported?} The tool version and configuration, the hardware domains covered, the activity proxy, and the scope and policy applied to idle consumption should be reported, as they determine what the attributed energy represents.
+\end{enumerate}
 
 
 % ------------------------------------------------------------------------------
@@ -724,5 +725,196 @@ evaluation as sufficient.
 \bibliography{bib/main-zotero.bib, bib/temp-manual.bib}
 
 % ------------------------------------------------------------------------------
+
+\appendix
+
+\section{Considered tools}\label{app:considered-tools}
+
+{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.1cm}>{\raggedright\arraybackslash}p{0.7cm}>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-6.8cm-8\tabcolsep\relax}@{}}
+\caption{Software energy profiling tools considered during the selection process. \emph{Year} is the year of first publication or public release. \emph{Discovery} gives the selection stage and, for snowballing, the publication from which the tool was identified.}
+\label{tab:considered-tools}\\
+\toprule
+\textbf{Tool} & \textbf{Year} & \textbf{Discovery} & \textbf{Status} & \textbf{Description}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Tool} & \textbf{Year} & \textbf{Discovery} & \textbf{Status} & \textbf{Description}\\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+
+PowerScope \cite{flinnPowerScopeToolProfiling1999} & 1999 & Backward snowballing \cite{noureddineReviewEnergyMeasurement2013} & Excluded: non-representative execution environment; unavailable implementation &
+Profiles energy at process and procedure level by combining an external multimeter, controlled by a separate computer, with kernel-supported statistical sampling of the program counter and process identifier \cite{flinnPowerScopeToolProfiling1999}. Energy profiles are computed offline, so that the analysis stage introduces no profiling overhead \cite{noureddineReviewEnergyMeasurement2013}. Samples taken while an asynchronous interrupt is handled, such as the receipt of a network packet, are attributed to an interrupt-specific bucket rather than to the running process \cite{flinnPowerScopeToolProfiling1999}. The approach requires kernel modifications and assumes a uniprocessor machine \cite{flinnPowerScopeToolProfiling1999,noureddineReviewEnergyMeasurement2013}.\\
+\addlinespace
+
+pTop \cite{doPTopProcesslevelPower2009} & 2009 & Backward snowballing \cite{noureddineReviewEnergyMeasurement2013,noureddineMonitoringEnergyHotspots2015} & Excluded: unavailable implementation &
+Estimates the energy of each process from its resource usage, read from \texttt{/proc} by a kernel-space daemon, and from component power values provided by manufacturers, such as the TDP \cite{doPTopProcesslevelPower2009,noureddineReviewEnergyMeasurement2013}. Each component is modelled by its power states and transitions, and the disk and network energy of a process is derived from the time it spends in each device state \cite{noureddineReviewEnergyMeasurement2013}. The authors report a median error below 2\,W against a wall-plug power meter, and a CPU overhead of 3\% at a 1\,s sampling interval \cite{noureddineReviewEnergyMeasurement2013}.\\
+\addlinespace
+
+Joulemeter \cite{kansalVirtualMachinePower2010} & 2010 & Backward snowballing \cite{noureddineReviewEnergyMeasurement2013} & Excluded: undisclosed methodology; unavailable implementation &
+Estimates the energy of virtual machines from the host by regressing whole-system power, read from the server's built-in power sensor, on hypervisor counters such as per-VM processor utilisation and disk bytes \cite{kansalVirtualMachinePower2010}. After a machine-wide base model, it learns separate coefficients for each virtual machine, and retrains when the sum of the estimates drifts from the measured total; idle energy is reported separately rather than allocated \cite{kansalVirtualMachinePower2010}. The released desktop version, evaluated by Jagroep et al. \cite{jagroepProfilingEnergyProfilers2015}, is closed-source and not documented beyond this paper, which describes an unreleased prototype.\\
+\addlinespace
+
+RAPL \cite{khanRAPLActionExperiences2018} & 2011 & Background (energy source of the seed tools) & Excluded: no software energy attribution &
+Hardware interface introduced by Intel with the Sandy Bridge micro-architecture, and by AMD with Zen, exposing energy counters for domains such as the package, cores and DRAM through model-specific registers \cite{khanRAPLActionExperiences2018,fieniSmartWattsSelfCalibratingSoftwareDefined2020}. Counters are updated approximately every millisecond \cite{khanRAPLActionExperiences2018}, and can be read through the MSRs, the powercap interface or perf\_events, which differ in latency, overhead and required privileges \cite{raffinDissectingSoftwarebasedMeasurement2024}. RAPL provides no attribution to software entities, but is the hardware-level energy source of most analysed tools.\\
+\addlinespace
+
+e-Surgeon (PowerAPI) \cite{noureddineESurgeonDiagnosingEnergy2012,noureddineMonitoringEnergyHotspots2015} & 2012 & Seed (keyword search) & Selected &
+Operating-system-level library of e-Surgeon estimating the CPU and network energy of processes \cite{noureddineMonitoringEnergyHotspots2015}. It estimates CPU power from the TDP and the processor frequency and voltage, and allocates it to processes in proportion to their CPU time \cite{noureddineMonitoringEnergyHotspots2015}. This original PowerAPI differs from the current Python framework of the same name \cite{fieniPowerAPIPythonFramework2024}.\\
+\addlinespace
+
+e-Surgeon (Jalen) \cite{noureddineESurgeonDiagnosingEnergy2012,noureddineMonitoringEnergyHotspots2015} & 2012 & Seed (keyword search) & Selected &
+Java agent of e-Surgeon distributing the process energy estimated by PowerAPI to threads according to their CPU time, then to classes and methods \cite{noureddineMonitoringEnergyHotspots2015}. It exists in two versions, relying either on bytecode instrumentation or on statistical sampling of the call stack \cite{noureddineMonitoringEnergyHotspots2015}. On individual Tomcat requests, the sampling version increases the response time by 3\% and the instrumentation version by 129\% \cite{noureddineMonitoringEnergyHotspots2015}, whereas the instrumentation of the first prototype reached 380\% on a CPU-intensive program \cite{noureddineESurgeonDiagnosingEnergy2012}.\\
+\addlinespace
+
+eprof \cite{schubertProfilingSoftwareEnergy2012} & 2012 & Keyword search & Excluded: unavailable implementation &
+Attributes dynamic CPU, memory and device energy to the functions of unmodified binaries \cite{schubertProfilingSoftwareEnergy2012}. CPU energy is estimated with a calibrated linear model on hardware performance counters, whose sampling thresholds are set so that each call-stack sample represents a fixed amount of energy \cite{schubertProfilingSoftwareEnergy2012}. Asynchronous disk and network energy is attributed by recording the call stack when the kernel creates the device request, and converted into equivalent samples so that both sources form a single profile \cite{schubertProfilingSoftwareEnergy2012}. The maximum runtime overhead reported is 2.7\% \cite{schubertProfilingSoftwareEnergy2012}.\\
+\addlinespace
+
+Intel Power Gadget \cite{vitilloVitilloPower_gadget2024} & 2012 & Backward snowballing \cite{wysockiMethodsImprovingSoftware2025} & Excluded: no software energy attribution &
+Commercial utility from Intel reporting processor and DRAM power and energy on Windows, macOS and Linux, through command-line and graphical interfaces \cite{garcia-martinEstimationEnergyConsumption2019}. Its Linux version is distributed as source code \cite{vitilloVitilloPower_gadget2024}. It provides no attribution to software entities.\\
+\addlinespace
+
+BitWatts \cite{colmantBitWattsProcesslevelPower2014,colmantProcesslevelPowerEstimation2015} & 2014 & Backward snowballing \cite{wysockiMethodsImprovingSoftware2025} & Selected &
+Software-defined power meter that estimates process power from per-process hardware performance counters, using a polynomial model of unhalted cycles per processor frequency, calibrated offline against an external power meter \cite{colmantProcesslevelPowerEstimation2015}. Virtual machines are supported through two instances: the host instance estimates the power of each virtual machine and forwards it to a guest instance over a VirtioSerial channel, which allocates it to guest processes in proportion to their CPU utilisation \cite{colmantProcesslevelPowerEstimation2015}. Reports can reach 40\,Hz with an external power meter and 10\,Hz with libpfm4, but 1\,Hz is used in the evaluation for stability \cite{colmantProcesslevelPowerEstimation2015}.\\
+\addlinespace
+
+jRAPL \cite{liuDataOrientedCharacterizationApplicationLevel2015} & 2015 & Backward snowballing \cite{wysockiMethodsImprovingSoftware2025} & Selected as a representative of time-window attribution &
+Java library wrapping access to RAPL model-specific registers through the Linux \texttt{msr} kernel module \cite{liuDataOrientedCharacterizationApplicationLevel2015}. Developers enclose a code block between two \texttt{statCheck} calls, and its energy is the difference between both readings, broken down by RAPL domain; time and hardware performance counter values can also be collected \cite{liuDataOrientedCharacterizationApplicationLevel2015}. Measurement and execution are delimited by the same calls, so that no synchronisation with an external meter is needed, at the cost of manual instrumentation and an access overhead in the order of microseconds \cite{liuDataOrientedCharacterizationApplicationLevel2015}.\\
+\addlinespace
+
+IgProf \cite{khanEnergyProfilingUsing2015} & 2015 & Backward snowballing \cite{wysockiMethodsImprovingSoftware2025} & Selected as a representative of time-window attribution &
+Energy module of a CERN application profiler that runs in user space without recompiling the profiled application \cite{khanEnergyProfilingUsing2015}. At a fixed interval, it reads RAPL through the PAPI library and attributes the energy consumed since the previous reading to the current call stack, producing function-level flat profiles and call graphs \cite{khanEnergyProfilingUsing2015}. Code executing faster than the RAPL update interval cannot be measured reliably, and the module accounts neither for multiple threads nor for other processes \cite{khanEnergyProfilingUsing2015}.\\
+\addlinespace
+
+GreenOracle \cite{chowdhuryGreenOracleEstimatingSoftware2016} & 2016 & Backward snowballing \cite{wysockiMethodsImprovingSoftware2025} & Excluded: mobile-only platform; no software energy attribution &
+Estimates the total energy of an Android application test run from system-call counts and CPU utilisation, using a ridge regression model trained on the measured energy of other applications \cite{chowdhuryGreenOracleEstimatingSoftware2016}. Developers therefore do not need to measure their own application, and estimates are mostly within 10\% error \cite{chowdhuryGreenOracleEstimatingSoftware2016}.\\
+\addlinespace
+
+Jolinar \cite{noureddineJolinarAnalysingEnergy2016} & 2016 & Backward snowballing \cite{wysockiMethodsImprovingSoftware2025} & Excluded: undisclosed methodology; unavailable implementation &
+Application-level monitoring tool for GNU/Linux built on the energy models of PowerAPI \cite{noureddineJolinarAnalysingEnergy2016}. It estimates CPU, disk and memory energy from manufacturer specifications and operating-system resource utilisation, accounting for frequency and voltage changes, every 500\,ms \cite{noureddineJolinarAnalysingEnergy2016}. It monitors one application at a time, limited to one process per application \cite{noureddineJolinarAnalysingEnergy2016}.\\
+\addlinespace
+
+PETrA \cite{dinucciPETrASoftwareBasedTool2017a,dinucciSoftwarebasedEnergyProfiling2017} & 2017 & Backward snowballing \cite{wysockiMethodsImprovingSoftware2025} & Excluded: mobile-only platform &
+Estimates the energy of Android application methods from the component states and voltage reported by Android tools and the device power profile \cite{dinucciPETrASoftwareBasedTool2017a}. The energy of a method call is the sum of the energy consumed in the time frames during which it was active \cite{dinucciPETrASoftwareBasedTool2017a}. On 54 applications, the average estimation error is 4\% with respect to a hardware power monitor \cite{dinucciPETrASoftwareBasedTool2017a}.\\
+\addlinespace
+
+s-tui \cite{amanuskAmanuskStui2026} & 2017 & Backward snowballing \cite{centofantiImpactPowerConsumption2024} & Excluded: no software energy attribution &
+Terminal-based utility for stress-testing and monitoring a system, reporting host power, per-core utilisation, frequency and temperature \cite{centofantiImpactPowerConsumption2024,amanuskAmanuskStui2026}. It provides no attribution to software entities.\\
+\addlinespace
+
+Scaphandre \cite{centofantiImpactPowerConsumption2024,Scaphandre} & 2020 & Backward snowballing \cite{centofantiImpactPowerConsumption2024} & Selected &
+Monitoring agent that reads RAPL through the Linux powercap interface and attributes host energy to processes according to their CPU time, measured in jiffies \cite{centofantiImpactPowerConsumption2024}. On Windows, it reads the RAPL model-specific registers through a dedicated kernel driver \cite{Scaphandre}. Metrics are exported to monitoring systems such as Prometheus \cite{centofantiImpactPowerConsumption2024}. Its measurement loop could not exceed 28\,Hz when modified for higher frequencies \cite{raffinDissectingSoftwarebasedMeasurement2024}, and its per-process estimates differed from those of PowerAPI for concurrent memory-intensive workloads \cite{jayExperimentalComparisonSoftwarebased2023}.\\
+\addlinespace
+
+Android Runner \cite{malavoltaFrameworkAutomaticExecution2021} & 2020 & Backward snowballing \cite{wysockiMethodsImprovingSoftware2025} & Excluded: mobile-only platform &
+Python framework automating measurement-based experiments on native and web Android applications, defined once in a descriptive fashion and then executed automatically \cite{malavoltaFrameworkAutomaticExecution2021}. Energy measurement is delegated to third-party profilers \cite{malavoltaFrameworkAutomaticExecution2021}.\\
+\addlinespace
+
+SmartWatts \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020} & 2020 & Forward snowballing \cite{colmantProcesslevelPowerEstimation2015} & Selected &
+Extension of the BitWatts middleware estimating the CPU package and DRAM power of control groups, covering processes, containers, pods and virtual machines monitored from the host \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}. For each frequency, a linear model maps hardware performance counters to dynamic power; it is recalibrated online against RAPL whenever its error exceeds a threshold, and the estimates of all entities are rescaled to the dynamic power reported by RAPL \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}. Counter events are selected at runtime without exceeding the available hardware counters, dedicated control groups isolate kernel and system activities, and the idle consumption is estimated after boot from idle RAPL samples \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}. Cadorel and Saingre report allocation errors of 3.1\% on average on one machine, but 16.2\% on average and up to 49.1\% on another \cite{cadorelProtocolAssessAccuracy2024b}.\\
+\addlinespace
+
+PowerJoular \cite{noureddinePowerJoularJoularJXMultiPlatform2022} & 2021 & Backward snowballing \cite{wysockiMethodsImprovingSoftware2025} & Selected &
+Monitors the CPU and GPU power of PCs, servers and Raspberry Pi devices, reading RAPL through the powercap interface (using the PSYS domain exclusively when available) and NVIDIA SMI, and applying polynomial regression models of CPU utilisation on Raspberry Pi devices \cite{noureddinePowerJoularJoularJXMultiPlatform2022}. It can also report the CPU power of a given process \cite{noureddinePowerJoularJoularJXMultiPlatform2022}.\\
+\addlinespace
+
+JoularJX \cite{noureddinePowerJoularJoularJXMultiPlatform2022} & 2021 & Backward snowballing \cite{wysockiMethodsImprovingSoftware2025} & Selected &
+Java agent that obtains the power of the monitored process from PowerJoular, allocates it to Java threads according to their CPU utilisation every second, then to methods by sampling the top of each thread's stack every 10\,ms \cite{noureddinePowerJoularJoularJXMultiPlatform2022}.\\
+\addlinespace
+
+Green Metrics Tool \cite{hoffmannGreenMetricsTool2025,DocsgreencodingioDocsPrologue} & 2022 & Seed (prior use in peer-reviewed publications) & Selected &
+Benchmarking framework that runs the software under test and its usage scenario in Docker containers, and collects resource and energy metrics through pluggable metric reporters, such as RAPL readers or external power meters \cite{hoffmannGreenMetricsTool2025}. A calibration step measures the idle consumption, measurements cover lifecycle phases from installation to removal, and data are written directly to file during the benchmark, with a reported overhead below 1\% \cite{hoffmannGreenMetricsTool2025}. Energy is attributed to containers from their resource utilisation, and to user-defined phases through execution time markers placed in the usage scenario \cite{DocsgreencodingioDocsPrologue,kayembeExploringPrivacySecurity2025}.\\
+\addlinespace
+
+Kepler ($\leq$ 0.9) \cite{amaralKeplerFrameworkCalculate2023,SustainablecomputingioKepler2026} & 2022 & Seed (prior use in peer-reviewed publications) & Selected &
+Kubernetes exporter attributing node energy, obtained from RAPL, ACPI or NVIDIA GPU interfaces, to processes, containers and pods, using eBPF-collected counters, and exporting the results to Prometheus \cite{centofantiImpactPowerConsumption2024}. Its default ratio model distributes dynamic power in proportion to resource utilisation, while pre-trained models estimate the node power when no measurement interface is available, as in virtual machines \cite{bellalInvestigatingPotentialKepler}. It also offered trained regressors predicting the power of each process from its counters \cite{amaralKeplerFrameworkCalculate2023,SustainablecomputingioKepler2026}. GPU energy, read through NVML, is allocated to containers according to the GPU utilisation of their processes \cite{SustainablecomputingioKepler2026}. Idle power is estimated as the minimum power observed in the lowest observed utilisation state and allocated in proportion to the resources assigned to each container \cite{SustainablecomputingioKepler2026,bellalInvestigatingPotentialKepler}. Bellal et al. report overestimations of up to 15 times under varying CPU configurations and C-state transitions \cite{bellalInvestigatingPotentialKepler}.\\
+\addlinespace
+
+AndroWatts \cite{guegainAndroWattsUnpackingPower2025} & 2025 & Seed (keyword search) & Excluded: mobile-only platform; no software energy attribution &
+Estimates the power consumption of smartphone hardware components, such as the display, CPU and memory, from system metrics \cite{guegainAndroWattsUnpackingPower2025}. Among the statistical models predicting battery discharge speed, gradient boosting performs best ($R^2$ of 0.93, 6.7\% average absolute error), but the coefficients of a linear model ($R^2$ of 0.91) are used to derive per-component power shares, which are evaluated against the On-Device Power Rails Monitor \cite{guegainAndroWattsUnpackingPower2025}. Estimates concern hardware components rather than software entities.\\
+\addlinespace
+
+KubeWatt \cite{pijnackerContainerlevelEnergyObservability2025,pijnackerBjornpijnackerKubewatt2026} & 2025 & Backward snowballing \cite{aneggiMeasuringSoftwareEnergy2026} & Selected &
+Kubernetes metrics collector estimating the power of each container from the node power reported by the baseboard management controller of the server through Redfish, its only implemented power source, and from the container CPU usage read from the Kubernetes metrics API \cite{pijnackerContainerlevelEnergyObservability2025}. Node power is split into an idle part, reported separately and including the idle control plane, and a dynamic part allocated to each container in proportion to its share of the CPU usage of all containers, system processes excluded \cite{pijnackerContainerlevelEnergyObservability2025}. The idle power is set once per node by an initialisation job, either averaged on an idle cluster or extrapolated by linear regression from a loaded one, and is not updated without manual intervention \cite{pijnackerContainerlevelEnergyObservability2025}. On a single server, both modes estimate it within 0.7\,W of the Redfish reading, whereas container attribution is only assessed qualitatively \cite{pijnackerContainerlevelEnergyObservability2025}.\\
+\addlinespace
+
+Kepler ($\geq$ 0.10) \cite{SustainablecomputingioKepler2026,PowerAttributionKepler} & 2025 & Seed (prior use in peer-reviewed publications) & Selected &
+Ground-up rewrite of Kepler \cite{SustainablecomputingioKepler2026}. Node power is split into active and idle parts according to the node CPU utilisation, and only the active power is distributed among processes, containers, virtual machines and pods in proportion to their CPU time, idle power not being allocated to workloads \cite{PowerAttributionKepler}. An experimental option allocates NVIDIA GPU energy to processes according to their GPU compute utilisation \cite{SustainablecomputingioKepler2026}.\\
+\addlinespace
+
+Joular Core \cite{noureddineJoularCoreUniversal2026,JoularJoularcore2026} & 2026 & Forward snowballing \cite{noureddinePowerJoularJoularJXMultiPlatform2022} & Selected &
+Platform monitoring the CPU and GPU power of PCs, servers, Raspberry Pi devices and virtual machines on Windows, Linux and macOS, including Apple Silicon, as well as individual processes and multi-process applications \cite{noureddineJoularCoreUniversal2026}. Power data are exposed through the terminal, CSV files, a ring buffer and an HTTP or WebSocket API, with command-line and graphical interfaces \cite{noureddineJoularCoreUniversal2026}. On Linux, reading RAPL through the powercap interface requires root privileges, and on Windows a RAPL kernel driver \cite{OverviewJoularCore}. It is implemented in Rust \cite{JoularJoularcore2026}.\\
+\addlinespace
+
+Joule Profiler \cite{woirhayeJouleProfilerPhasebased2026} & 2026 & Keyword search & Excluded: no software energy attribution &
+Command-line tool splitting a program's execution into user-defined phases, detected from markers printed to standard output, and computing the energy of each phase from RAPL (through perf\_events or powercap) and NVML counter differences \cite{woirhayeJouleProfilerPhasebased2026}. The reported energy is system-wide, and output-based phase detection is considered viable for phases longer than 1\,ms \cite{woirhayeJouleProfilerPhasebased2026}.\\
+\addlinespace
+
+Trepn Profiler \cite{hoqueModelingProfilingDebugging2015} & -- & Backward snowballing \cite{wysockiMethodsImprovingSoftware2025} & Excluded: undisclosed methodology; mobile-only platform &
+Qualcomm profiler for Snapdragon-based Android devices, reporting the usage and power of components such as the CPU, GPU, Wi-Fi and memory, as well as the energy of the whole device \cite{hoqueModelingProfilingDebugging2015}. Component-level readings rely on sense resistors and a power-management chip available on dedicated development hardware, so that accurate estimates require this instrumentation \cite{hoqueModelingProfilingDebugging2015,ahmadPerformanceAssessmentDynamic2018}. Samples are taken every 100\,ms, with a rate adapted to the system load \cite{hoqueModelingProfilingDebugging2015}.\\
+\addlinespace
+
+PowerTOP \cite{venFenrus75Powertop2026} & -- & Backward snowballing \cite{noureddineReviewEnergyMeasurement2013} & Excluded: undisclosed methodology &
+Linux tool for diagnosing power consumption and power-management issues, reporting estimates for applications and system components and allowing users to apply power-management settings interactively \cite{noureddineReviewEnergyMeasurement2013,venFenrus75Powertop2026}. When the machine runs on battery, it builds per-device power estimates from measured consumption and system activity, and their accuracy can be improved by a calibration cycle \cite{venFenrus75Powertop2026}. The estimation mechanism itself is not described in a publication.\\
+
+\end{longtable}
+}
+
+
+\section{Tools identified but not analysed}\label{app:not-analysed}
+
+{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{5.5cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.5cm-2\tabcolsep\relax}@{}}
+\caption{Candidate tools identified in the surveys and comparative studies consulted during snowballing, but not analysed in this study (see Section~\ref{sec:profiler-selection}).}
+\label{tab:not-analysed}\\
+\toprule
+\textbf{Tool} & \textbf{Identified in}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Tool} & \textbf{Identified in}\\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Alumet & \cite{woirhayeJouleProfilerPhasebased2026}\\
+Carbon Tracker & \cite{jayExperimentalComparisonSoftwarebased2023,pathaniaCalculatingSoftwaresEnergy2025}\\
+Cloud Carbon Footprint & \cite{pathaniaCalculatingSoftwaresEnergy2025}\\
+Cloud Jewels & \cite{pathaniaCalculatingSoftwaresEnergy2025}\\
+Cloud provider dashboards & \cite{pathaniaCalculatingSoftwaresEnergy2025}\\
+CodeCarbon \cite{courtyMlco2CodecarbonV3322026,codeCarbon} & \cite{raffinDissectingSoftwarebasedMeasurement2024,jayExperimentalComparisonSoftwarebased2023,pathaniaCalculatingSoftwaresEnergy2025}\\
+Cumulator & \cite{pathaniaCalculatingSoftwaresEnergy2025,jayExperimentalComparisonSoftwarebased2023}\\
+EC Tools & \cite{jagroepProfilingEnergyProfilers2015}\\
+eco2AI & \cite{pathaniaCalculatingSoftwaresEnergy2025}\\
+EcoFloc & \cite{aneggiMeasuringSoftwareEnergy2026}\\
+Energy Scope & \cite{jayExperimentalComparisonSoftwarebased2023}\\
+EnergiBridge & \cite{aneggiMeasuringSoftwareEnergy2026}\\
+ESSaver & \cite{jagroepProfilingEnergyProfilers2015}\\
+Experiment Impact Tracker \cite{hendersonSystematicReportingEnergy2022,hendersonBreakendExperimentimpacttracker2026} & \cite{jayExperimentalComparisonSoftwarebased2023,pathaniaCalculatingSoftwaresEnergy2025}\\
+Green Algorithms & \cite{jayExperimentalComparisonSoftwarebased2023,pathaniaCalculatingSoftwaresEnergy2025}\\
+Hardware Sensors Monitor & \cite{jagroepProfilingEnergyProfilers2015}\\
+Likwid & \cite{jayExperimentalComparisonSoftwarebased2023,raffinDissectingSoftwarebasedMeasurement2024}\\
+ML CO2 Impact & \cite{jayExperimentalComparisonSoftwarebased2023,pathaniaCalculatingSoftwaresEnergy2025}\\
+nvidia-smi & \cite{jayExperimentalComparisonSoftwarebased2023}\\
+PAPI & \cite{jayExperimentalComparisonSoftwarebased2023}\\
+Perf & \cite{jayExperimentalComparisonSoftwarebased2023,aneggiMeasuringSoftwareEnergy2026}\\
+Power Measurement Toolkit & \cite{pathaniaCalculatingSoftwaresEnergy2025}\\
+powermetrics & \cite{jayExperimentalComparisonSoftwarebased2023}\\
+PowerLetrics \cite{geerd-dietgerPowerLetricsOpenSourceFramework2025,GreenkernelPowerletrics2026} & \cite{aneggiMeasuringSoftwareEnergy2026}\\
+powerStat & \cite{jayExperimentalComparisonSoftwarebased2023}\\
+pTopW & \cite{jagroepProfilingEnergyProfilers2015}\\
+PyJoules & \cite{jayExperimentalComparisonSoftwarebased2023,pathaniaCalculatingSoftwaresEnergy2025}\\
+Sensorsview & \cite{jagroepProfilingEnergyProfilers2015}\\
+Tracarbon & \cite{pathaniaCalculatingSoftwaresEnergy2025}\\
+turbostat & \cite{aneggiMeasuringSoftwareEnergy2026,pathaniaCalculatingSoftwaresEnergy2025}\\
+Watt Watcher & \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}\\
+Active Energy Manager, Computer Power Log, Energy-aware profiler, powometer & \cite{jagroepProfilingEnergyProfilers2015}\\
+\end{longtable}
+}
 
 \end{document}

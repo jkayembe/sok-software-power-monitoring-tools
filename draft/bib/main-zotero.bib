@@ -11,6 +11,16 @@
   keywords = {Application energy,Benchmark testing,Energy consumption,Estimation,Measurement,Performance evaluation,Power measurement,Power Tutor,Profiling,Tools,Wireless fidelity}
 }
 
+@misc{amanuskAmanuskStui2026,
+  title = {Amanusk/s-Tui},
+  author = {{amanusk}},
+  year = 2026,
+  month = nov,
+  urldate = {2026-11-17},
+  abstract = {Terminal-based CPU stress and monitoring utility},
+  copyright = {GPL-2.0}
+}
+
 @inproceedings{amaralKeplerFrameworkCalculate2023,
   title = {Kepler: {{A Framework}} to {{Calculate}} the {{Energy Consumption}} of {{Containerized Applications}}},
   shorttitle = {Kepler},
@@ -26,11 +36,48 @@
   keywords = {Cloud computing,Computational modeling,container power modeling,eBPF,energy accounting,kubernetes,Measurement,Power demand,Power measurement,Protocols,RAPL,Sustainability,Training}
 }
 
+@article{aneggiMeasuringSoftwareEnergy2026,
+  title = {Measuring {{Software Energy}} in {{Practice}}: {{A Guide}} to {{RAPL-Based Tools}}},
+  shorttitle = {Measuring {{Software Energy}} in {{Practice}}},
+  author = {Aneggi, Alessandro and Janes, Andrea and Taibi, Davide},
+  year = 2026,
+  month = jul,
+  journal = {IEEE Software},
+  volume = {43},
+  number = {4},
+  pages = {115--120},
+  issn = {0740-7459},
+  doi = {10.1109/MS.2026.3684757},
+  abstract = {Measuring software energy consumption is becoming essential, but doing it correctly is not straightforward. Energy is measured at the hardware level, while software operates at higher levels of abstraction, making attribution inherently uncertain. Here, we explore RAPL-based tools that bridge this gap, comparing their capabilities and limitations and providing practical guidance to help practitioners choose the right tools for experiments, monitoring, and production use.}
+}
+
 @article{bellalInvestigatingPotentialKepler,
-  title = {Investigating the {{Potential}} of {{Kepler Towards Power Observability}} for {{Sustainable Cloud Computing}}},
-  author = {Bellal, Zouhir and Lahlou, Laaziz and Kara, Nadjia and Murphy, Timothy and Nguyen, Tan Phat and Ahmed, Arif and {Perez-Jimenez}, Mario},
-  urldate = {2026-02-10},
-  abstract = {Power monitoring is a cornerstone of sustainability efforts, especially as the energy demands of Artificial Intelligence (AI) workloads continue to rise. However, accurately measuring power consumption in cloud-native environments remains challenging}
+  title = {Investigating the {{Potential}} of {{Kepler Toward Power Observability}} for {{Sustainable Cloud Computing}}},
+  author = {Bellal, Zouhir and Lahlou, Laaziz and Kara, Nadjia and Murphy, Timothy and Phat Nguyen, Tan and Ahmed, Arif and {Perez-Jimenez}, Mario},
+  year = 2026,
+  journal = {IEEE Transactions on Green Communications and Networking},
+  volume = {10},
+  pages = {2118--2135},
+  issn = {2473-2400},
+  doi = {10.1109/TGCN.2026.3660816},
+  urldate = {2026-11-22},
+  abstract = {Power monitoring is a cornerstone of sustainability efforts, especially as the energy demands of Artificial Intelligence (AI) workloads continue to rise. However, accurately measuring power consumption in cloud-native environments remains challenging due to technical constraints such as fine-grained monitoring requirements and the high abstraction introduced by virtualization and containerization. Kepler (Kubernetes-based Efficient Power Level Exporter), an open-source tool for container-level power monitoring, has emerged as a promising solution for cloud power observability. This paper outlines the key requirements for accurate power tracking in containerized environments and assesses Kepler's alignment with these criteria. However, its precision remains unvalidated, mainly due to the lack of a systematic evaluation methodology. To fill this gap, we introduce a novel accuracy validation framework tailored to assess container-level power monitoring tools under dynamic controlled multi-tenancy environments, including CPU frequency scaling, C-state transitions, and varying co-runner workloads (i.e., co-hosted containers executing concurrently on other cores of the same processor socket). Using this framework, we perform the first in-depth evaluation of Kepler's accuracy in real-world cloud scenarios (e.g., dynamic power configuration settings, dynamic workloads). Our results show that Kepler's container-level power estimation exhibits a root mean squared error (RMSE) of 11.9 Watts against the RAPL ground truth, corresponding to an overestimation of approximately 15\textbackslash times . Its accuracy is highly sensitive to runtime factors such as CPU configuration and C-state transitions, which reveals critical limitations in Kepler's current power model and highlights the need for refinement. This work establishes the foundation for more precise and effective power observability in cloud computing and paves the way for sustainable cloud computing.},
+  keywords = {Accuracy,Artificial intelligence,Cloud computing,cloud power observability,container-level power monitoring,Containers,Energy consumption,Hardware,Kepler accuracy validation,Monitoring,Observability,power accuracy validation framework,Power demand,Power monitoring,Servers}
+}
+
+@misc{boardCodeCarbonGuideTrack2026,
+  title = {{{CodeCarbon Guide}}: {{Track Compute Carbon Emissions}}},
+  shorttitle = {{{CodeCarbon Guide}}},
+  author = {Board, CASRAI Editorial},
+  year = 2026,
+  month = nov,
+  journal = {CASRAI},
+  publisher = {CASRAI},
+  urldate = {2026-11-23},
+  abstract = {Track machine learning emissions with CodeCarbon. Configure RAPL CPU tracking, monitor GPUs, export emissions.csv, and report research compute footprints.},
+  copyright = {https://creativecommons.org/licenses/by/4.0/},
+  howpublished = {https://casrai.org/guides/codecarbon},
+  langid = {english}
 }
 
 @inproceedings{cadorelProtocolAssessAccuracy2024b,
@@ -113,6 +160,15 @@
   langid = {american}
 }
 
+@misc{codeCarbon,
+  title = {Home},
+  journal = {CodeCarbon},
+  urldate = {2026-11-17},
+  abstract = {AI can benefit society in many ways, but given the energy needed to support the computing behind AI, these benefits can come at a high environmental price. Use CodeCarbon to track and reduce your CO{$_2$} output from code running on your own hardware. For tracking emissions from remote GenAI API calls (OpenAI, Anthropic, etc.), see EcoLogits.},
+  howpublished = {https://docs.codecarbon.io/latest/},
+  langid = {english}
+}
+
 @inproceedings{colmantBitWattsProcesslevelPower2014,
   title = {{{BitWatts}}: A Process-Level Power Monitoring Middleware},
   shorttitle = {{{BitWatts}}},
@@ -131,7 +187,7 @@
 }
 
 @inproceedings{colmantProcesslevelPowerEstimation2015,
-  title = {Process-Level Power Estimation in {{VM-based}} Systems},
+  title = {Process-Level Power Estimation in {{VM}}-Based Systems},
   booktitle = {Proceedings of the {{Tenth European Conference}} on {{Computer Systems}}},
   author = {Colmant, Maxime and Kurpicz, Mascha and Felber, Pascal and Huertas, Lo{\"i}c and Rouvoy, Romain and Sobe, Anita},
   year = 2015,
@@ -144,6 +200,35 @@
   urldate = {2026-09-07},
   abstract = {Power estimation of software processes provides critical indicators to drive scheduling or power capping heuristics. State-of-the-art solutions can perform coarse-grained power estimation in virtualized environments, typically treating virtual machines (VMs) as a black box. Yet, VM-based systems are nowadays commonly used to host multiple applications for cost savings and better use of energy by sharing common resources and assets.In this paper, we propose a fine-grained monitoring middleware providing real-time and accurate power estimation of software processes running at any level of virtualization in a system. In particular, our solution automatically learns an application-agnostic power model, which can be used to estimate the power consumption of applications.Our middleware implementation, named BitWatts, builds on a distributed actor implementation to collect process usage and infer fine-grained power consumption without imposing any hardware investment (e.g., power meters). BitWatts instances use high-throughput communication channels to spread the power consumption across the VM levels and between machines. Our experiments, based on CPU- and memory-intensive benchmarks running on different hardware setups, demonstrate that BitWatts scales both in number of monitored processes and virtualization levels. This non-invasive monitoring solution therefore paves the way for scalable energy accounting that takes into account the dynamic nature of virtualized environments.},
   isbn = {978-1-4503-3238-5}
+}
+
+@article{courtyMlco2CodecarbonV3322026,
+  title = {Mlco2/Codecarbon: V3.3.2},
+  shorttitle = {Mlco2/Codecarbon},
+  author = {Courty, Beno{\^i}t and Schmidt, Victor and {Goyal-Kamal} and {inimaz} and MarionCoutarel and Blanche, Luis and Feld, Boris and Berenstein, David and Saboni, Amine and Lecourt, J{\'e}r{\'e}my and LiamConnell and LLORET, Patrick and SabAmine and {supatomic} and L{\'e}val, Mathilde and {cianc} and Cruveiller, Alexis and {ouminasara} and Zhao, Franklin and Bauer, Christian and Festus, Jerry Laruba and Joshi, Aditya and Bogroff, Alexis and Laskaris, Niko and de Lavoreille, Hugues and Phiev, Alexandre and Abati, Edoardo and Blank, Douglas},
+  year = 2026,
+  month = oct,
+  publisher = {Zenodo},
+  doi = {10.5281/zenodo.23589071},
+  urldate = {2026-11-09},
+  abstract = {What's Changed Use official 2023 MEE/NBS provincial emission factors for China (\#1448) @Zhaohh0706 Update US state carbon intensity to EPA eGRID2023 (\#1452) @ArshiaBajaj Better Raspberry Pi support (\#1453) @prmths128 Warn when SLURM ranks double count a node (\#1390) @davidberenstein1957 Allow users to set metadata for BoAmps (\#1234) @benoit-cty Add biomass, biofuel and waste factors to carbon\_intensity\_per\_source (\#1446) @avalyset Integrate GPU power when energy counter is absent (\#1319) @davidberenstein1957 Add project name option to monitor command (\#1435) @kalyanigattu09 add --host argument to carbonboard (\#1434) @tourniert Dashboard : remove user from org (\#1420) @inimaz Smaller improvements and fixes Skip uncorrectable RAPL counter wraps (\#1321) @davidberenstein1957 fix(cli): report actual emissions file path (\#1331) @davidberenstein1957 feat: cache and back off Electricity Maps carbon intensity (\#1358) @davidberenstein1957 fix(powermetrics): reject unsupported Macs and report 0 W when no samples (\#1345) @davidberenstein1957 fix: preserve multi-digit GCP region numbers (\#1439) @nawaaaaaAaar fix: preserve explicitly provided zero carbon intensity (\#1441) @nawaaaaaAaar fix: align appended emissions records to existing CSV headers (\#1443) @nawaaaaaAaar fix: lock CPU power history swap (\#1335) @davidberenstein1957 fix: resolve RAM default pid at init time (\#1326) @davidberenstein1957 chore: PyPI metadata, docs links in warnings, release-drafter versioning (\#1431) @davidberenstein1957 Fix/flush missing experiment name (\#1411) @sohammishra864-wq test: keep the test suite headless (\#1425) @davidberenstein1957 docs: tell agents to fill in the PR template (\#1426) @davidberenstein1957 fix: drop dtype coercion in CSV update path (\#1370) @davidberenstein1957 :arrow\_up: Dependencies updates fix: certifi updates (\#1454) @inimaz build(deps): bump the uv group across 3 directories with 1 update (\#1450) @dependabot[bot] build(deps): bump werkzeug from 3.1.8 to 3.1.9 in the uv group across 1 directory (\#1447) @dependabot[bot] build(deps): bump the uv group across 3 directories with 3 updates (\#1437) @dependabot[bot] build(deps): bump the pip group across 2 directories with 2 updates (\#1436) @dependabot[bot] build(deps): bump the uv group across 2 directories with 1 update (\#1417) @dependabot[bot] build(deps): bump anyio from 4.12.0 to 4.14.2 in /requirements in the pip group across 1 directory (\#1418) @dependabot[bot] :busts\_in\_silhouette: List of contributors @ArshiaBajaj, @Zhaohh0706, @avalyset, @benoit-cty, @davidberenstein1957, @dependabot[bot], @inimaz, @kalyanigattu09, @nawaaaaaAaar, @prmths128, @sohammishra864-wq, @tourniert, dependabot[bot]}
+}
+
+@misc{diamondWhatCostEnergy2026,
+  title = {What {{Is}} the {{Cost}} of {{Energy Monitoring}}? {{An Empirical Study}} on the {{Overhead}} of {{RAPL-Based Tools}}},
+  shorttitle = {What {{Is}} the {{Cost}} of {{Energy Monitoring}}?},
+  author = {Diamond, Jeremy and Stoico, Vincenzo},
+  year = 2026,
+  month = apr,
+  number = {arXiv:2604.26815},
+  eprint = {2604.26815},
+  primaryclass = {cs.SE},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2604.26815},
+  urldate = {2026-11-20},
+  abstract = {The Running Average Power Limit (RAPL) interface is widely used to estimate software energy consumption via CPU and DRAM counters, but tool design differences and high-frequency polling can introduce measurement overhead, namely, extra time and energy consumed by the tool itself.This paper quantifies the impact of RAPL-based tools on high-frequency (1 kHz) energy monitoring and investigates mitigation strategies. We conduct two controlled experiments: the first evaluates seven tools, including a user-space application and a kernel module developed by the authors, against a no-tool baseline, using six NAS Benchmark functions to quantify overhead. The second experiment isolates and times key functions for polling Model-Specific Registers (MSRs) (rdmsr and sys/proc\_read) to estimate their execution latencies and identify potential slowdowns. The results show that existing user-space tools can introduce substantial time overhead at 1 kHz, whereas our tools significantly reduce system call overhead and inline math overhead. The time overhead of existing tools ranges from 0.25\% to 46.75\%. Our solutions maintain time overhead levels close to the baseline. We also find that system calls are slower than rdmsr, which in turn is slower than traditionally long-running instructions like cpuid. These findings indicate that RAPL-based energy measurement can be substantially improved by simplifying tool design and employing lower-level instructions to access RAPL values. Our findings provide guidance for practitioners on how to develop high-frequency energy profiling tools, show possible situations that can skew energy values, and demonstrate that access to RAPL values can be faster using specific techniques.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Performance,Computer Science - Software Engineering}
 }
 
 @inproceedings{dinucciPETrASoftwareBasedTool2017a,
@@ -180,6 +265,12 @@
   langid = {english}
 }
 
+@misc{DocsgreencodingioDocsMeasuring,
+  title = {Docs.Green-Coding.Io/Docs/Measuring/Measuring-Containers/},
+  urldate = {2026-11-22},
+  howpublished = {https://docs.green-coding.io/docs/measuring/measuring-containers/}
+}
+
 @misc{DocsgreencodingioDocsPrologue,
   type = {Documentation},
   title = {Docs.Green-Coding.Io/Docs/Prologue/Introduction/},
@@ -187,6 +278,18 @@
   journal = {Green Metrics Tool},
   urldate = {2026-07-31},
   howpublished = {https://docs.green-coding.io/docs/prologue/introduction/}
+}
+
+@inproceedings{doPTopProcesslevelPower2009,
+  title = {{{pTop}}: {{A Process}}-Level {{Power Profiling Tool}}},
+  shorttitle = {{{pTop}}},
+  booktitle = {Proceedings of the 2nd {{Workshop}} on {{Power Aware Computing}} and {{Systems}} ({{HotPower}}'09)},
+  author = {Do, Thanh and Rawshdeh, Suhib and Shi, Weisong},
+  year = 2009,
+  month = oct,
+  urldate = {2026-10-27},
+  abstract = {PDF \textbar{} We solve the problem of estimating the amount of energy consumed by each application in the sys- tem by presenting the design and implementation... \textbar{} Find, read and cite all the research you need on ResearchGate},
+  langid = {english}
 }
 
 @article{ergashevaMetricsEnergyConsumption2020,
@@ -208,6 +311,37 @@
   keywords = {read-jay}
 }
 
+@article{fieniPowerAPIPythonFramework2024,
+  title = {{{PowerAPI}}: {{A Python}} Framework for Building Software-Defined Power Meters},
+  shorttitle = {{{PowerAPI}}},
+  author = {Fieni, Guillaume and Acero, Daniel Romero and Rust, Pierre and Rouvoy, Romain},
+  year = 2024,
+  month = jun,
+  journal = {Journal of Open Source Software},
+  volume = {9},
+  number = {98},
+  pages = {6670},
+  issn = {2475-9066},
+  doi = {10.21105/joss.06670},
+  urldate = {2026-11-09},
+  abstract = {Fieni et al., (2024). PowerAPI: A Python framework for building software-defined power meters. Journal of Open Source Software, 9(98), 6670, https://doi.org/10.21105/joss.06670},
+  langid = {english}
+}
+
+@inproceedings{fieniSmartWattsSelfCalibratingSoftwareDefined2020,
+  title = {{{SmartWatts}}: {{Self-Calibrating Software-Defined Power Meter}} for {{Containers}}},
+  shorttitle = {{{SmartWatts}}},
+  booktitle = {{{CCGRID}} 2020 - 20th {{IEEE}}/{{ACM International Symposium}} on {{Cluster}}, {{Cloud}} and {{Internet Computing}}},
+  author = {Fieni, Guillaume and Rouvoy, Romain and Seinturier, Lionel},
+  year = 2020,
+  month = may,
+  address = {Melbourne, Australia},
+  doi = {10.1109/CCGrid49817.2020.00-45},
+  urldate = {2026-10-27},
+  abstract = {Fine-grained power monitoring of software activities becomes unavoidable to maximize the power usage efficiency of data centers. In particular, achieving an optimal scheduling of containers requires the deployment of software-defined power\textasciitilde meters to go beyond the granularity of hardware power monitoring sensors, such as Power Distribution Units (PDU) or Intel's Running Average Power Limit (RAPL), to deliver power estimations of activities at the granularity of software\textasciitilde containers. However, the definition of the underlying power models that estimate the power consumption remains a long and fragile process that is tightly coupled to the host machine. To overcome these limitations, this paper introduces SmartWatts: a lightweight power monitoring system that adopts online calibration to automatically adjust the CPU and DRAM power models in order to maximize the accuracy of runtime power estimations of containers. Unlike state-of-the-art techniques, SmartWatts does not require any a priori training phase or hardware equipment to configure the power models and can therefore be deployed on a wide range of machines including the latest power optimizations, at no cost.},
+  keywords = {containers,energy,Power model,powerapi}
+}
+
 @inproceedings{flinnPowerScopeToolProfiling1999,
   title = {{{PowerScope}}: A Tool for Profiling the Energy Usage of Mobile Applications},
   shorttitle = {{{PowerScope}}},
@@ -222,6 +356,46 @@
   keywords = {Application software,Current measurement,Energy consumption,Hardware,Instruments,Kernel,Performance evaluation,Sampling methods,Software measurement,Software performance}
 }
 
+@article{garcia-martinEstimationEnergyConsumption2019,
+  title = {Estimation of Energy Consumption in Machine Learning},
+  author = {{Garc{\'i}a-Mart{\'i}n}, Eva and Rodrigues, Crefeda Faviola and Riley, Graham and Grahn, H{\aa}kan},
+  year = 2019,
+  month = dec,
+  journal = {Journal of Parallel and Distributed Computing},
+  volume = {134},
+  pages = {75--88},
+  issn = {0743-7315},
+  doi = {10.1016/j.jpdc.2019.07.007},
+  urldate = {2026-10-29},
+  abstract = {Energy consumption has been widely studied in the computer architecture field for decades. While the adoption of energy as a metric in machine learning is emerging, the majority of research is still primarily focused on obtaining high levels of accuracy without any computational constraint. We believe that one of the reasons for this lack of interest is due to their lack of familiarity with approaches to evaluate energy consumption. To address this challenge, we present a review of the different approaches to estimate energy consumption in general and machine learning applications in particular. Our goal is to provide useful guidelines to the machine learning community giving them the fundamental knowledge to use and build specific energy estimation methods for machine learning algorithms. We also present the latest software tools that give energy estimation values, together with two use cases that enhance the study of energy consumption in machine learning.},
+  keywords = {Deep learning,Energy consumption,GreenAI,High performance computing,Machine learning}
+}
+
+@inproceedings{geerd-dietgerPowerLetricsOpenSourceFramework2025,
+  title = {{{PowerLetrics}}: {{An Open-Source Framework}} for {{Power}} and {{Energy Metrics}} for {{Linux}}},
+  shorttitle = {{{PowerLetrics}}},
+  booktitle = {2025 {{IEEE}}/{{ACM}} 9th {{International Workshop}} on {{Green}} and {{Sustainable Software}} ({{GREENS}})},
+  author = {{Geerd-Dietger}, Hoffmann and Verena, Majuntke},
+  year = 2025,
+  month = apr,
+  pages = {28--30},
+  issn = {2473-1161},
+  doi = {10.1109/GREENS66463.2025.00009},
+  urldate = {2026-11-20},
+  abstract = {The increasing energy consumption of software and hardware systems has become a significant concern due to its environmental impact and operational costs. While operating systems like Windows and macOS have proprietary, undocumented energy analytics functionality, this feature is still lacking in Linux. In this paper we introduce PowerLetrics, an open-source framework designed to monitor and analyze power consumption metrics on a process level on Linux. By providing real-time power monitoring and flexible integration capabilities, PowerLetrics enables users to conduct power-related studies to improve energy efficiency. The main contributions are: 1) A novel and secure approach for the operating system to share energy metrics with processes and containers through the /proc file system without needing root permission, 2) An open source implementation influenced by the macOS powermetrics command for Linux using eBPF and 3) a discussion of the Linux Energy Estimation Engine (L3E) which enables users to tweak or build their own models.},
+  keywords = {energy efficiency,File systems,Green products,Hardware,linux,Linux,Measurement,Monitoring,open-source,Operating systems,Power demand,power monitoring,Real-time systems,Software,sustainable computing}
+}
+
+@misc{GreenkernelPowerletrics2026,
+  title = {Green-Kernel/Powerletrics},
+  year = 2026,
+  month = apr,
+  urldate = {2026-11-20},
+  abstract = {Powermetrics for Linux},
+  copyright = {AGPL-3.0},
+  howpublished = {Green Kernel}
+}
+
 @inproceedings{guegainAndroWattsUnpackingPower2025,
   title = {{{AndroWatts}}: {{Unpacking}} the {{Power Consumption}} of {{Mobile Device}}'s {{Components}}},
   shorttitle = {{{AndroWatts}}},
@@ -234,6 +408,31 @@
   urldate = {2026-02-27},
   abstract = {Power efficiency is crucial for mobile devices, where software inefficiencies can rapidly drain battery life and reduce device longevity. To help developers diagnose inefficiency issues and optimize power use, this paper introduces a novel methodology for estimating power consumption at a hardware component level in mobile devices. Unlike existing approaches that rely on coarse-grained battery discharge measurements, our approach consists of modeling per-component power usage as an inverse problem, utilizing linear statistical models and system metrics to estimate the contributions of individual components.In this paper, we model the total power usage using system metrics, we evaluate the accuracy of per-component power estimations, and we investigate the impact of dataset size on the model's performance. Our empirical evaluation shows that linear models achieve high predictive accuracy, with R-squared values exceeding 0.90 for total power usage, and robust correlations are observed between predicted and ground-truth power consumption for key components such as the CPU and GPU. We also observe that the amount of measures required to build such a model is of the order of magnitude of the hundred rather than the thousand.},
   keywords = {Accuracy,Android,Batteries,battery,Battery charge measurement,component,Measurement,Mobile handsets,model,power,Power demand,Predictive models,Software,Software engineering,System analysis and design}
+}
+
+@misc{hendersonBreakendExperimentimpacttracker2026,
+  title = {Breakend/Experiment-Impact-Tracker},
+  author = {Henderson, Peter},
+  year = 2026,
+  month = nov,
+  urldate = {2026-11-20},
+  copyright = {MIT}
+}
+
+@misc{hendersonSystematicReportingEnergy2022,
+  title = {Towards the {{Systematic Reporting}} of the {{Energy}} and {{Carbon Footprints}} of {{Machine Learning}}},
+  author = {Henderson, Peter and Hu, Jieru and Romoff, Joshua and Brunskill, Emma and Jurafsky, Dan and Pineau, Joelle},
+  year = 2022,
+  month = nov,
+  number = {arXiv:2002.05651},
+  eprint = {2002.05651},
+  primaryclass = {cs.CY},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2002.05651},
+  urldate = {2026-11-20},
+  abstract = {Accurate reporting of energy and carbon usage is essential for understanding the potential climate impacts of machine learning research. We introduce a framework that makes this easier by providing a simple interface for tracking realtime energy consumption and carbon emissions, as well as generating standardized online appendices. Utilizing this framework, we create a leaderboard for energy efficient reinforcement learning algorithms to incentivize responsible research in this area as an example for other areas of machine learning. Finally, based on case studies using our framework, we propose strategies for mitigation of carbon emissions and reduction of energy consumption. By making accounting easier, we hope to further the sustainable development of machine learning experiments and spur more research into energy efficient algorithms.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computers and Society,Computer Science - Machine Learning}
 }
 
 @misc{hoffmannGreenMetricsTool2025,
@@ -251,6 +450,36 @@
   abstract = {The environmental impact of software is gaining increasing attention as the demand for computational resources continues to rise. In order to optimize software resource consumption and reduce carbon emissions, measuring and evaluating software is a first essential step. In this paper we discuss what metrics are important for fact base decision making. We introduce the Green Metrics Tool (GMT), a novel framework for accurately measuring the resource consumption of software. The tool provides a containerized, controlled, and reproducible life cycle-based approach, assessing the resource use of software during key phases. Finally, we discuss GMT features like visualization, comparability and rule- and LLM-based optimisations highlighting its potential to guide developers and researchers in reducing the environmental impact of their software.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Computers and Society,Computer Science - Emerging Technologies,Computer Science - Software Engineering}
+}
+
+@article{hoqueModelingProfilingDebugging2015,
+  title = {Modeling, {{Profiling}}, and {{Debugging}} the {{Energy Consumption}} of {{Mobile Devices}}},
+  author = {Hoque, Mohammad Ashraful and Siekkinen, Matti and Khan, Kashif Nizam and Xiao, Yu and Tarkoma, Sasu},
+  year = 2015,
+  month = dec,
+  journal = {ACM Computing Surveys (CSUR)},
+  volume = {48},
+  number = {3},
+  pages = {39:1--39:40},
+  issn = {0360-0300},
+  doi = {10.1145/2840723},
+  urldate = {2026-11-17},
+  abstract = {Software energy profilers are the tools to measure the energy consumption of mobile devices, applications running on those devices, and various hardware components. They adopt different modeling and measurement techniques. In this article, we aim to review a wide range of such energy profilers for mobile devices. First, we introduce the terminologies and describe the power modeling and measurement methodologies applied in model-based energy profiling. Next, we classify the profilers according to their implementation and deployment strategies, and compare the profiling capabilities and performance between different types. Finally, we point out their limitations and the corresponding challenges.},
+  keywords = {battery model,discharge curve,energy bug,energy debugging,energy hog,energy hotspot,Energy profiler,fuel gauge,power consumption,power model}
+}
+
+@misc{HowItWorks,
+  title = {How It Works \textbar{} Kube-Green},
+  urldate = {2026-11-22},
+  abstract = {The use of kube-green is very simple. Once installed on the cluster, configure the desired CRD to make it work.},
+  howpublished = {https://kube-green.dev/docs/lifecycle/},
+  langid = {english}
+}
+
+@misc{IntroductionScaphandreDocumentation,
+  title = {Introduction - {{Scaphandre}} Documentation},
+  urldate = {2026-11-16},
+  howpublished = {https://hubblo-org.github.io/scaphandre/book/}
 }
 
 @misc{jagannadharaoBeginnersGuidePower2024,
@@ -285,6 +514,45 @@
   isbn = {978-1-4503-3196-8}
 }
 
+@inproceedings{jayExperimentalComparisonSoftwarebased2023,
+  title = {An Experimental Comparison of Software-Based Power Meters: Focus on {{CPU}} and {{GPU}}},
+  shorttitle = {An Experimental Comparison of Software-Based Power Meters},
+  booktitle = {2023 {{IEEE}}/{{ACM}} 23rd {{International Symposium}} on {{Cluster}}, {{Cloud}} and {{Internet Computing}} ({{CCGrid}})},
+  author = {Jay, Mathilde and Ostapenco, Vladimir and Lefevre, Laurent and Trystram, Denis and Orgerie, Anne-C{\'e}cile and Fichel, Benjamin},
+  year = 2023,
+  month = may,
+  pages = {106--118},
+  publisher = {IEEE},
+  address = {Bangalore, India},
+  doi = {10.1109/CCGrid57682.2023.00020},
+  urldate = {2026-11-09},
+  abstract = {The global energy demand for digital activities is constantly growing. Computing nodes and cloud services are at the heart of these activities. Understanding their energy consumption is an important step towards reducing it. On one hand, physical power meters are very accurate in measuring energy but they are expensive, difficult to deploy on a large scale, and are not able to provide measurements at the service level. On the other hand, power models and vendor-specific internal interfaces are already available or can be implemented on existing systems. Plenty of tools, called software-based power meters, have been developed around the concepts of power models and internal interfaces, in order to report the power consumption at levels ranging from the whole computing node to applications and services. However, we have found that it can be difficult to choose the right tool for a specific need. In this work, we qualitatively and experimentally compare several software-based power meters able to deal with CPU or GPU-based infrastructures. For this purpose, we evaluate them against high-precision physical power meters while executing various intensive workloads. We extend this empirical study to highlight the strengths and limitations of each software-based power meter.},
+  copyright = {https://doi.org/10.15223/policy-029},
+  isbn = {979-8-3503-0119-9},
+  langid = {english}
+}
+
+@misc{JoularJoularcore2026,
+  title = {Joular/Joularcore},
+  year = 2026,
+  month = nov,
+  urldate = {2026-11-13},
+  abstract = {Joular Core is a library that measures the energy or power consumption of hardware components (CPU, GPU) on Windows, Linux and macOS},
+  copyright = {LGPL-3.0},
+  howpublished = {The Joular Project}
+}
+
+@inproceedings{kansalVirtualMachinePower2010,
+  title = {Virtual {{Machine Power Metering}} and {{Provisioning}}},
+  booktitle = {{{ACM Symposium}} on {{Cloud Computing}} ({{SOCC}})},
+  author = {Kansal, Aman and Zhao, Feng and Liu, Jie and Kothari, Nupur and Bhattacharya, Arka A.},
+  year = 2010,
+  month = jun,
+  urldate = {2026-10-27},
+  abstract = {Virtualization is often used in cloud computing platforms for its several advantages in efficient management of the physical resources. However, virtualization raises certain additional challenges, and one of them is lack of power metering for virtual machines (VMs). Power management requirements in modern data centers have led to most new servers providing power usage measurement [\dots ]},
+  langid = {american}
+}
+
 @misc{kayembeExploringPrivacySecurity2025,
   title = {Exploring {{Privacy}} and {{Security}} as {{Drivers}} for {{Environmental Sustainability}} in {{Cloud-Based Office Solutions}}},
   author = {Kayembe, Jason and Guirat, Iness Ben and M{\"u}hlberg, Jan Tobias},
@@ -299,6 +567,12 @@
   abstract = {In this paper, we explore the intersection of privacy, security, and environmental sustainability in cloud-based office solutions, focusing on quantifying user- and network-side energy use and associated carbon emissions. We hypothesise that privacy-focused services are typically more energy-efficient than those funded through data collection and advertising. To evaluate this, we propose a framework that systematically measures environmental costs based on energy usage and network data traffic during well-defined, automated usage scenarios. To test our hypothesis, we first analyse how underlying architectures and business models, such as monetisation through personalised advertising, contribute to the environmental footprint of these services. We then explore existing methodologies and tools for software environmental impact assessment. We apply our framework to three mainstream email services selected to reflect different privacy policies, from ad-supported tracking-intensive models to privacy-focused designs: Microsoft Outlook, Google Mail (Gmail), and Proton Mail. We extend this comparison to a self-hosted email solution, evaluated with and without end-to-end encryption. We show that the self-hosted solution, even with 14\% of device energy and 15\% of emissions overheads from PGP encryption, remains the most energy-efficient, saving up to 33\% of emissions per session compared to Gmail. Among commercial providers, Proton Mail is the most efficient, saving up to 0.1 gCO2 e per session compared to Outlook, whose emissions can be further reduced by 2\% through ad-blocking.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Computers and Society,Computer Science - Cryptography and Security,Computer Science - Software Engineering}
+}
+
+@misc{KeplerDeepDive,
+  title = {Kepler {{Deep Dive}} - {{Kepler}}},
+  urldate = {2026-11-22},
+  howpublished = {https://sustainable-computing.io/archive/usage/deep\_dive/}
 }
 
 @book{khanEnergyProfilingUsing2015,
@@ -325,6 +599,24 @@
   doi = {10.1145/3177754},
   urldate = {2026-02-17},
   abstract = {To improve energy efficiency and comply with the power budgets, it is important to be able to measure the power consumption of cloud computing servers. Intel's Running Average Power Limit (RAPL) interface is a powerful tool for this purpose. RAPL provides power limiting features and accurate energy readings for CPUs and DRAM, which are easily accessible through different interfaces on large distributed computing systems. Since its introduction, RAPL has been used extensively in power measurement and modeling. However, the advantages and disadvantages of RAPL have not been well investigated yet. To fill this gap, we conduct a series of experiments to disclose the underlying strengths and weaknesses of the RAPL interface by using both customized microbenchmarks and three well-known application level benchmarks: Stream, Stress-ng, and ParFullCMS. Moreover, to make the analysis as realistic as possible, we leverage two production-level power measurement datasets from the Taito, a supercomputing cluster of the Finnish Center of Scientific Computing and also replicate our experiments on Amazon EC2. Our results illustrate different aspects of RAPL and document the findings through comprehensive analysis. Our observations reveal that RAPL readings are highly correlated with plug power, promisingly accurate enough, and have negligible performance overhead. Experimental results suggest RAPL can be a very useful tool to measure and monitor the energy consumption of servers without deploying any complex power meters. We also show that there are still some open issues, such as driver support, non-atomicity of register updates, and unpredictable timings that might weaken the usability of RAPL in certain scenarios. For such scenarios, we pinpoint solutions and workarounds.}
+}
+
+@inproceedings{lippPLATYPUSSoftwarebasedPower2021,
+  title = {{{PLATYPUS}}: {{Software}}-Based {{Power Side-Channel Attacks}} on X86},
+  shorttitle = {{{PLATYPUS}}},
+  booktitle = {2021 {{IEEE Symposium}} on {{Security}} and {{Privacy}} ({{SP}})},
+  author = {Lipp, Moritz and Kogler, Andreas and Oswald, David and Schwarz, Michael and Easdon, Catherine and Canella, Claudio and Gruss, Daniel},
+  year = 2021,
+  month = may,
+  pages = {355--371},
+  publisher = {IEEE},
+  address = {San Francisco, CA, USA},
+  doi = {10.1109/SP40001.2021.00063},
+  urldate = {2026-11-16},
+  abstract = {Power side-channel attacks exploit variations in power consumption to extract secrets from a device, e.g., cryptographic keys. Prior attacks typically required physical access to the target device and specialized equipment such as probes and a high-resolution oscilloscope.},
+  copyright = {https://doi.org/10.15223/policy-009},
+  isbn = {978-1-7281-8934-5},
+  langid = {english}
 }
 
 @inproceedings{liRuntimeModelingEstimation2003,
@@ -375,16 +667,41 @@
   isbn = {978-1-4503-8128-4}
 }
 
-@inproceedings{noureddineBetterUnderstandingEnergy2014,
+@article{manousakisTProfEnergyProfiler2015,
+  title = {{{TProf}}: {{An}} Energy Profiler for Task-Parallel Programs},
+  shorttitle = {{{TProf}}},
+  author = {Manousakis, Ioannis and Zakkak, Foivos S. and Pratikakis, Polyvios and Nikolopoulos, Dimitrios S.},
+  year = 2015,
+  month = mar,
+  journal = {Sustainable Computing: Informatics and Systems},
+  volume = {5},
+  pages = {1--13},
+  issn = {2210-5379},
+  doi = {10.1016/j.suscom.2014.07.004},
+  urldate = {2026-10-27},
+  abstract = {We present TProf, an energy profiling tool for OpenMP-like task-parallel programs. To compute the energy consumed by each task in a parallel application, TProf dynamically traces the parallel execution and uses a novel technique to estimate the per-task energy consumption. To achieve this estimation, TProf apportions the total processor energy among cores and overcomes the limitation of current works which would otherwise make parallel accounting impossible to achieve. We demonstrate the value of TProf by characterizing a set of task parallel programs, where we find that data locality, memory access patterns and task working sets are responsible for significant variance in energy consumption between seemingly homogeneous tasks. In addition, we identify opportunities for fine-grain energy optimization by applying per-task Dynamic Voltage and Frequency Scaling (DVFS).},
+  keywords = {Energy profiling,Parallel programming models,Parallel runtime systems,Task parallelism}
+}
+
+@misc{Methodology,
+  title = {Methodology},
+  journal = {CodeCarbon},
+  urldate = {2026-11-23},
+  abstract = {Measure and reduce carbon emissions from computing - Official Documentation},
+  howpublished = {https://docs.codecarbon.io/latest/explanation/methodology/},
+  langid = {english}
+}
+
+@phdthesis{noureddineBetterUnderstandingEnergy2014,
   title = {Towards a Better Understanding of the Energy Consumption of Software Systems},
   author = {Noureddine, Adel},
   year = 2014,
   month = mar,
-  publisher = {Lille 1},
   doi = {10.70675/122b8657za966z488aza2ddz7918eb8dcbe1},
   urldate = {2026-09-07},
   abstract = {Vers une meilleure compr\'ehension de la consommation \'energ\'etique des syst\`emes logiciels           La consommation \'energ\'etique augmente dans les technologies informatiques, notamment \`a cause de l'augmentation de l'utilisation des services web et distribu\'ee, l'informatique dans les nuages, ou les appareils mobiles. Par cons\'equent, des approches de gestion de l'\'energie ont \'et\'e d\'evelopp\'ees, de l'optimisation du code des logiciels, \`a des strat\'egies d'adaptation bas\'ees sur l'utilisation des ressources mat\'erielles. Afin de r\'epondre \`a ces lacunes, nous pr\'esentons dans cette th\`ese, des mod\`eles \'energ\'etiques, approches et outils pour estimer fid\`element la consommation \'energ\'etique des logiciels, au niveau de l'application, et au niveau du code, et pour inf\'erer le mod\`ele d'\'evolution \'energ\'etique des m\'ethodes bas\'e sur leurs param\`etres d'entr\'ees. Nous proposons aussi Jalen et Jalen Unit, des frameworks \'energ\'etiques pour estimer la consommation \'energ\'etique de chaque portion de code de l'application, et pour inf\'erer le mod\`ele d'\'evolution \'energ\'etique des m\'ethodes en se basant sur des \'etudes et exp\'eriences empiriques. En utilisant des mod\`eles \'energ\'etiques et d'outils d'estimations logicielles, nous pouvons proposer des informations \'energ\'etiques pr\'ecises sans avoir besoin de wattm\`etres ou d'investissement de mat\'eriels de mesures \'energ\'etiques. Les informations \'energ\'etiques que nous proposons, offrent aussi aux approches de gestion \'energ\'etique des mesures directes et pr\'ecises pour leurs approches d'adaptations et d'optimisations \'energ\'etiques. Ces informations \'energ\'etiques \'etablissent aussi un mod\`ele d'\'evolution \'energ\'etique des logiciels en se basant sur leurs param\`etres d'entr\'ees. Cela offre aux d\'eveloppeurs une connaissance plus profonde sur l'efficacit\'e \'energ\'etique dans les logiciels.         ,            With the rise of the usage of computers and mobile devices, and the higher price of electricity, energy management of software has become a necessity for sustainable software, devices and IT services. Energy consumption in IT is rising through the rise of web and distributed services, cloud computing, or mobile devices. However, these approaches do not use proper energy information for their adaptations rendering themselves limited and not energy-aware. They do not provide an energy feedback of software, and limited information is available on how and where energy is spend in software code. To address these shortcomings, we present, in this thesis, energy models, approaches and tools in order to accurately estimate the energy consumption of software at the application level, at the code level, and for inferring energy evolution models based on the method's own input parameters. We also propose Jalen and Jalen Unit, energy frameworks for estimating how much energy each portion of code consumes, and for inferring energy evolution models based on empirical benchmarking of software methods. By using software estimations and energy models, we are able to provide accurate energy information without the need of power meters or hardware energy investment. The energy information we provide also gives energy management approaches direct and accurate energy measurements for their adaptations and optimizations. Provided energy information also draws a model of energy consumption evolution of software based on the values of their input parameters. This gives developers knowledge on energy efficiency in software leading to choose some code over others based on their energy performance.},
-  langid = {english}
+  langid = {english},
+  school = {Lille 1}
 }
 
 @techreport{noureddineESurgeonDiagnosingEnergy2012,
@@ -415,6 +732,17 @@
   abstract = {Monitoring energy consumption of applications is crucial for energy optimisation and improvements in software systems. With the recent emphasis on energy efficiency, it is vital that software engineers have an understanding of the energy consumed by the code they write. In this paper, we present Jolinar, a tool that bridges the gap between energy measurements and accessibility to software engineers and even end-users. The tool builds on top of recent energy models to provide an accurate, light and easy-to-use interface for energy measurements. The target audience of Jolinar is both software engineers and non-technical end-users who want to monitor their applications' energy footprint. We show that end-users can use Jolinar's GUI to determine the energy consumed by the software they are using, and software engineers can use the tool to analyse energy consumption of systems to make energy-conscious decisions.},
   isbn = {978-1-4503-4390-9},
   langid = {english}
+}
+
+@misc{noureddineJoularCoreUniversal2026,
+  title = {Joular {{Core}}: The {{Universal Energy Measurement Platform}}},
+  shorttitle = {Joular {{Core}}},
+  author = {Noureddine, Adel},
+  year = 2026,
+  month = jun,
+  urldate = {2026-11-13},
+  abstract = {The energy consumption of computing cyber-physical systems (CPS), which includes computers, smartphones, IoT objects and servers, is continuously rising, and thus the need to monitor it. With the heterogeneity of these devices and their computing architecture (such as varying CPU or GPU architectures), and operating systems, the need for a universal, cross-platform and cross-OS power monitoring tool is adamant. In this paper, we present Joular Core, a novel and unique universal platform that measures and monitors power and energy consumption on all platforms, operating systems and CPU and GPU architectures, i.e., everywhere. Joular Core works on all systems (Windows, Linux, macOS, Raspberry Pi, virtual machines), from servers to IoT single-board computers, and monitors hardware energy (CPU, GPU), along with processes and multi-process applications.},
+  keywords = {Energy Analysis,Energy Monitoring,Hardware monitoring,Power Consumption,Software Analysis,Software Monitoring}
 }
 
 @article{noureddineMonitoringEnergyHotspots2015,
@@ -463,6 +791,71 @@
   abstract = {Reducing the energy footprint of digital devices and software is a task challenging the research in Green IT. Researches have proposed approaches for energy management, ranging from reducing usage of software and hardware, compilators optimization, to server consolidation and software migration. However, optimizing the energy consumption requires knowledge of that said consumption. In particular, measuring the energy consumption of hardware and software is an important requirement for efficient energy strategies. In this review, we outline the different categories of approaches in energy measurements, and provide insights into example of each category. We draw recommendations from our review on requirements on how to efficiently measure energy consumption of devices and software.}
 }
 
+@article{nowakOverheadProfilingUsing2014,
+  title = {The Overhead of Profiling Using {{PMU}} Hardware Counters},
+  author = {Nowak, Andrzej and Bitzes, Georgios},
+  year = 2014,
+  month = jul,
+  publisher = {Zenodo},
+  doi = {10.5281/zenodo.10800},
+  urldate = {2026-11-16},
+  abstract = {Run-time profiling of executable binaries can offer valuable insight into the performance characteristics and behaviour of a program. Some methods, such as instrumentation, are invasive and involve modifications of the profiled binary. This can significantly impact performance, to the point that an instrumented binary runs many times slower than the original. The Performance Monitoring Unit found in many modern processors offers the possibility of low-overhead profiling through a plethora of performance events. In this report, we investigate and quantify this overhead for a variety of tests and configurations, using the ``perf'' tool of the Linux kernel. Results for four main usage modes of the PMU are included: counting, sampling, PEBS events, and Last Branch Record (LBR).},
+  keywords = {counter,Performance Monitoring Unit,PMU,processor}
+}
+
+@incollection{oliveiraSmallChangesBig2021,
+  title = {Small {{Changes}}, {{Big Impacts}}: {{Leveraging Diversity}} to {{Improve Energy Efficiency}}},
+  shorttitle = {Small {{Changes}}, {{Big Impacts}}},
+  booktitle = {Software {{Sustainability}}},
+  author = {Oliveira, Wellington and Matalonga, Hugo and Pinto, Gustavo and Castor, Fernando and Fernandes, Jo{\~a}o Paulo},
+  editor = {Calero, Coral and Moraga, Mª {\'A}ngeles and Piattini, Mario},
+  year = 2021,
+  pages = {123--152},
+  publisher = {Springer International Publishing},
+  address = {Cham},
+  doi = {10.1007/978-3-030-69970-3_6},
+  urldate = {2026-10-26},
+  abstract = {In this chapter, we advocate that developers should leverage software diversity to make software systems more energy efficient. Our main goal is to show that non-specialists can build software that consumes less energy by alternating at development time between readily available, diversely designed pieces of software implemented by third parties. By revisiting the main findings of research work we conducted in the past few years, we noticed that they share a common observation: small changes can make a big difference in terms of energy consumption. These changes can usually be implemented by very simple modifications, sometimes amounting to a single line of code. Based on experimental results, one small change that could make a big difference is to replace most of the uses of a Hashtable class with uses of the ConcurrentHashMap class. In most of the cases, it was only necessary to modify the line where the Hashtable object was created. This simple reengineering effort promoted a reduction of up to 17.8\% in the energy consumption of Xalan and up to 9.32\% for Tomcat, when using the workloads of the DaCapo benchmark suite.},
+  isbn = {978-3-030-69970-3},
+  langid = {english}
+}
+
+@misc{OverviewJoularCore,
+  title = {Overview - {{Joular Core Documentation}}},
+  urldate = {2026-11-22},
+  howpublished = {https://joular.github.io/joularcore/overview.html}
+}
+
+@misc{pahlkeUnlockEnergyConsumption2024,
+  type = {Conference Talk},
+  title = {Unlock {{Energy Consumption}} in the {{Cloud}} with {{eBPF}}},
+  shorttitle = {Unlock {{Energy Consumption}} in the {{Cloud}} with {{eBPF}}},
+  author = {Pahlke, Leonard},
+  year = 2024,
+  month = mar,
+  address = {Paris, France},
+  urldate = {2026-11-16},
+  abstract = {View more about this event at KubeCon + CloudNativeCon Europe 2024},
+  langid = {english}
+}
+
+@inproceedings{pathaniaCalculatingSoftwaresEnergy2025,
+  title = {Calculating {{Software}}'s {{Energy Use}} and {{Carbon Emissions}}: {{A Survey}} of the {{State}} of {{Art}}, {{Challenges}}, and the {{Way Ahead}}},
+  shorttitle = {Calculating {{Software}}'s {{Energy Use}} and {{Carbon Emissions}}},
+  booktitle = {2025 {{IEEE}}/{{ACM}} 9th {{International Workshop}} on {{Green}} and {{Sustainable Software}} ({{GREENS}})},
+  author = {Pathania, Priyavanshi and Bamby, Nikhil and Mehra, Rohit and Sikand, Samarth and Sharma, Vibhu Saujanya and Kaulgud, Vikrant and Podder, Sanjay and Burden, Adam P.},
+  year = 2025,
+  month = apr,
+  eprint = {2506.09683},
+  primaryclass = {cs.SE},
+  pages = {92--99},
+  doi = {10.1109/GREENS66463.2025.00018},
+  urldate = {2026-11-13},
+  abstract = {The proliferation of software and AI comes with a hidden risk: its growing energy and carbon footprint. As concerns regarding environmental sustainability come to the forefront, understanding and optimizing how software impacts the environment becomes paramount. In this paper, we present a state-of-the-art review of methods and tools that enable the measurement of software and AI-related energy and/or carbon emissions. We introduce a taxonomy to categorize the existing work as Monitoring, Estimation, or Black-Box approaches. We delve deeper into the tools and compare them across different dimensions and granularity - for example, whether their measurement encompasses energy and carbon emissions and the components considered (like CPU, GPU, RAM, etc.). We present our observations on the practical use (component wise consolidation of approaches) as well as the challenges that we have identified across the current state-of-the-art. As we start an initiative to address these challenges, we emphasize active collaboration across the community in this important field.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computers and Society,Computer Science - Software Engineering}
+}
+
 @inproceedings{phungModelingSystemLevelPower2018,
   title = {Modeling {{System-Level Power Consumption Profiles Using RAPL}}},
   booktitle = {2018 {{IEEE}} 17th {{International Symposium}} on {{Network Computing}} and {{Applications}} ({{NCA}})},
@@ -476,21 +869,52 @@
   keywords = {Benchmark testing,Computational modeling,CPU,distributed systems,energy monitoring,Estimation,Mathematical model,Meters,Power demand,power modeling,power monitoring,RAPL,Servers}
 }
 
-@misc{raffinDissectingSoftwarebasedMeasurement2024,
-  title = {Dissecting the Software-Based Measurement of {{CPU}} Energy Consumption: A Comparative Analysis},
-  shorttitle = {Dissecting the Software-Based Measurement of {{CPU}} Energy Consumption},
-  author = {Raffin, Guillaume and Trystram, Denis},
-  year = 2024,
-  month = jul,
-  number = {arXiv:2401.15985},
-  eprint = {2401.15985},
-  primaryclass = {cs},
+@misc{pijnackerBjornpijnackerKubewatt2026,
+  title = {Bjornpijnacker/Kubewatt},
+  author = {Pijnacker, Bjorn},
+  year = 2026,
+  month = aug,
+  urldate = {2026-11-20}
+}
+
+@inproceedings{pijnackerContainerlevelEnergyObservability2025,
+  title = {Container-Level {{Energy Observability}} in {{Kubernetes Clusters}}},
+  booktitle = {{{ICT4S}} 2025},
+  author = {Pijnacker, Bjorn and Setz, Brian and Andrikopoulos, Vasilios},
+  year = 2025,
+  month = apr,
+  eprint = {2504.10702},
+  primaryclass = {cs.DC},
+  pages = {69--79},
   publisher = {arXiv},
-  doi = {10.48550/arXiv.2401.15985},
-  urldate = {2026-03-03},
-  abstract = {Every day, we experience the effects of the global warming: extreme weather events, major forest fires, storms, global warming, etc.The scientific community acknowledges that this crisis is a consequence of human activities where Information and Communications Technologies (ICT) are an increasingly important contributor.Computer scientists need tools for measuring the footprint of the code they produce and for optimizing it. Running Average Power Limit (RAPL) is a low-level interface designed by Intel that provides a measure of the energy consumption of a CPU (and more) without the need for additional hardware. Since 2017, it is available on most computing devices, including non-Intel devices such as AMD processors.More and more people are using RAPL for energy measurement, mostly like a black box without deep knowledge of its behavior.Unfortunately, this causes mistakes when implementing measurement tools.In this paper, we propose to come back to the basic mechanisms that allow to use RAPL measurements and present a critical analysis of their operations. In addition to long-established mechanisms, we explore the suitability of the recent eBPF technology (formerly and abbreviation for extended Berkeley Packet Filter) for working with RAPL.For each mechanism, we release an implementation in Rust that avoids the pitfalls we detected in existing tools, improving correctness, timing accuracy and performance. These new implementations have desirable properties for monitoring and profiling parallel applications.We also provide an experimental study with multiple benchmarks and processor models (Intel and AMD) in order to evaluate the efficiency of the various mechanisms and their impact on parallel software.These experiments show that no mechanism provides a significant performance advantage over the others. However, they differ significantly in terms of ease-of-use and resiliency.We believe that this work will help the community to develop correct, resilient and lightweight measurement tools.},
+  doi = {10.48550/arXiv.2504.10702},
+  urldate = {2026-11-20},
+  abstract = {Kubernetes has been for a number of years the default cloud orchestrator solution across multiple application and research domains. As such, optimizing the energy efficiency of Kubernetes-deployed workloads is of primary interest towards controlling operational expenses by reducing energy consumption at data center level and allocated resources at application level. A lot of research in this direction aims on reducing the total energy usage of Kubernetes clusters without establishing an understanding of their workloads, i.e. the applications deployed on the cluster. This means that there are untapped potential improvements in energy efficiency that can be achieved through, for example, application refactoring or deployment optimization. For all these cases a prerequisite is establishing fine-grained observability down to the level of individual containers and their power draw over time. A state-of-the-art tool approved by the Cloud-Native Computing Foundation, Kepler, aims to provide this functionality, but has not been assessed for its accuracy and therefore fitness for purpose. In this work we start by developing an experimental procedure to this goal, and we conclude that the reported energy usage metrics provided by Kepler are not at a satisfactory level. As a reaction to this, we develop KubeWatt as an alternative to Kepler for specific use case scenarios, and demonstrate its higher accuracy through the same experimental procedure as we used for Kepler.},
   archiveprefix = {arXiv},
-  keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Performance}
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Software Engineering}
+}
+
+@misc{PowerAttributionKepler,
+  title = {Power {{Attribution}} - {{Kepler}}},
+  urldate = {2026-11-22},
+  howpublished = {https://sustainable-computing.io/kepler/usage/power-attribution/}
+}
+
+@article{raffinDissectingSoftwareBasedMeasurement2025,
+  title = {Dissecting the {{Software-Based Measurement}} of {{CPU Energy Consumption}}: {{A Comparative Analysis}}},
+  shorttitle = {Dissecting the {{Software-Based Measurement}} of {{CPU Energy Consumption}}},
+  author = {Raffin, Guillaume and Trystram, Denis},
+  year = 2025,
+  month = jan,
+  journal = {IEEE Transactions on Parallel and Distributed Systems},
+  volume = {36},
+  number = {1},
+  pages = {96--107},
+  issn = {1558-2183},
+  doi = {10.1109/TPDS.2024.3492336},
+  urldate = {2026-11-23},
+  abstract = {Information and Communications Technologies (ICT) are an increasingly important contributor to the environmental crisis. Computer scientists need tools for measuring the footprint of the code they produce and for optimizing it. Running Average Power Limit (RAPL) is a low-level interface designed by Intel that provides a measure of the energy consumption of a CPU (and more) without the need for additional hardware. Since 2017, it is available on most x86 processors, including AMD processors. More and more people are using RAPL for energy measurement, mostly like a black box without deep knowledge of its behavior. Unfortunately, this causes mistakes when implementing measurement tools. In this article, we propose to come back to the basic mechanisms that allow to use RAPL measurements and present a critical analysis of their operations. In addition to long-established mechanisms, we explore the suitability of the recent eBPF technology (formerly and abbreviation for extended Berkeley Packet Filter) for working with RAPL. We release an implementation in Rust that avoids the pitfalls we detected in existing tools, improving correctness, timing accuracy and performance, with desirable properties for monitoring and profiling parallel applications. We provide an experimental study with multiple benchmarks and processor models to evaluate the efficiency of the various mechanisms and their impact on parallel software. We show that no mechanism provides a significant performance advantage over the others. However, they differ significantly in terms of ease-of-use and resiliency. We believe that this work will help the community to develop correct, resilient and lightweight measurement tools.},
+  keywords = {Central Processing Unit,Climate change,Closed box,Energy consumption,energy efficiency,Energy efficiency,Environmental monitoring,Global warming,performance analysis,Performance analysis,RAPL library (Running Average Power Limit),software measurement,Software measurement,Weather forecasting}
 }
 
 @article{sanlialpEnergyEfficiencyAnalysis2022,
@@ -512,6 +936,40 @@
   keywords = {code refactoring,energy consumption,energy efficiency,green and sustainable software,maintainability index,object-oriented code,sustainability}
 }
 
+@misc{Scaphandre,
+  title = {Scaphandre},
+  urldate = {2026-11-23},
+  abstract = {Electric power/energy consumption monitoring agent.},
+  howpublished = {https://scaphandre.hubblo.org},
+  langid = {english}
+}
+
+@inproceedings{schubertProfilingSoftwareEnergy2012,
+  title = {Profiling {{Software}} for {{Energy Consumption}}},
+  booktitle = {2012 {{IEEE International Conference}} on {{Green Computing}} and {{Communications}}},
+  author = {Schubert, Simon and Kostic, Dejan and Zwaenepoel, Willy and Shin, Kang G.},
+  year = 2012,
+  month = nov,
+  pages = {515--522},
+  publisher = {IEEE},
+  address = {Besancon, France},
+  doi = {10.1109/GreenCom.2012.86},
+  urldate = {2026-10-27},
+  abstract = {The amount of energy consumed by computer systems can be lowered through the use of more efficient algorithms and software. Unfortunately, software developers lack the tools to pinpoint energy-hungry sections in their code and therefore have to rely on their intuition when trying to optimize their code for energy consumption. We have developed eprof, a profiler that relates energy consumption to code locations; it attributes both the synchronously consumed energy in the CPU and the asynchronously consumed energy in peripheral devices like hard drives, network cards, etc. Eprof requires minimal changes to the kernel (tens of lines of code) and does not require special hardware to energy-profile software. Therefore eprof can be widely used to help developers make energy-aware decisions.},
+  isbn = {978-1-4673-5146-1 978-0-7695-4865-4},
+  langid = {english}
+}
+
+@misc{SustainablecomputingioKepler2026,
+  title = {Sustainable-Computing-Io/Kepler},
+  year = 2026,
+  month = nov,
+  urldate = {2026-11-16},
+  abstract = {Kepler lets you monitor the energy use of Kubernetes workloads. Kepler is a CNCF Sandbox project. Let's make every watt matter. ⚡},
+  copyright = {Apache-2.0},
+  howpublished = {Sustainable Computing}
+}
+
 @misc{tararaRAPLSGXEnergy,
   title = {{{RAPL}}, {{SGX}} and Energy Filtering - {{Influences}} on Power Consumption},
   author = {Tarara, Arne},
@@ -521,6 +979,26 @@
   langid = {english}
 }
 
+@misc{venFenrus75Powertop2026,
+  title = {Fenrus75/Powertop},
+  author = {van de Ven, Arjan},
+  year = 2026,
+  month = nov,
+  urldate = {2026-11-17},
+  abstract = {The Linux PowerTOP tool  -- please post patches to the mailing list instead of using github pull requests},
+  copyright = {GPL-2.0}
+}
+
+@misc{vitilloVitilloPower_gadget2024,
+  title = {Vitillo/Power\_gadget},
+  author = {Vitillo, Roberto},
+  year = 2024,
+  month = jul,
+  urldate = {2026-11-17},
+  abstract = {Intel's power gadget for Linux},
+  copyright = {BSD-2-Clause}
+}
+
 @misc{WebsiteCarbonCalculator,
   title = {Website {{Carbon}}™ {{Calculator}} v4 \textbar{} {{What}}'s Your Site's Carbon Footprint?},
   journal = {Website Carbon Calculator},
@@ -528,6 +1006,23 @@
   abstract = {The original website carbon calculator tool, brought to you by Wholegrain Digital,London's original sustainable WordPress agency.},
   howpublished = {https://www.websitecarbon.com/},
   langid = {american}
+}
+
+@article{woirhayeJouleProfilerPhasebased2026,
+  title = {Joule {{Profiler}}: {{A}} Phase-Based Energy Measurement Tool},
+  shorttitle = {Joule {{Profiler}}},
+  author = {Woirhaye, J{\'e}r{\'e}my and Gibier, Fran{\c c}ois and Rouvoy, Romain},
+  year = 2026,
+  month = aug,
+  journal = {Journal of Open Source Software},
+  volume = {11},
+  number = {124},
+  pages = {10575},
+  issn = {2475-9066},
+  doi = {10.21105/joss.10575},
+  urldate = {2026-11-09},
+  abstract = {Woirhaye et al., (2026). Joule Profiler: A phase-based energy measurement tool. Journal of Open Source Software, 11(124), 10575, https://doi.org/10.21105/joss.10575},
+  langid = {english}
 }
 
 @article{wysockiMethodsImprovingSoftware2025,
@@ -550,8 +1045,25 @@
   keywords = {electronics,energy efficiency,knowledge acquisition and engineering,knowledge management,programming techniques,read-jay,risk management,software}
 }
 
+@inproceedings{yangParttimePowerMeasurements2024,
+  title = {Part-Time {{Power Measurements}}: Nvidia-Smi's {{Lack}} of {{Attention}}},
+  shorttitle = {Part-Time {{Power Measurements}}},
+  booktitle = {{{SC24}}: {{International Conference}} for {{High Performance Computing}}, {{Networking}}, {{Storage}} and {{Analysis}}},
+  author = {Yang, Zeyu and Adamek, Karel and Armour, Wesley},
+  year = 2024,
+  month = nov,
+  eprint = {2312.02741},
+  primaryclass = {cs.DC},
+  pages = {1--17},
+  doi = {10.1109/SC41406.2024.00028},
+  urldate = {2026-11-22},
+  abstract = {The GPU has emerged as the go-to accelerator for high throughput and parallel workloads, spanning scientific simulations to AI, thanks to its performance and power efficiency. Given that 6 out of the top 10 fastest supercomputers in the world use NVIDIA GPUs and many AI companies each employ 10,000's of NVIDIA GPUs, an accurate understanding of GPU power consumption is essential for making progress to further improve its efficiency. Despite the limited documentation and the lack of understanding of its mechanisms, NVIDIA GPUs' built-in power sensor, providing easily accessible power readings via the nvidia-smi interface, is widely used in energy efficient computing research on GPUs. Our study seeks to elucidate the internal mechanisms of the power readings provided by nvidia-smi and assess the accuracy of the power and energy consumption data. We have developed a suite of micro-benchmarks to profile the behaviour of nvidia-smi power readings and have evaluated them on over 70 different GPUs from all architectural generations since power measurement was first introduced in the 'Fermi' generation. We have identified several unforeseen problems in terms of power/energy measurement using nvidia-smi, for example on the A100 and H100 GPUs only 25\% of the runtime is sampled for power consumption, during the other 75\% of the time, the GPU can be using drastically different power and nvidia-smi and results presented by it are unaware of this. This along with other findings can lead to a drastic under/overestimation of energy consumed, especially when considering data centres housing tens of thousands of GPUs. We proposed several good practices that help to mitigate these problems. By comparing our results to those measured from an external power-meter, we have reduced the error in the energy measurement by an average of 35\% and in some cases by as much as 65\% in the test cases we present.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Hardware Architecture}
+}
+
 @article{zoniSurveyRuntimePower2023,
-  title = {A {{Survey}} on {{Run-time Power Monitors}} at the {{Edge}}},
+  title = {A {{Survey}} on {{Run}}-Time {{Power Monitors}} at the {{Edge}}},
   author = {Zoni, Davide and Galimberti, Andrea and Fornaciari, William},
   year = 2023,
   month = jul,
