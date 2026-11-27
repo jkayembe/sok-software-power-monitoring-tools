@@ -198,7 +198,7 @@ Our taxonomy aims to capture the principal design choices shaping software energ
 The taxonomy was developed iteratively alongside the tool selection. While examining the publications, documentation and source code of candidate tools, we introduced a dimension whenever a design choice influenced the performance, limits or implementation of several tools, and discarded characteristics that did not distinguish tools or were specific to a single implementation. Excluded candidates also contributed: eprof \cite{schubertProfilingSoftwareEnergy2012} and PowerScope \cite{flinnPowerScopeToolProfiling1999} informed the treatment of asynchronous energy consumption, Joulemeter \cite{kansalVirtualMachinePower2010} the attribution of energy to virtual machines from the host, and pTop \cite{doPTopProcesslevelPower2009} allocation strategies based on device states. The selected tools, the profiling challenges and the taxonomy were thus refined jointly, and the resulting taxonomy remains structured around the challenges discussed in Section~\ref{challenges}.
 
 \section{Profiling Challenges} \label{challenges}
-
+\todo{you cite the tools that are bottom_ups but not the top-down }
 Energy profiling of software systems is inherently indirect. While hardware components consume energy, software only influences this consumption through its use of hardware resources. Consequently, profiling tools do not measure software energy consumption directly, but instead estimate hardware energy and attribute it to software based on observable signals and modelling assumptions. Existing approaches follow one of two formulations. \emph{Top-down} approaches first obtain the energy consumed by a hardware component, and then attribute a share of this measured total to each software entity:
 
 \begin{equation}
@@ -262,7 +262,7 @@ Access to these sources may be restricted for security reasons. Lipp et al. \cit
 \subsection{Temporal Resolution}
 
 Profilers observe system activity and update their attribution periodically. Increasing the observation frequency improves temporal precision only up to the update rate of the measurement sources: RAPL registers are updated approximately every millisecond, so that code executing faster than this interval cannot be reliably measured without synchronisation \cite{khanEnergyProfilingUsing2015,khanRAPLActionExperiences2018}. Higher frequencies also increase runtime overhead, and excessive sampling may even increase energy consumption by preventing processors from entering low-power states \cite{raffinDissectingSoftwarebasedMeasurement2025}. Temporal resolution therefore defines a trade-off between accuracy and overhead (Section~\ref{sec:temporal-resolution}).
-
+\todo{problem in citation raffinDissectingSoftwarebasedMeasurement2025}
 \subsection{Profiling Overhead}
 
 Profiling introduces runtime overhead, arising from \emph{(i) instrumentation of code or binaries}, \emph{(ii) periodic sampling and interrupt handling} and \emph{(iii) live logging of estimated energy shares}.  This overhead affects both the execution time of the monitored workload and the energy consumed by the system. Driven by the amount of data that needs to be collected and processed online, it can bias the measurements themselves. Minimising and quantifying it is necessary to ensure the validity of observations, yet it is not always explicitly addressed (Section~\ref{sec:overhead}).
@@ -404,7 +404,7 @@ Even when no monitored application is running, computing systems still consume e
 E_{\mathrm{dynamic}} = E_{\mathrm{hardware}} - E_{\mathrm{idle}}
 \]
 the remaining dynamic energy. Three idle policies can be distinguished.
-
+\todo{also an equation?}
 \begin{itemize}
 
 \item \emph{Idle not distinguished}: the idle energy is not estimated, and is therefore distributed along with the dynamic energy according to the activity shares:
@@ -488,7 +488,7 @@ Temporal resolution represents the frequency at which measurements are collected
 Some tools allow temporal resolution to be configured, but the achievable range mainly depends on the underlying measurement sources. Both hardware-level energy estimation and software activity proxies expose metrics at finite update rates, and the effective temporal resolution is therefore bounded by the slowest. For hardware-level energy estimation, the sampling frequency of external power meters varies widely with the instrument, BitWatts for instance reporting up to 40\,Hz when connected to its power meter \cite{colmantProcesslevelPowerEstimation2015}. Hardware-exposed interfaces usually offer a good compromise between resolution and overhead: RAPL registers are updated approximately every millisecond, i.e. on the order of a kilohertz \cite{khanRAPLActionExperiences2018}, whereas platform sensors accessed through IPMI provide coarser and less accurate readings \cite{khanRAPLActionExperiences2018}.
 
 \subsubsection{\textbf{Overhead}} \label{sec:overhead}
-
+\todo{repetition, also mentioned in challenges}
 Profiling inevitably perturbs the monitored system. Overhead originates from the profiling tool own activity including instrumentation logic, metric collection and processing, storage operations, etc\dots. It can be determinant when monitored workloads are lightweight. Reported overheads take two forms: an execution-time overhead, generally expressed as a percentage, and a power or energy overhead, expressed in watts, such as the 0.33\,W consumed by the SmartWatts sensor \cite{fieniSmartWattsSelfCalibratingSoftwareDefined2020}.
 
 Different levers exist to reduce the overhead depending on the measurement mechanism. Common approaches include reducing the acquisition frequency, performing attribution or analysis offline rather than online, or selecting lower-overhead operating-system interfaces to access measurement sources. For example, \cite{raffinDissectingSoftwarebasedMeasurement2025} showed that different Linux interfaces used to access RAPL counters exhibit significantly different latency and energy overhead characteristics, especially at high acquisition frequencies or on idle systems. At a 1\,kHz polling frequency, Diamond and Stoico \cite{diamondWhatCostEnergy2026} measured execution-time overheads ranging from 0.25\% to 46.75\% across existing RAPL-based tools, mainly caused by redundant system calls and by computations performed within the sampling loop, whereas simpler implementations kept execution times close to a no-tool baseline. Activity reconstruction is comparatively cheap: reading hardware performance counters in counting mode incurs a negligible overhead, as long as no more events are monitored than hardware counters are available \cite{nowakOverheadProfilingUsing2014}.
@@ -509,7 +509,7 @@ When code instrumentation is required, we indicate it and distinguish between ma
 
 Profiling tools also differ in the privileges required to access measurement sources. Some operate entirely in user space using standard operating-system interfaces or libraries such as PAPI, although such access to RAPL now generally requires elevated privileges (see Section~\ref{challenges}), while others require elevated privileges to access restricted hardware interfaces such as RAPL Model-Specific Registers (MSRs) or Hardware Performance Counters (HPCs). Certain approaches also rely on kernel-level facilities, such as eBPF programs, kprobes, or dedicated kernel modules, whose deployment generally requires administrative privileges.
 
-The interface used to access a given source also matters. Raffin and Trystram \cite{raffinDissectingSoftwarebasedMeasurement2025} show that reading RAPL through MSRs, the powercap interface, perf\_events or eBPF leads to different latencies and overheads, and we therefore also report the interface used by each tool to access RAPL.
+The interface used to access a given source also matters. Raffin and Trystram \cite{raffinDissectingSoftwarebasedMeasurement2025} show that reading RAPL through MSRs, the powercap interface, perf\_events or eBPF leads to different latencies and overheads, and we therefore also report the interface used by each tool to access RAPL. \todo{Raffin and Trystram citation is missing?}
 
 Privilege requirements directly impact deployability, particularly in environments where users may lack administrative access. We therefore distinguish between tools that \emph{(i) operate entirely in user space}, \emph{(ii) require elevated privileges to access measurement interfaces}, and \emph{(iii) depend on additional kernel-level instrumentation or modules}.
 
